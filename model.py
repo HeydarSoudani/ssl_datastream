@@ -23,22 +23,22 @@ class MyPretrainedResnet50(nn.Module):
     # self.pretrained = models.resnet50()
 
     # Pretrain with torch
-    self.pretrained = models.resnet50(pretrained=True)
+    # self.pretrained = models.resnet50(pretrained=True)
 
-    for k in list(state_dict.keys()):
-      # retain only encoder_q up to before the embedding layer
-      if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
-        # remove prefix
-        state_dict[k[len("module.encoder_q."):]] = state_dict[k]
-      # delete renamed or unused k
-      del state_dict[k]
+    # for k in list(state_dict.keys()):
+    #   # retain only encoder_q up to before the embedding layer
+    #   if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
+    #     # remove prefix
+    #     state_dict[k[len("module.encoder_q."):]] = state_dict[k]
+    #   # delete renamed or unused k
+    #   del state_dict[k]
       
     # print(list(state_dict.keys()))
 
     # freeze all layers but the last fc
     for name, param in self.pretrained.named_parameters():
-      # print(name)
-      # print(not name.startswith(('layer4', 'fc')))
+      print(name)
+      print(not name.startswith(('layer4', 'fc')))
       # if name not in ['fc.weight', 'fc.bias']:
       if not name.startswith(('layer4', 'fc')):
         param.requires_grad = False
