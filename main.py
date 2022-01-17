@@ -88,8 +88,6 @@ checkpoint = torch.load(PATH)
 state_dict = checkpoint['state_dict']
 model = models.resnet50()
 
-print(list(state_dict.keys()))
-
 for k in list(state_dict.keys()):
     # retain only encoder_q up to before the embedding layer
     if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
@@ -97,6 +95,8 @@ for k in list(state_dict.keys()):
         state_dict[k[len("module.encoder_q."):]] = state_dict[k]
     # delete renamed or unused k
     del state_dict[k]
+
+print(list(state_dict.keys()))
 
 # freeze all layers but the last fc
 for name, param in model.named_parameters():
