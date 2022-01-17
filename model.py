@@ -34,6 +34,7 @@ class MyPretrainedResnet50(nn.Module):
     # freeze all layers but the last fc
     for name, param in self.pretrained.named_parameters():
       print(name)
+      print(name.startswith('layer4'))
       if name not in ['fc.weight', 'fc.bias']:
         param.requires_grad = False
     self.pretrained.load_state_dict(state_dict, strict=False)
