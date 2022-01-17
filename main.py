@@ -144,7 +144,7 @@ print('Test with last model')
 test(model, test_dataloader, args, device)
 
 print('Test with best model')
-try: model.load_state_dict(args.best_model_path, strict=False)
+try: model.load_state_dict(torch.load(args.best_model_path), strict=False)
 except FileNotFoundError: pass
 else: print("Load model from {}".format(args.best_model_path))
 test(model, test_dataloader, args, device)
