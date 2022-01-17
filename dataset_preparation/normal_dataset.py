@@ -1,7 +1,13 @@
 import pandas as pd 
 import numpy as np
 import argparse
+import pickle
 import os
+
+def unpickle(file):
+  with open(file, 'rb') as fo:
+    dict = pickle.load(fo, encoding='bytes')
+  return dict
 
 ## == Params ==========================
 parser = argparse.ArgumentParser()
