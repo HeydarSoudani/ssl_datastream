@@ -34,6 +34,7 @@ class MyPretrainedResnet50(nn.Module):
 
     ## == Pretrain with DINO
     self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
+    print(self.pretrained)
 
     ## == Pretrain with torch
     # self.pretrained = models.resnet50(pretrained=True)
