@@ -18,37 +18,38 @@ class MyPretrainedResnet50(nn.Module):
   def __init__(self):
     super(MyPretrainedResnet50, self).__init__()
     
-    PATH = 'moco_v2_800ep_pretrain.pth.tar'
-    checkpoint = torch.load(PATH)
-    state_dict = checkpoint['state_dict']
-    self.pretrained = models.resnet50()
+    # PATH = 'moco_v2_800ep_pretrain.pth.tar'
+    # checkpoint = torch.load(PATH)
+    # state_dict = checkpoint['state_dict']
+    # self.pretrained = models.resnet50()
 
-    for k in list(state_dict.keys()):
-      # retain only encoder_q up to before the embedding layer
-      if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
-        # remove prefix
-        state_dict[k[len("module.encoder_q."):]] = state_dict[k]
-      # delete renamed or unused k
-      del state_dict[k]
+    # for k in list(state_dict.keys()):
+    #   # retain only encoder_q up to before the embedding layer
+    #   if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
+    #     # remove prefix
+    #     state_dict[k[len("module.encoder_q."):]] = state_dict[k]
+    #   # delete renamed or unused k
+    #   del state_dict[k]
       
-    # freeze all layers but the last fc
-    for name, param in self.pretrained.named_parameters():
-      if name not in ['fc.weight', 'fc.bias']:
-        param.requires_grad = False
-    self.pretrained.load_state_dict(state_dict, strict=False)
+    # # freeze all layers but the last fc
+    # for name, param in self.pretrained.named_parameters():
+    #   if name not in ['fc.weight', 'fc.bias']:
+    #     param.requires_grad = False
+    # self.pretrained.load_state_dict(state_dict, strict=False)
     
-    self.fc1 = nn.Linear(1000, 128)
+    self.fc1 = nn.Linear(3072, 128)
     self.fc2 = nn.Linear(128, 10)
     
     # init the fc layers
-    self.pretrained.fc.weight.data.normal_(mean=0.0, std=0.01)
-    self.pretrained.fc.bias.data.zero_()
+    # self.pretrained.fc.weight.data.normal_(mean=0.0, std=0.01)
+    # self.pretrained.fc.bias.data.zero_()
     self.fc1.apply(Xavier)
     self.fc2.apply(Xavier)
     
   
   def forward(self, x):
-    x = self.pretrained(x)
+    # x = self.pretrained(x)
+    x = x.view(x.size(0), -1)
     features = torch.relu(self.fc1(x))
     out = self.fc2(features)
     return out, features
