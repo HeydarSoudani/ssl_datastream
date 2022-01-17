@@ -133,9 +133,7 @@ train(model, train_dataloader, val_dataloader, args, device)
 test(model, test_dataloader, args, device)
 
 ## == visualization ===================
-
-
-visualization(model, test_dataset, args, device)
+# visualization(model, test_dataset, args, device)
 
 
 
