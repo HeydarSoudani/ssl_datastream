@@ -54,6 +54,7 @@ class MyPretrainedResnet50(nn.Module):
   def forward(self, x):
     # x = x.view(x.size(0), -1)
     x = self.pretrained(x)
+    x = self.dropout(torch.relu(x))
     features = torch.relu(self.fc1(x))
     out = self.fc2(self.dropout(features))
     return out, features
