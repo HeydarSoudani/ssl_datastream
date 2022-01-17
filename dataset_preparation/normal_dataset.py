@@ -53,6 +53,18 @@ if __name__ == '__main__':
   ## ========================================
   ## ========================================
 
+  ## ========================================
+  # == Get Cifar100 dataset =================
+  if args.dataset == 'cifar100':
+    cifar100_train = unpickle(os.path.join(args.data_path, 'cifar100_train'))
+    cifar100_test = unpickle(os.path.join(args.data_path, 'cifar100_test'))
+    X_train = np.array(cifar100_train[b'data'])
+    y_train = np.array(cifar100_train[b'fine_labels'])
+    X_test = np.array(cifar100_test[b'data'])
+    y_test = np.array(cifar100_test[b'fine_labels'])
+  ## ========================================
+  ## ========================================
+
   train_data = np.concatenate((X_train, y_train.reshape(-1, 1)), axis=1)
   test_data = np.concatenate((X_test, y_test.reshape(-1, 1)), axis=1)
 
