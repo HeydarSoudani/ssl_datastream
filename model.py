@@ -29,10 +29,11 @@ class MyPretrainedResnet50(nn.Module):
       # delete renamed or unused k
       del state_dict[k]
       
-    print(list(state_dict.keys()))
+    # print(list(state_dict.keys()))
 
     # freeze all layers but the last fc
     for name, param in self.pretrained.named_parameters():
+      print(name)
       if name not in ['fc.weight', 'fc.bias']:
         param.requires_grad = False
     self.pretrained.load_state_dict(state_dict, strict=False)
