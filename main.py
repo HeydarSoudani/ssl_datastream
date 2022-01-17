@@ -88,6 +88,8 @@ checkpoint = torch.load(PATH)
 state_dict = checkpoint['state_dict']
 model = models.resnet50()
 
+print(list(state_dict.keys()))
+
 for k in list(state_dict.keys()):
     # retain only encoder_q up to before the embedding layer
     if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
@@ -98,8 +100,8 @@ for k in list(state_dict.keys()):
 
 # freeze all layers but the last fc
 for name, param in model.named_parameters():
-    if name not in ['fc.weight', 'fc.bias']:
-        param.requires_grad = False
+  if name not in ['fc.weight', 'fc.bias']:
+    param.requires_grad = False
 
 # init the fc layer
 model.fc = nn.Linear(2048, 10)
@@ -116,7 +118,6 @@ total_params = sum(p.numel() for p in model.parameters())
 total_params_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print('Total params: {}'.format(total_params))
 print('Total trainable params: {}'.format(total_params_trainable))
-
 
 ## == load data =======================
 print('Data loaading ...')
@@ -154,6 +155,10 @@ train(model, train_dataloader, val_dataloader, args, device)
 ## == Test model ======================
 test(model, test_dataloader, args, device)
 
+## == visualization ===================
+
+
+visualization(model, test_dataset, args, device)
 
 
 
