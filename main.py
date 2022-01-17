@@ -100,9 +100,12 @@ for name, param in model.named_parameters():
 model.fc.weight.data.normal_(mean=0.0, std=0.01)
 model.fc.bias.data.zero_()
 
-
 model.load_state_dict(state_dict, strict=False)
 model.to(device)
+
+# === Print Model layers ans params ===
+
+
 
 # === load data =======================
 print('Data loaading ...')

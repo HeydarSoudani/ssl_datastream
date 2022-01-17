@@ -39,7 +39,7 @@ def train(model, train_loader, val_loader, args, device):
             loss = loss.mean()
             total_val_loss += loss.item()
 
-          total_val_loss /= len(val_dataloader)
+          total_val_loss /= len(val_loader)
           print('=== Epoch: %d/%d, Train Loss: %f, Val Loss: %f' % (
             epoch_item, i+1,  train_loss/args.log_interval, total_val_loss))
           train_loss = 0.
