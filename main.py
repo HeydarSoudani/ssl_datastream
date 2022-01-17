@@ -95,9 +95,7 @@ for k in list(state_dict.keys()):
         state_dict[k[len("module.encoder_q."):]] = state_dict[k]
     # delete renamed or unused k
     del state_dict[k]
-
-print(list(state_dict.keys()))
-
+  
 # freeze all layers but the last fc
 for name, param in model.named_parameters():
   if name not in ['fc.weight', 'fc.bias']:
@@ -150,10 +148,10 @@ test_dataloader = DataLoader(dataset=test_dataset,
 
 
 ## == train ===========================
-train(model, train_dataloader, val_dataloader, args, device)
+# train(model, train_dataloader, val_dataloader, args, device)
 
 ## == Test model ======================
-test(model, test_dataloader, args, device)
+# test(model, test_dataloader, args, device)
 
 ## == visualization ===================
 
