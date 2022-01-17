@@ -37,7 +37,7 @@ class MyPretrainedResnet50(nn.Module):
       # print(not name.startswith(('layer4', 'fc')))
       # if name not in ['fc.weight', 'fc.bias']:
 
-      if not name.startswith(('layer4.2', 'fc')):
+      if not name.startswith(('layer4', 'fc')):
         param.requires_grad = False
     self.pretrained.load_state_dict(state_dict, strict=False)
     
