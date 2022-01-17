@@ -6,7 +6,8 @@ import os
 def train(model, train_loader, val_loader, args, device):
   print('training ...')
   criterion = torch.nn.CrossEntropyLoss()
-  optim = SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+  # optim = SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+  optim = Adam(model.parameters(), lr=args.lr)
   scheduler = StepLR(optim, step_size=args.step_size, gamma=args.gamma)
 
   min_loss = float('inf')
