@@ -41,7 +41,7 @@ class MyPretrainedResnet50(nn.Module):
     self.pretrained.load_state_dict(state_dict, strict=False)
     
     self.fc1 = nn.Linear(1000, 128)
-    self.fc2 = nn.Linear(128, 10)
+    self.fc2 = nn.Linear(128, 100)
     
     # init the fc layers
     self.pretrained.fc.weight.data.normal_(mean=0.0, std=0.01)
