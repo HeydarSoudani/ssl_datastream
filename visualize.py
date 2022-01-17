@@ -12,6 +12,7 @@ from samplers.pt_sampler import PtSampler
 
 
 def tsne_plot(features, labels, file_name='tsne'):
+  print('t-SNE plotting ...')
   tsne = TSNE()
   X_embedded = tsne.fit_transform(features)
 
@@ -30,6 +31,7 @@ def tsne_plot(features, labels, file_name='tsne'):
 
 
 def pca_plot(features, labels, file_name='pca'):
+  print('PCA plotting ...')
   pca = PCA(n_components=2)
   X_embedded = pca.fit_transform(features)
 
@@ -49,11 +51,11 @@ def pca_plot(features, labels, file_name='pca'):
 
 def visualization(model, dataset, args, device):
   
-  activation = {}
-  def get_activation(name):
-    def hook(model, input, output):
-      activation[name] = output.detach()
-    return hook
+  # activation = {}
+  # def get_activation(name):
+  #   def hook(model, input, output):
+  #     activation[name] = output.detach()
+  #   return hook
   
   print(dataset.label_set)
   print(len(dataset))
@@ -80,11 +82,10 @@ def visualization(model, dataset, args, device):
     support_images = support_images.to(device)
     support_labels = support_labels.to(device)
 
-    model.layer4[2].bn3.register_forward_hook(get_activation('features'))
+    # model.layer4[2].bn3.register_forward_hook(get_activation('features'))
+    # features = torch.squeeze(activation['features'])
 
-    outputs = model.forward(support_images)
-    
-    features = torch.squeeze(activation['features'])
+    outputs, features = model.forward(support_images)
     print(features.shape)
 
     features = features.cpu().detach().numpy()

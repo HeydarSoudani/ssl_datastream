@@ -11,6 +11,7 @@ import subprocess
 import numpy as np
 from pandas import read_csv
 
+from model import MyPretrainedResnet50
 from dataset import SimpleDataset
 from trainer import train, test
 from visualize import visualization
@@ -84,30 +85,7 @@ if not os.path.exists('moco_v2_800ep_pretrain.pth.tar'):
   subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
 # subprocess.call("tar xzfv cifar-100-python.tar.gz", shell=True)
 
-PATH = 'moco_v2_800ep_pretrain.pth.tar'
-checkpoint = torch.load(PATH)
-state_dict = checkpoint['state_dict']
-model = models.resnet50()
-
-for k in list(state_dict.keys()):
-    # retain only encoder_q up to before the embedding layer
-    if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
-        # remove prefix
-        state_dict[k[len("module.encoder_q."):]] = state_dict[k]
-    # delete renamed or unused k
-    del state_dict[k]
-  
-# freeze all layers but the last fc
-for name, param in model.named_parameters():
-  if name not in ['fc.weight', 'fc.bias']:
-    param.requires_grad = False
-
-# init the fc layer
-model.fc = nn.Linear(2048, 10)
-model.fc.weight.data.normal_(mean=0.0, std=0.01)
-model.fc.bias.data.zero_()
-
-model.load_state_dict(state_dict, strict=False)
+model = MyPretrainedResnet50()
 model.to(device)
 
 # === Print Model layers ans params ===

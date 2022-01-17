@@ -12,13 +12,13 @@ def train(model, train_loader, val_loader, args, device):
   min_loss = float('inf')
   for epoch_item in range(args.start_epoch, args.epochs):
     print('=== Epoch %d ===' % epoch_item)
-    train_loss = 0.
+    train_loss = 0.0
     for i, batch in enumerate(train_loader):
       images, labels = batch
       images, labels = images.to(device), labels.to(device)
       
       optim.zero_grad()
-      outputs = model.forward(images)
+      outputs, _ = model.forward(images)
       loss = criterion(outputs, labels)
       loss.backward()
       optim.step()
@@ -34,7 +34,7 @@ def train(model, train_loader, val_loader, args, device):
             sample, labels = data
             sample, labels = sample.to(device), labels.to(device)
 
-            logits = model.forward(sample)
+            logits, _ = model.forward(sample)
             loss = criterion(logits, labels)
             loss = loss.mean()
             total_val_loss += loss.item()
@@ -73,7 +73,7 @@ def test(model, test_loader, args, device):
   
       samples, labels = data
       samples, labels = samples.to(device), labels.to(device)
-      logits = model.forward(samples)
+      logits, _ = model.forward(samples)
       
       _, predicted = torch.max(logits, 1)
       total += labels.size(0)
