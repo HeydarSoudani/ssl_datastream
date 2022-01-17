@@ -41,8 +41,9 @@ class MyPretrainedResnet50(nn.Module):
     self.pretrained.load_state_dict(state_dict, strict=False)
     
     self.fc1 = nn.Linear(1000, args.feature_dim)
+    self.dp1 = nn.Dropout(args.dropout)
     self.fc2 = nn.Linear(args.feature_dim, args.n_classes)
-    self.dropout = nn.Dropout(args.dropout)
+    self.dp2 = nn.Dropout(args.dropout)
     
     # init the fc layers
     self.pretrained.fc.weight.data.normal_(mean=0.0, std=0.01)
@@ -54,8 +55,8 @@ class MyPretrainedResnet50(nn.Module):
   def forward(self, x):
     # x = x.view(x.size(0), -1)
     x = self.pretrained(x)
-    x = self.dropout(torch.relu(x))
+    x = self.dp1(torch.relu(x))
     features = torch.relu(self.fc1(x))
-    out = self.fc2(self.dropout(features))
+    out = self.fc2(self.dp2(features))
     return out, features
 
