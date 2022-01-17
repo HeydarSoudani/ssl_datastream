@@ -11,6 +11,7 @@ import numpy as np
 from pandas import read_csv
 
 from dataset import SimpleDataset
+from trainer import train, test
 
 ## == Params ========================
 parser = argparse.ArgumentParser()
@@ -74,7 +75,8 @@ if not os.path.exists(args.save):
 
 # === Load model =======================
 print('Pretrain model loading ...')
-subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
+if not os.path.exists('moco_v2_800ep_pretrain.pth.tar'):
+  subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
 # subprocess.call("tar xzfv cifar-100-python.tar.gz", shell=True)
 
 PATH = 'moco_v2_800ep_pretrain.pth.tar'
