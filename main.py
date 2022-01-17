@@ -50,7 +50,7 @@ parser.add_argument('--gamma', type=float, default=0.5)
 # Model
 parser.add_argument('--feature_dim', type=int, default=128)
 parser.add_argument('--n_classes', type=int, default=10)
-parser.add_argument('--dropout', type=float, default=0.4)
+parser.add_argument('--dropout', type=float, default=0.5)
 
 # Device and Randomness
 parser.add_argument('--cuda', action='store_true',help='use CUDA')
@@ -121,9 +121,27 @@ test_data = read_csv(
   sep=',',
   header=None).values
 
-train_dataset = SimpleDataset(train_data, args)
+train_transform = transforms.Compose([
+  transforms.ToPILImage(),
+  # transforms.RandomCrop(32, padding=4, fill=128),
+  transforms.RandomHorizontalFlip(p=0.5),
+  # CIFAR10Policy(),
+  transforms.RandomRotation(10),
+  transforms.ToTensor(),
+  # Cutout(n_holes=1, length=16),
+  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+  # transforms.RandomErasing(probability=args.p, sh=args.sh, r1=args.r1, mean=[0.5, 0.5, 0.5]),
+])
+
+test_transform = transforms.Compose([
+  transforms.ToPILImage(),
+  transforms.ToTensor(),
+  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+])
+
+train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
 train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [40000, 10000])
-test_dataset = SimpleDataset(test_data, args)
+test_dataset = SimpleDataset(test_data, args, transforms=test_transform)
 
 train_dataloader = DataLoader(dataset=train_dataset,
                               batch_size=args.batch_size,
