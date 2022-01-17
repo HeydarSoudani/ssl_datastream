@@ -127,10 +127,10 @@ test_dataloader = DataLoader(dataset=test_dataset,
 
 
 ## == train ===========================
-# train(model, train_dataloader, val_dataloader, args, device)
+train(model, train_dataloader, val_dataloader, args, device)
 
 ## == Test model ======================
-# test(model, test_dataloader, args, device)
+test(model, test_dataloader, args, device)
 
 ## == visualization ===================
 
