@@ -137,11 +137,11 @@ test_dataloader = DataLoader(dataset=test_dataset,
 
 
 ## == train ===========================
-train(model, train_dataloader, val_dataloader, args, device)
+# train(model, train_dataloader, val_dataloader, args, device)
 
 ## == Test model ======================
-print('Test with last model')
-test(model, test_dataloader, args, device)
+# print('Test with last model')
+# test(model, test_dataloader, args, device)
 
 print('Test with best model')
 try: model.load_state_dict(torch.load(args.best_model_path), strict=False)
