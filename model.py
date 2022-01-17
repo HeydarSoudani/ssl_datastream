@@ -22,9 +22,6 @@ class MyPretrainedResnet50(nn.Module):
     # state_dict = checkpoint['state_dict']
     # self.pretrained = models.resnet50()
 
-    # Pretrain with torch
-    # self.pretrained = models.resnet50(pretrained=True)
-
     # for k in list(state_dict.keys()):
     #   # retain only encoder_q up to before the embedding layer
     #   if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
@@ -32,8 +29,10 @@ class MyPretrainedResnet50(nn.Module):
     #     state_dict[k[len("module.encoder_q."):]] = state_dict[k]
     #   # delete renamed or unused k
     #   del state_dict[k]
-      
     # print(list(state_dict.keys()))
+
+    # Pretrain with torch
+    self.pretrained = models.resnet50(pretrained=True)
 
     # freeze all layers but the last fc
     for name, param in self.pretrained.named_parameters():
