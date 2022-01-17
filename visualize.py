@@ -60,7 +60,7 @@ def visualization(model, dataset, args, device):
   sampler = PtSampler(
     dataset,
     n_way=10,
-    n_shot=1000,
+    n_shot=600,
     n_query=0,
     n_tasks=1
   )
@@ -84,7 +84,7 @@ def visualization(model, dataset, args, device):
 
     outputs = model.forward(support_images)
     
-    features = activation['features']
+    features = torch.squeeze(activation['features'])
     print(features.shape)
 
     features = features.cpu().detach().numpy()
