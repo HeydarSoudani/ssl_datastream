@@ -112,7 +112,7 @@ test_data = read_csv(
   header=None).values
 
 train_dataset = SimpleDataset(train_data, args)
-train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [50000, 10000])
+train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [40000, 10000])
 test_dataset = SimpleDataset(test_data, args)
 
 train_dataloader = DataLoader(dataset=train_dataset,
