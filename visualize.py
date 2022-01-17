@@ -16,7 +16,7 @@ def tsne_plot(features, labels, file_name='tsne'):
   X_embedded = tsne.fit_transform(features)
 
   sns.set(rc={'figure.figsize':(11.7,8.27)})
-  palette = sns.color_palette("bright", 6)
+  palette = sns.color_palette("bright", 10)
   sns.scatterplot(
     x=X_embedded[:,0],
     y=X_embedded[:,1],
@@ -34,7 +34,7 @@ def pca_plot(features, labels, file_name='pca'):
   X_embedded = pca.fit_transform(features)
 
   sns.set(rc={'figure.figsize':(11.7,8.27)})
-  palette = sns.color_palette("bright", 6)
+  palette = sns.color_palette("bright", 10)
   sns.scatterplot(
     x=X_embedded[:,0],
     y=X_embedded[:,1],
@@ -97,6 +97,6 @@ def visualization(model, dataset, args, device):
     # print(support_labels.shape)
   # features += 1e-12
 
-  # tsne_plot(features, support_labels, file_name='tsne_last')
-  pca_plot(features, support_labels, file_name='pca_last')
+  tsne_plot(features, support_labels, file_name='tsne_last')
+  # pca_plot(features, support_labels, file_name='pca_last')
 
