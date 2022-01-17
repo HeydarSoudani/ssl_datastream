@@ -37,6 +37,11 @@ parser.add_argument('--lr', type=float, default=0.001, help='')
 parser.add_argument('--momentum', type=float, default=0.9, help='')
 parser.add_argument('--wd', type=float, default=0.0005, help='')  #l2 regularization
 parser.add_argument('--grad_clip', type=float, default=5.0)
+# Scheduler
+parser.add_argument("--scheduler", action="store_true", help="use scheduler")
+parser.add_argument('--step_size', type=int, default=5)
+parser.add_argument('--gamma', type=float, default=0.5)
+
 
 # Device and Randomness
 parser.add_argument('--cuda', action='store_true',help='use CUDA')
@@ -47,8 +52,32 @@ parser.add_argument('--save', type=str, default='saved/', help='')
 parser.add_argument('--best_model_path', type=str, default='saved/model_best.pt', help='')
 parser.add_argument('--last_model_path', type=str, default='saved/model_last.pt', help='')
 
-
 args = parser.parse_args()
+
+
+def test(model, test_loader, args, device):
+  model.to(device)
+
+  correct = 0
+  total = 0
+
+  model.eval()
+  with torch.no_grad():
+    for i, data in enumerate(test_loader):
+  
+      samples, labels = data
+      samples, labels = samples.to(device), labels.to(device)
+      logits, feature = model.forward(samples)
+      
+      _, predicted = torch.max(logits, 1)
+      total += labels.size(0)
+      correct += (predicted == labels).sum().item()
+    
+    print('Accuracy of the network on the 10000 test images: %7.4f %%' % (100 * correct / total))
+  return correct / total
+
+
+
 
 ## == Device ===========================
 if torch.cuda.is_available():
@@ -68,6 +97,7 @@ if not os.path.exists(args.save):
 
 
 # === Load model =======================
+print('Pretrain model loading ...')
 subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
 # subprocess.call("tar xzfv cifar-100-python.tar.gz", shell=True)
 
@@ -97,6 +127,7 @@ model.load_state_dict(state_dict, strict=False)
 model.to(device)
 
 # === load data =======================
+print('Data loaading ...')
 args.data_path = 'data/'
 args.train_file = '{}_train.csv'.format(args.dataset)
 args.test_file = '{}_test.csv'.format(args.dataset)
@@ -126,8 +157,10 @@ test_dataloader = DataLoader(dataset=test_dataset,
 
 
 # === train ===========================
+print('training ...')
 criterion = torch.nn.CrossEntropyLoss()
 optim = SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+scheduler = StepLR(optim, step_size=args.step_size, gamma=args.gamma)
 
 min_loss = float('inf')
 for epoch_item in range(args.start_epoch, args.epochs):
@@ -145,6 +178,7 @@ for epoch_item in range(args.start_epoch, args.epochs):
 
     train_loss += loss
 
+    # == Validation =================
     if (i+1) % args.log_interval == 0:
       with torch.no_grad():
         total_val_loss = 0.0
@@ -169,12 +203,21 @@ for epoch_item in range(args.start_epoch, args.epochs):
           torch.save(model.state_dict(), os.path.join(args.save, "model_best.pt"))
           min_loss = total_val_loss
           print("Saving new best model")
-  # scheduler.step()
+  
+  if args.scheduler:
+    scheduler.step()
   
 # save last model
 # model.save(os.path.join(args.save, "model_last.pt"))
 torch.save(model.state_dict(), os.path.join(args.save, "model_last.pt"))
 print("Saving new last model")
+
+
+### === Test model =================
+print('Testing model ...')
+test(model, test_dataloader, args, device)
+
+
 
 
 
