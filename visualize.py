@@ -48,6 +48,13 @@ def pca_plot(features, labels, file_name='pca'):
 
 
 def visualization(model, dataset, args, device):
+  
+  activation = {}
+  def get_activation(name):
+    def hook(model, input, output):
+      activation[name] = output.detach()
+    return hook
+  
   print(dataset.label_set)
   print(len(dataset))
   sampler = PtSampler(
