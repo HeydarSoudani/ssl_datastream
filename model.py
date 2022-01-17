@@ -13,7 +13,7 @@ def Xavier(m):
       m.bias.data.fill_(0.0)
 
 class MyPretrainedResnet50(nn.Module):
-  def __init__(self):
+  def __init__(self, args):
     super(MyPretrainedResnet50, self).__init__()
     
     PATH = 'moco_v2_800ep_pretrain.pth.tar'
@@ -40,8 +40,9 @@ class MyPretrainedResnet50(nn.Module):
         param.requires_grad = False
     self.pretrained.load_state_dict(state_dict, strict=False)
     
-    self.fc1 = nn.Linear(1000, 128)
-    self.fc2 = nn.Linear(128, 100)
+    self.fc1 = nn.Linear(1000, args.feature_dim)
+    self.fc2 = nn.Linear(args.feature_dim, args.n_classes)
+    self.dropout = nn.Dropout(args.dropout)
     
     # init the fc layers
     self.pretrained.fc.weight.data.normal_(mean=0.0, std=0.01)
@@ -54,6 +55,6 @@ class MyPretrainedResnet50(nn.Module):
     # x = x.view(x.size(0), -1)
     x = self.pretrained(x)
     features = torch.relu(self.fc1(x))
-    out = self.fc2(features)
+    out = self.fc2(self.dropout(features))
     return out, features
 

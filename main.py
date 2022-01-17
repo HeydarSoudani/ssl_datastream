@@ -47,6 +47,10 @@ parser.add_argument("--scheduler", action="store_true", help="use scheduler")
 parser.add_argument('--step_size', type=int, default=5)
 parser.add_argument('--gamma', type=float, default=0.5)
 
+# Model
+parser.add_argument('--feature_dim', type=int, default=128)
+parser.add_argument('--n_classes', type=int, default=10)
+parser.add_argument('--dropout', type=float, default=0.4)
 
 # Device and Randomness
 parser.add_argument('--cuda', action='store_true',help='use CUDA')
@@ -59,6 +63,11 @@ parser.add_argument('--last_model_path', type=str, default='saved/model_last.pt'
 
 args = parser.parse_args()
 
+
+if args.dataset in ['mnist', 'fmnist', 'cifar10']:
+  args.n_classes = 10
+elif args.dataset in ['cifar100']:
+  args.n_classes = 100
 
 ## == Device ===========================
 if torch.cuda.is_available():
@@ -86,7 +95,7 @@ if not os.path.exists('moco_v2_800ep_pretrain.pth.tar'):
   subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
 # subprocess.call("tar xzfv cifar-100-python.tar.gz", shell=True)
 
-model = MyPretrainedResnet50()
+model = MyPretrainedResnet50(args)
 model.to(device)
 
 # === Print Model layers ans params ===
@@ -131,7 +140,15 @@ test_dataloader = DataLoader(dataset=test_dataset,
 train(model, train_dataloader, val_dataloader, args, device)
 
 ## == Test model ======================
+print('Test with last model')
 test(model, test_dataloader, args, device)
+
+print('Test with best model')
+try: model.load_state_dict(args.best_model_path, strict=False)
+except FileNotFoundError: pass
+else: print("Load model from {}".format(args.best_model_path))
+test(model, test_dataloader, args, device)
+
 
 ## == visualization ===================
 # visualization(model, test_dataset, args, device)
