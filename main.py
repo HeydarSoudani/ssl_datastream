@@ -4,6 +4,7 @@ import torchvision.models as models
 from torch.utils.data import DataLoader
 from torch.optim import SGD, Adam
 from torch.optim.lr_scheduler import StepLR
+from torchvision.transforms import transforms
 
 import os
 import argparse
