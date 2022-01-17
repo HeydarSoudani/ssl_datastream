@@ -30,6 +30,7 @@ class MyPretrainedResnet50(nn.Module):
     #   # delete renamed or unused k
     #   del state_dict[k]
     # print(list(state_dict.keys()))
+    # self.pretrained.load_state_dict(state_dict, strict=False)
 
     # Pretrain with torch
     self.pretrained = models.resnet50(pretrained=True)
@@ -41,7 +42,6 @@ class MyPretrainedResnet50(nn.Module):
       # if name not in ['fc.weight', 'fc.bias']:
       if not name.startswith(('layer4', 'fc')):
         param.requires_grad = False
-    self.pretrained.load_state_dict(state_dict, strict=False)
     
     self.fc1 = nn.Linear(1000, args.feature_dim)
     self.dp1 = nn.Dropout(args.dropout)
