@@ -25,7 +25,8 @@ parser.add_argument(
   choices=[
     'mnist',
     'fmnist',
-    'cifar10'
+    'cifar10',
+    'cifar100',
   ],
   default='cifar10',
   help=''
