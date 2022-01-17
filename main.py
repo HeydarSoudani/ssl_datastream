@@ -70,13 +70,13 @@ torch.manual_seed(args.seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 if args.cuda:
-  torch.cuda.manual_seed_all(seed)
+  torch.cuda.manual_seed_all(args.seed)
 
 ## == Save dir =========================
 if not os.path.exists(args.save):
   os.makedirs(args.save)
 
-# === Load model =======================
+## == Load model =======================
 print('Pretrain model loading ...')
 if not os.path.exists('moco_v2_800ep_pretrain.pth.tar'):
   subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
@@ -115,7 +115,7 @@ print('Total params: {}'.format(total_params))
 print('Total trainable params: {}'.format(total_params_trainable))
 
 
-# === load data =======================
+## == load data =======================
 print('Data loaading ...')
 args.data_path = 'data/'
 args.train_file = '{}_train.csv'.format(args.dataset)
@@ -145,10 +145,10 @@ test_dataloader = DataLoader(dataset=test_dataset,
                               shuffle=False)
 
 
-# === train ===========================
+## == train ===========================
 train(model, train_dataloader, val_dataloader, args, device)
 
-### === Test model =================
+## == Test model ======================
 test(model, test_dataloader, args, device)
 
 
