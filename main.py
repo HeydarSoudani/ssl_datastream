@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 import torchvision.models as models
 from torch.utils.data import DataLoader
 from torch.optim import SGD, Adam
@@ -99,7 +100,9 @@ for k in list(state_dict.keys()):
 for name, param in model.named_parameters():
     if name not in ['fc.weight', 'fc.bias']:
         param.requires_grad = False
+
 # init the fc layer
+model.fc = nn.Linear(2048, 10)
 model.fc.weight.data.normal_(mean=0.0, std=0.01)
 model.fc.bias.data.zero_()
 
