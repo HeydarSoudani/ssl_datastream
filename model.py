@@ -33,11 +33,12 @@ class MyPretrainedResnet50(nn.Module):
     # self.pretrained.load_state_dict(state_dict, strict=False)
 
     ## == Pretrain with DINO
-    # self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
-    # print(self.pretrained)
+    self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
+    self.pretrained.fc = nn.Linear(2048, 1000)
+    print(self.pretrained)
 
     # == Pretrain with torch
-    self.pretrained = models.resnet50(pretrained=True)
+    # self.pretrained = models.resnet50(pretrained=True)
 
     # freeze all layers but the last fc
     for name, param in self.pretrained.named_parameters():
