@@ -16,10 +16,14 @@ class MyPretrainedResnet50(nn.Module):
   def __init__(self, args):
     super(MyPretrainedResnet50, self).__init__()
     
-    PATH = 'moco_v2_800ep_pretrain.pth.tar'
-    checkpoint = torch.load(PATH)
-    state_dict = checkpoint['state_dict']
-    self.pretrained = models.resnet50()
+    # Pretrain with SSL model MoCo V2
+    # PATH = 'moco_v2_800ep_pretrain.pth.tar'
+    # checkpoint = torch.load(PATH)
+    # state_dict = checkpoint['state_dict']
+    # self.pretrained = models.resnet50()
+
+    # Pretrain with torch
+    self.pretrained = models.resnet50(pretrained=True)
 
     for k in list(state_dict.keys()):
       # retain only encoder_q up to before the embedding layer

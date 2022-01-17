@@ -124,7 +124,7 @@ test_data = read_csv(
 
 train_transform = transforms.Compose([
   transforms.ToPILImage(),
-  transforms.RandomCrop(32, padding=4, fill=128),
+  # transforms.RandomCrop(32, padding=4, fill=128),
   transforms.RandomHorizontalFlip(p=0.5),
   # CIFAR10Policy(),
   transforms.RandomRotation(10),
