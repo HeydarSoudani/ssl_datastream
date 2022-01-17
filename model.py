@@ -16,7 +16,7 @@ class MyPretrainedResnet50(nn.Module):
   def __init__(self, args):
     super(MyPretrainedResnet50, self).__init__()
     
-    # Pretrain with SSL model MoCo V2
+    ## == Pretrain with SSL model MoCo V2
     # PATH = 'moco_v2_800ep_pretrain.pth.tar'
     # checkpoint = torch.load(PATH)
     # state_dict = checkpoint['state_dict']
@@ -32,13 +32,16 @@ class MyPretrainedResnet50(nn.Module):
     # print(list(state_dict.keys()))
     # self.pretrained.load_state_dict(state_dict, strict=False)
 
-    # Pretrain with torch
-    self.pretrained = models.resnet50(pretrained=True)
+    ## == Pretrain with DINO
+    self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
+
+    ## == Pretrain with torch
+    # self.pretrained = models.resnet50(pretrained=True)
 
     # freeze all layers but the last fc
     for name, param in self.pretrained.named_parameters():
-      print(name)
-      print(not name.startswith(('layer4', 'fc')))
+      # print(name)
+      # print(not name.startswith(('layer4', 'fc')))
       # if name not in ['fc.weight', 'fc.bias']:
       if not name.startswith(('layer4', 'fc')):
         param.requires_grad = False
