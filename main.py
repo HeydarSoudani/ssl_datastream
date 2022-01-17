@@ -13,6 +13,7 @@ from pandas import read_csv
 
 from dataset import SimpleDataset
 from trainer import train, test
+from visualize import visualization
 
 ## == Params ========================
 parser = argparse.ArgumentParser()
