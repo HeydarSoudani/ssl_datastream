@@ -65,13 +65,16 @@ device = torch.device("cuda" if args.cuda else "cpu")
 print('Device: {}'.format(device))
 
 ## == Apply seed =======================
-torch.manual_seed(args.seed)
 np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+if args.cuda:
+  torch.cuda.manual_seed_all(seed)
 
 ## == Save dir =========================
 if not os.path.exists(args.save):
   os.makedirs(args.save)
-
 
 # === Load model =======================
 print('Pretrain model loading ...')
@@ -104,7 +107,12 @@ model.load_state_dict(state_dict, strict=False)
 model.to(device)
 
 # === Print Model layers ans params ===
+print(model)
 
+total_params = sum(p.numel() for p in model.parameters())
+total_params_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print('Total params: {}'.format(total_params))
+print('Total trainable params: {}'.format(total_params_trainable))
 
 
 # === load data =======================
