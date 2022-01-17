@@ -51,10 +51,8 @@ class MyPretrainedResnet50(nn.Module):
     
   
   def forward(self, x):
-      x = self.pretrained(x)
-      features = torch.relu(self.fc1(x))
-      out = self.fc2(features)
-      return out, features
+    x = self.pretrained(x)
+    features = torch.relu(self.fc1(x))
+    out = self.fc2(features)
+    return out, features
 
-my_extended_model = MyAlexNet(my_pretrained_model=pretrained)
-my_extended_model
