@@ -1,7 +1,10 @@
 import torch
 import torch.nn as nn
 import torchvision.models as models
+
+import os
 import math
+import subprocess
 
 def Xavier(m):
   if m.__class__.__name__ == 'Linear':
@@ -17,6 +20,8 @@ class MyPretrainedResnet50(nn.Module):
     super(MyPretrainedResnet50, self).__init__()
     
     ## == Pretrain with SSL model MoCo V2
+    # if not os.path.exists('moco_v2_800ep_pretrain.pth.tar'):
+    #   subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
     # PATH = 'moco_v2_800ep_pretrain.pth.tar'
     # checkpoint = torch.load(PATH)
     # state_dict = checkpoint['state_dict']
