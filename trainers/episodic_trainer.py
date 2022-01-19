@@ -73,7 +73,3 @@ def train(
   torch.save(feature_ext.state_dict(), os.path.join(args.save, "model_last.pt"))
   print("= ...New last model saved")
 
-
-
-def test(model, train_loader, args, device):
-  pass

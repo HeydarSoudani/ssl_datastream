@@ -71,7 +71,8 @@ class RelationLearner:
     ### === Relation Network ===========================
 
     ### === Loss & backward ============================
-    loss = self.criterion(outputs, labels)   # without Relation network
+    loss = self.criterion(outputs[:support_len], support_labels)
+    # loss = self.criterion(outputs, labels)   # without Relation network
 
 
     loss.backward()
