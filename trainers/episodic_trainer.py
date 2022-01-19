@@ -4,10 +4,10 @@ import os
 import time
 
 
-def train(model, learner, train_loader, args, device):
+def train(feature_ext, learner, train_loader, args, device):
   # criterion = torch.nn.CrossEntropyLoss()
-  # optim = SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
-  optim = Adam(model.parameters(), lr=args.lr)
+  # optim = SGD(feature_ext.parameters(), lr=args.lr, momentum=args.momentum)
+  optim = Adam(feature_ext.parameters(), lr=args.lr)
   scheduler = StepLR(optim, step_size=args.step_size, gamma=args.gamma)
 
   global_time = time.time()
@@ -20,7 +20,7 @@ def train(model, learner, train_loader, args, device):
 
       for miteration_item in range(args.meta_iteration):
         batch = next(trainloader)
-        loss = learner.train(model, batch, optim, miteration_item, args)
+        loss = learner.train(feature_ext, batch, optim, miteration_item, args)
         train_loss += loss
 
         ## == validation ==============
@@ -32,7 +32,7 @@ def train(model, learner, train_loader, args, device):
           # evalute on val_dataset
           val_loss_total, \
           val_acc_dis_total, \
-          val_acc_cls_total = learner.evaluate(model, val_dataloader, known_labels, args)  # For Pt.
+          val_acc_cls_total = learner.evaluate(feature_ext, val_dataloader, known_labels, args)  # For Pt.
 
           # print losses
           # print('scheduler: %f' % (optim.param_groups[0]['lr']))
@@ -43,7 +43,7 @@ def train(model, learner, train_loader, args, device):
     
           # save best model
           if val_loss_total < min_loss:
-            model.save(os.path.join(args.save, "model_best.pt"))
+            feature_ext.save(os.path.join(args.save, "model_best.pt"))
             min_loss = val_loss_total
             print("= ...New best model saved")
           
@@ -51,7 +51,11 @@ def train(model, learner, train_loader, args, device):
             scheduler.step()
   
   except KeyboardInterrupt:
-    print('skipping training')  
+    print('skipping training')
+
+  # save last model
+  model.save(os.path.join(args.save, "model_last.pt"))
+  print("= ...New last model saved")
 
 
 
