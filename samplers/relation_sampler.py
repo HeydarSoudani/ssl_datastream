@@ -39,6 +39,10 @@ class RelationSampler(Sampler):
       query_class = random.sample(classes, 1)
       support_class = classes.remove(query_class)
 
+      print(classes)
+      print(query_class)
+      print(support_class)
+
       query_class_samples =  torch.tensor(
         random.sample(
           self.items_per_label[query_class], self.n_shot + self.n_query
