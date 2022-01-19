@@ -14,6 +14,7 @@ from pandas import read_csv
 from model import MyPretrainedResnet50
 from dataset import SimpleDataset
 from phases.batch_learn import batch_learn
+from phases.init_learn import init_learn
 
 from visualize import visualization
 
