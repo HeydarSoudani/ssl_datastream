@@ -44,7 +44,7 @@ def init_learn(feature_ext, learner, args, device):
   )
 
   ## == train ===========================
-  train(feature_ext, learner, train_loader, args, device)
+  train(feature_ext, learner, train_dataloader, args, device)
 
   ## == Test ============================
   test()
