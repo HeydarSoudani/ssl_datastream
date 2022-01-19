@@ -71,11 +71,16 @@ class RelationSampler(Sampler):
     print(all_images.shape)
     print(all_labels)
 
-    query_images, support_images = torch.split(all_images, self.n_query)
+    query_images, support_images = torch.split(
+      all_images,
+      [ self.n_query, self.n_way * self.n_shot]
+    )
     print(query_images.shape)
     print(support_images.shape)
 
-    query_labels, support_labels = torch.split(all_labels, self.n_query)
+    query_labels, support_labels = torch.split(
+      all_labels,
+      [self.n_query, self.n_way * self.n_shot])
     print(query_labels)
     print(support_labels)
 
