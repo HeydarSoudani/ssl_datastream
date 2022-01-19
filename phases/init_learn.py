@@ -7,7 +7,6 @@ from dataset import SimpleDataset
 from samplers.relation_sampler import RelationSampler
 
 def init_learn(model,
-               train_data,
                args,
                device):
   

@@ -118,7 +118,7 @@ model = MyPretrainedResnet50(args)
 model.to(device)
 
 # === Print Model layers ans params ====
-print(model)
+# print(model)
 total_params = sum(p.numel() for p in model.parameters())
 total_params_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print('Total params: {}'.format(total_params))
