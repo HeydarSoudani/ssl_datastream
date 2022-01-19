@@ -30,9 +30,9 @@ def init_learn(feature_ext, relation, learner, args, device):
 
   train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
   
-  train_data,\
-  val_data = torch.utils.data.dataset.random_split(
-    train_data,
+  train_dataset,\
+  val_dataset = torch.utils.data.dataset.random_split(
+    train_dataset,
     [int(train_data.shape[0]*0.9), int(train_data.shape[0]*0.1)]
   )
   
