@@ -16,8 +16,13 @@ class RelationLearner:
     feature_ext.train()
     optimizer.zero_grad()
 
-    print(batch)
-
+    support_images, support_labels, query_images, query_labels = batch
+    print(support_images.shape)
+    print(support_labels.shape)
+    print(support_labels)
+    print(query_images.shape)
+    print(query_labels.shape)
+    print(query_labels)
   
   def evaluate(self, feature_ext, dataloader, known_labels, args):
     model.eval()
