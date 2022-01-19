@@ -1,5 +1,25 @@
 import torch
 
+def compute_prototypes(
+  support_features: torch.Tensor, support_labels: torch.Tensor
+) -> torch.Tensor:
+  """
+  Compute class prototypes from support features and labels
+  Args:
+    support_features: for each instance in the support set, its feature vector
+    support_labels: for each instance in the support set, its label
+  Returns:
+    for each label of the support set, the average feature vector of instances with this label
+  """
+  seen_labels = torch.unique(support_labels)
+
+  # Prototype i is the mean of all instances of features corresponding to labels == i
+  return torch.cat(
+    [
+      support_features[(support_labels == l).nonzero(as_tuple=True)[0]].mean(0).reshape(1, -1)
+      for l in seen_labels
+    ]
+  )
 
 class RelationLearner:
   def __init__(self, device, args):
@@ -44,6 +64,8 @@ class RelationLearner:
     new_prototypes = beta * old_prototypes + (1 - beta) * episode_prototypes
 
     ### === Concat features ============================
+    support_feature = features[:support_len]
+    query_feature = features[support_len:]
 
 
     ### === Relation Network ===========================
