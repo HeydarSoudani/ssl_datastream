@@ -1,3 +1,4 @@
+import torch
 from torch.optim import SGD, Adam
 from torch.optim.lr_scheduler import StepLR, OneCycleLR
 import os
