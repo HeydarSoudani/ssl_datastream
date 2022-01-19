@@ -32,7 +32,7 @@ def init_learn(feature_ext, relation, learner, args, device):
   train_data,\
     val_data = torch.utils.data.random_split(
       train_data,
-      [int(train_data.shape[0]*0.9), int(train_data.shape[1]*0.1)]
+      [int(train_data.shape[0]*0.9), int(train_data.shape[0]*0.1)]
     )
   
   
