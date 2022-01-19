@@ -61,4 +61,32 @@ def init_learn(feature_ext, relation, learner, args, device):
     args, device)
 
   ## == Test ============================
-  test()
+  test_transform = transforms.Compose([
+    # transforms.ToPILImage(),
+    # transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+])
+  test_data = read_csv(
+    os.path.join(args.data_path, args.test_file),
+    sep=',',
+    header=None).values
+  test_dataset = SimpleDataset(test_data, args, transforms=test_transform)
+  test_dataloader = DataLoader(dataset=val_dataset, batch_size=8, shuffle=False)
+
+  print('Test with last model ...')
+  _, acc_dis, acc_cls = learner.evaluate(feature_ext,
+                                        test_dataloader,
+                                        known_labels,
+                                        args)
+  print('Dist: {}, Cls: {}'.format(acc_dis, acc_cls))
+
+  print('Test with best model ...')
+  try: feature_ext.load_state_dict(torch.load(args.best_model_path), strict=False)
+  except FileNotFoundError: pass
+  else: print("Load model from {}".format(args.best_model_path))
+  _, acc_dis, acc_cls = learner.evaluate(feature_ext,
+                                        test_dataloader,
+                                        known_labels,
+                                        args)
+  print('Dist: {}, Cls: {}'.format(acc_dis, acc_cls))
+  
