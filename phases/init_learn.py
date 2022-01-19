@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from torchvision.transforms import transforms
 import os
 from pandas import read_csv
+from sklearn.model_selection import train_test_split
 
 from dataset import SimpleDataset
 from samplers.relation_sampler import RelationSampler
@@ -30,17 +31,19 @@ def init_learn(feature_ext, relation, learner, args, device):
 
   # print(torch.tensor(train_data[-1]).shape)
   # print(torch.tensor(train_data[:-1]).shape)
+  # init_dataset = TensorDataset(
+  #   torch.tensor(train_data[:, :-1]),
+  #   torch.tensor(train_data[:, -1]).flatten()
+  # )
+  train_data, val_data = train_test_split(train_data, test_size=0.1)
+  print(train_data.shape)
+  print(val_data.shape)
 
-  init_dataset = TensorDataset(
-    torch.tensor(train_data[:, :-1]),
-    torch.tensor(train_data[:, -1]).flatten()
-  )
-
-  train_data,\
-  val_data = torch.utils.data.dataset.random_split(
-    init_dataset,
-    [int(train_data.shape[0]*0.9), int(train_data.shape[0]*0.1)]
-  )
+  # train_data,\
+  # val_data = torch.utils.data.dataset.random_split(
+  #   init_dataset,
+  #   [int(train_data.shape[0]*0.9), int(train_data.shape[0]*0.1)]
+  # )
   train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
   val_dataset = SimpleDataset(val_data, args, transforms=train_transform)
   known_labels = train_dataset.label_set
