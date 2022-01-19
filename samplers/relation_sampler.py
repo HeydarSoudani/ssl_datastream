@@ -62,7 +62,7 @@ class RelationSampler(Sampler):
           for label in classes
         ]
       )
-      yield torch.cat((support_class_samples, query_class_samples))
+      yield torch.cat((query_class_samples, support_class_samples))
   
   def episodic_collate_fn(self, input_data):
     all_images = torch.cat([x[0].unsqueeze(0) for x in input_data])
