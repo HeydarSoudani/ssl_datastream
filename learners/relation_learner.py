@@ -129,7 +129,7 @@ class RelationLearner:
         # )
         # total_loss += loss.item()
 
-        loss = ce(logits, labels)
+        loss = self.criterion(logits, labels)
         loss = loss.mean()
         total_loss += loss.item()
 
