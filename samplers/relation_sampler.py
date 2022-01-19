@@ -36,7 +36,7 @@ class RelationSampler(Sampler):
   def __iter__(self):
     for _ in range(self.n_tasks):
       classes = random.sample(self.items_per_label.keys(), self.n_way)
-      query_class = random.sample(classes, 1)
+      query_class = random.sample(classes, 1)[0]
       support_class = classes.remove(query_class)
 
       print(classes)
