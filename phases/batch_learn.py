@@ -1,7 +1,6 @@
 import os
 from pandas import read_csv
 from dataset import SimpleDataset
-from utils.preparation import transforms_preparation
 from torch.utils.data import DataLoader
 
 from trainers.batch_trainer import train, test
