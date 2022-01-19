@@ -5,11 +5,11 @@ from pandas import read_csv
 
 from dataset import SimpleDataset
 from samplers.relation_sampler import RelationSampler
+from trainers.episodic_trainer import train, test
 
-def init_learn(model,
-               args,
-               device):
-  
+
+def init_learn(feature_ext, learner, args, device):
+  ## == Data ============================
   train_data = read_csv(
     os.path.join(args.data_path, args.train_file),
     sep=',',
@@ -42,3 +42,9 @@ def init_learn(model,
     pin_memory=True,
     collate_fn=sampler.episodic_collate_fn,
   )
+
+  ## == train ===========================
+  train(feature_ext, learner, train_loader, args, device)
+
+  ## == Test ============================
+  test()

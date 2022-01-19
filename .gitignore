@@ -113,7 +113,7 @@ venv.bak/
 .DS_Store
 .idea
 
-
+.vscode
 build_dataset
 data
 saved

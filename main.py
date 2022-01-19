@@ -13,6 +13,7 @@ from pandas import read_csv
 
 from model import MyPretrainedResnet50
 from dataset import SimpleDataset
+from learners.relation_learner import RelationLearner
 from phases.batch_learn import batch_learn
 from phases.init_learn import init_learn
 
@@ -112,17 +113,20 @@ if args.cuda:
 if not os.path.exists(args.save):
   os.makedirs(args.save)
 
-## == Load model =======================
+## == Load feature_ext =================
 print('Pretrain model loading ...')
-model = MyPretrainedResnet50(args)
-model.to(device)
+feature_ext = MyPretrainedResnet50(args)
+feature_ext.to(device)
 
-# === Print Model layers ans params ====
-# print(model)
-total_params = sum(p.numel() for p in model.parameters())
-total_params_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+# === Print feature_ext layers and params ====
+# print(feature_ext)
+total_params = sum(p.numel() for p in feature_ext.parameters())
+total_params_trainable = sum(p.numel() for p in feature_ext.parameters() if p.requires_grad)
 print('Total params: {}'.format(total_params))
 print('Total trainable params: {}'.format(total_params_trainable))
+
+## == Load learner =====================
+learner = RelationLearner(device, args)
 
 ## == load data ========================
 print('Data loaading ...')
@@ -134,10 +138,10 @@ args.test_file = '{}_test.csv'.format(args.dataset)
 if __name__ == '__main__':
   ## == Batch learning ===
   if args.phase == 'batch_learn':
-    batch_learn(model, args, device)
+    batch_learn(feature_ext, args, device)
   ## == Data Stream ======
   elif args.phase == 'init_learn':
-    init_learn(model, args, device)
+    init_learn(feature_ext, learner, args, device)
 
 ## == visualization ===================
 # visualization(model, test_dataset, args, device)
