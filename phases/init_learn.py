@@ -28,12 +28,12 @@ def init_learn(feature_ext, relation, learner, args, device):
     # transforms.RandomErasing(probability=args.p, sh=args.sh, r1=args.r1, mean=[0.5, 0.5, 0.5]),
   ])
 
-  print(torch.tensor(train_data[-1]).shape)
-  print(torch.tensor(train_data[:-1]).shape)
+  # print(torch.tensor(train_data[-1]).shape)
+  # print(torch.tensor(train_data[:-1]).shape)
 
   init_dataset = TensorDataset(
-    torch.tensor(train_data[:-1]),
-    torch.tensor(train_data[-1]).flatten()
+    torch.tensor(train_data[:, :-1]),
+    torch.tensor(train_data[:, -1]).flatten()
   )
 
   train_data,\
