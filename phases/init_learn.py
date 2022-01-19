@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 
 from dataset import SimpleDataset
 from samplers.relation_sampler import RelationSampler
-from trainers.episodic_trainer import train, test
+from trainers.episodic_trainer import train
 
 
 def init_learn(feature_ext, relation, learner, args, device):
