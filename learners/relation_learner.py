@@ -78,6 +78,8 @@ class RelationLearner:
     torch.nn.utils.clip_grad_norm_(feature_ext.parameters(), args.grad_clip)
     optimizer.step()
 
+    return loss.detach().item()
+
 
   def evaluate(self, feature_ext, dataloader, known_labels, args):
     feature_ext.eval()
