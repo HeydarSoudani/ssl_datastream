@@ -57,7 +57,8 @@ class RelationSampler(Sampler):
       )
       print(query_class_samples.shape)
       print(support_class_samples.shape)
-      yield 0
+      yield torch.cat(support_class_samples, query_class_samples)
   
-  def episodic_collate_fn():
+  def episodic_collate_fn(self, input_data):
+    print(input_data)
     return 0
