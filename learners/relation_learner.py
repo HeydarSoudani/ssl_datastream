@@ -64,8 +64,8 @@ class RelationLearner:
     new_prototypes = beta * old_prototypes + (1 - beta) * episode_prototypes
 
     ### === Concat features ============================
-    support_feature = features[:support_len]
-    query_feature = features[support_len:]
+    # support_feature = features[:support_len]
+    # query_feature = features[support_len:]
 
 
     ### === Relation Network ===========================
@@ -99,7 +99,7 @@ class RelationLearner:
         samples, labels = batch
         labels = labels.flatten()
         samples, labels = samples.to(self.device), labels.to(self.device)
-        logits, features = model.forward(samples)
+        logits, features = feature_ext.forward(samples)
 
         ## == Distance-based Acc. ============== 
         dists = torch.cdist(features, pts)  #[]
