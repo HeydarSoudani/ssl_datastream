@@ -59,7 +59,7 @@ class RelationSampler(Sampler):
               self.items_per_label[label], self.n_shot
             )
           )
-          for label in random.sample(self.items_per_label.keys(), classes)
+          for label in classes
         ]
       )
       print(query_class_samples.shape)
