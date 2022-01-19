@@ -11,7 +11,7 @@ import argparse
 import numpy as np
 from pandas import read_csv
 
-from model import MyPretrainedResnet50
+from model import MyPretrainedResnet50, MLP
 from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
 from phases.batch_learn import batch_learn
@@ -75,6 +75,7 @@ parser.add_argument('--gamma', type=float, default=0.5)
 parser.add_argument('--feature_dim', type=int, default=128)
 parser.add_argument('--n_classes', type=int, default=10)
 parser.add_argument('--dropout', type=float, default=0.5)
+parser.add_argument('--beta', type=float, default=1.0)
 
 # Device and Randomness
 parser.add_argument('--cuda', action='store_true',help='use CUDA')
@@ -113,10 +114,14 @@ if args.cuda:
 if not os.path.exists(args.save):
   os.makedirs(args.save)
 
-## == Load feature_ext =================
+## == Define feature_ext ===============
 print('Pretrain model loading ...')
 feature_ext = MyPretrainedResnet50(args)
 feature_ext.to(device)
+
+## == Define Relation network ==========
+relation = MLP(args)
+relation.to(device)
 
 # === Print feature_ext layers and params ====
 # print(feature_ext)
@@ -141,7 +146,7 @@ if __name__ == '__main__':
     batch_learn(feature_ext, args, device)
   ## == Data Stream ======
   elif args.phase == 'init_learn':
-    init_learn(feature_ext, learner, args, device)
+    init_learn(feature_ext, relation, learner, args, device)
 
 ## == visualization ===================
 # visualization(model, test_dataset, args, device)

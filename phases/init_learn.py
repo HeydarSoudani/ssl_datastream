@@ -8,7 +8,7 @@ from samplers.relation_sampler import RelationSampler
 from trainers.episodic_trainer import train, test
 
 
-def init_learn(feature_ext, learner, args, device):
+def init_learn(feature_ext, relation, learner, args, device):
   ## == Data ============================
   train_data = read_csv(
     os.path.join(args.data_path, args.train_file),
@@ -44,7 +44,7 @@ def init_learn(feature_ext, learner, args, device):
   )
 
   ## == train ===========================
-  train(feature_ext, learner, train_dataloader, args, device)
+  train(feature_ext, relation, learner, train_dataloader, args, device)
 
   ## == Test ============================
   test()

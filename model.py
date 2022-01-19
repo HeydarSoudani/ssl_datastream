@@ -63,7 +63,6 @@ class MyPretrainedResnet50(nn.Module):
     self.fc1.apply(Xavier)
     self.fc2.apply(Xavier)
     
-  
   def forward(self, x):
     # x = x.view(x.size(0), -1)
     x = self.pretrained(x)
@@ -72,3 +71,15 @@ class MyPretrainedResnet50(nn.Module):
     out = self.fc2(self.dp2(features))
     return out, features
 
+
+class MLP(nn.Module):
+  def __init__(self, args, bias=True):
+    super(MLP, self).__init__()
+    self.fc1 = nn.Linear(2*args.feature_dim, 10)
+    self.dp1 = nn.Dropout(args.dropout)
+    self.fc2 = nn.Linear(10, 1)
+  
+  def forward(self, x):
+    out = torch.relu(self.fc1(x))
+    out = self.fc2(self.dp1(out))
+    return out

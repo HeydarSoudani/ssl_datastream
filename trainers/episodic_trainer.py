@@ -4,7 +4,7 @@ import os
 import time
 
 
-def train(feature_ext, learner, train_loader, args, device):
+def train(feature_ext, relation, learner, train_loader, args, device):
   # criterion = torch.nn.CrossEntropyLoss()
   # optim = SGD(feature_ext.parameters(), lr=args.lr, momentum=args.momentum)
   optim = Adam(feature_ext.parameters(), lr=args.lr)
@@ -20,7 +20,7 @@ def train(feature_ext, learner, train_loader, args, device):
 
       for miteration_item in range(args.meta_iteration):
         batch = next(trainloader)
-        loss = learner.train(feature_ext, batch, optim, miteration_item, args)
+        loss = learner.train(feature_ext, relation, batch, optim, miteration_item, args)
         train_loss += loss
 
         ## == validation ==============
