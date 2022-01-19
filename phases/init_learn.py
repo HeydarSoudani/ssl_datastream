@@ -35,7 +35,7 @@ def init_learn(feature_ext, relation, learner, args, device):
   train_dataset,\
     val_dataset = torch.utils.data.random_split(
       train_dataset,
-      [len(train_dataset)*0.9, len(train_dataset)*0.1]
+      [int(len(train_dataset)*0.9), int(len(train_dataset)*0.1)]
     )
 
   sampler = RelationSampler(
