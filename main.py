@@ -52,6 +52,7 @@ parser.add_argument('--start_epoch', type=int, default=0, help='')
 parser.add_argument('--epochs', type=int, default=2, help='')
 parser.add_argument('--batch_size', type=int, default=16, help='')
 parser.add_argument('--log_interval', type=int, default=5, help='must be less then meta_iteration parameter')
+parser.add_argument('--meta_iteration', type=int, default=3000, help='')
 
 # Sampler
 parser.add_argument('--ways', type=int, default=5, help='')

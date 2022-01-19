@@ -1,6 +1,6 @@
 import os
 from pandas import read_csv
-from datasets.dataset import SimpleDataset
+from dataset import SimpleDataset
 from utils.preparation import transforms_preparation
 from torch.utils.data import DataLoader
 
