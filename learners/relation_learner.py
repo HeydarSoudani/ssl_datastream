@@ -83,3 +83,58 @@ class RelationLearner:
 
   def evaluate(self, feature_ext, dataloader, known_labels, args):
     feature_ext.eval()
+
+    known_labels = torch.tensor(list(known_labels), device=self.device)
+    pts = torch.cat(
+      [self.prototypes[l.item()] for l in known_labels]
+    )
+    
+    with torch.no_grad():
+      total_loss = 0.0
+      total_dist_acc = 0.0
+      correct_cls_acc = 0.0
+      total_cls_acc = 0
+
+      for i, batch in enumerate(dataloader):
+        samples, labels = batch
+        labels = labels.flatten()
+        samples, labels = samples.to(self.device), labels.to(self.device)
+        logits, features = model.forward(samples)
+
+        ## == Distance-based Acc. ============== 
+        dists = torch.cdist(features, pts)  #[]
+        argmin_dists = torch.min(dists, dim=1).indices
+        pred_labels = known_labels[argmin_dists]
+        
+        acc = (labels==pred_labels).sum().item() / labels.size(0)
+        total_dist_acc += acc
+
+        ## == Cls-based Acc. ===================
+        _, predicted = torch.max(logits, 1)
+        total_cls_acc += labels.size(0)
+        correct_cls_acc += (predicted == labels).sum().item()
+
+        ## == loss =============================
+        # unique_label = torch.unique(labels)
+        # prototypes = torch.cat(
+        #   [self.prototypes[l.item()] for l in unique_label]
+        # )
+        # loss = self.criterion(
+        #   features,
+        #   logits,
+        #   labels,
+        #   prototypes,
+        #   n_query=args.query_num,
+        #   n_classes=args.ways,
+        # )
+        # total_loss += loss.item()
+
+        loss = ce(logits, labels)
+        loss = loss.mean()
+        total_loss += loss.item()
+
+      total_loss /= len(dataloader)
+      total_dist_acc /= len(dataloader)
+      total_cls_acc = correct_cls_acc / total_cls_acc  
+
+      return total_loss, total_dist_acc, total_cls_acc

@@ -4,7 +4,16 @@ import os
 import time
 
 
-def train(feature_ext, relation, learner, train_loader, args, device):
+def train(
+  feature_ext,
+  relation,
+  learner,
+  train_loader,
+  val_loader,
+  known_labels,
+  args,
+  device):
+  
   # criterion = torch.nn.CrossEntropyLoss()
   # optim = SGD(feature_ext.parameters(), lr=args.lr, momentum=args.momentum)
   optim = Adam(feature_ext.parameters(), lr=args.lr)
@@ -20,7 +29,14 @@ def train(feature_ext, relation, learner, train_loader, args, device):
 
       for miteration_item in range(args.meta_iteration):
         batch = next(trainloader)
-        loss = learner.train(feature_ext, relation, batch, optim, miteration_item, args)
+        loss = learner.train(
+          feature_ext,
+          relation,
+          batch,
+          optim,
+          miteration_item,
+          args
+        )
         train_loss += loss
 
         ## == validation ==============
@@ -29,23 +45,23 @@ def train(feature_ext, relation, learner, train_loader, args, device):
           train_loss_total = train_loss / args.log_interval
           train_loss = 0.
 
-          # # evalute on val_dataset
-          # val_loss_total, \
-          # val_acc_dis_total, \
-          # val_acc_cls_total = learner.evaluate(feature_ext, val_dataloader, known_labels, args)  # For Pt.
+          # evalute on val_dataset
+          val_loss_total, \
+          val_acc_dis_total, \
+          val_acc_cls_total = learner.evaluate(feature_ext, val_dataloader, known_labels, args)  # For Pt.
 
-          # # print losses
-          # # print('scheduler: %f' % (optim.param_groups[0]['lr']))
-          # print('=== Time: %.2f, Step: %d, Train Loss: %f, Val Loss: %f' % (
-          #   time.time()-global_time, miteration_item+1, train_loss_total, val_loss_total))
-          # # print('===============================================')
-          # global_time = time.time()
+          # print losses
+          # print('scheduler: %f' % (optim.param_groups[0]['lr']))
+          print('=== Time: %.2f, Step: %d, Train Loss: %f, Val Loss: %f' % (
+            time.time()-global_time, miteration_item+1, train_loss_total, val_loss_total))
+          # print('===============================================')
+          global_time = time.time()
     
-          # # save best model
-          # if val_loss_total < min_loss:
-          #   feature_ext.save(os.path.join(args.save, "model_best.pt"))
-          #   min_loss = val_loss_total
-          #   print("= ...New best model saved")
+          # save best model
+          if val_loss_total < min_loss:
+            feature_ext.save(os.path.join(args.save, "model_best.pt"))
+            min_loss = val_loss_total
+            print("= ...New best model saved")
           
           if args.scheduler:
             scheduler.step()

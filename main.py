@@ -115,7 +115,7 @@ if not os.path.exists(args.save):
   os.makedirs(args.save)
 
 ## == Define feature_ext ===============
-print('Pretrain model loading ...')
+print('feature_ext & relation are loading ...')
 feature_ext = MyPretrainedResnet50(args)
 feature_ext.to(device)
 

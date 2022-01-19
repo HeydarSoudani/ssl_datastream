@@ -28,6 +28,9 @@ def init_learn(feature_ext, relation, learner, args, device):
   ])
 
   train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
+  known_labels = train_dataset.label_set
+  train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [len(train_dataset)*0.9, len(train_dataset)*0.1])
+
   sampler = RelationSampler(
     train_dataset,
     n_way=args.ways,
@@ -42,9 +45,17 @@ def init_learn(feature_ext, relation, learner, args, device):
     pin_memory=True,
     collate_fn=sampler.episodic_collate_fn,
   )
+  val_dataloader = DataLoader(dataset=val_dataset, batch_size=8, shuffle=False)
 
   ## == train ===========================
-  train(feature_ext, relation, learner, train_dataloader, args, device)
+  train(
+    feature_ext,
+    relation,
+    learner,
+    train_dataloader,
+    val_dataloader,
+    known_labels,
+    args, device)
 
   ## == Test ============================
   test()
