@@ -30,7 +30,13 @@ def init_learn(feature_ext, relation, learner, args, device):
 
   train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
   known_labels = train_dataset.label_set
-  train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [len(train_dataset)*0.9, len(train_dataset)*0.1])
+  print(len(train_dataset)*0.9)
+  print(len(train_dataset)*0.1)
+  train_dataset,\
+    val_dataset = torch.utils.data.random_split(
+      train_dataset,
+      [len(train_dataset)*0.9, len(train_dataset)*0.1]
+    )
 
   sampler = RelationSampler(
     train_dataset,
