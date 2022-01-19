@@ -68,9 +68,15 @@ class RelationSampler(Sampler):
     all_images = torch.cat([x[0].unsqueeze(0) for x in input_data])
     all_labels = torch.tensor([x[1] for x in input_data])
 
-    
-
-
     print(all_images.shape)
     print(all_labels)
+
+    query_images, support_images = torch.split(all_images, self.n_query)
+    print(query_images.shape)
+    print(support_images.shape)
+
+    query_labels, support_labels = torch.split(all_labels, self.n_query)
+    print(query_labels)
+    print(support_labels)
+
     return 0
