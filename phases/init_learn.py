@@ -29,21 +29,7 @@ def init_learn(feature_ext, relation, learner, args, device):
     # transforms.RandomErasing(probability=args.p, sh=args.sh, r1=args.r1, mean=[0.5, 0.5, 0.5]),
   ])
 
-  # print(torch.tensor(train_data[-1]).shape)
-  # print(torch.tensor(train_data[:-1]).shape)
-  # init_dataset = TensorDataset(
-  #   torch.tensor(train_data[:, :-1]),
-  #   torch.tensor(train_data[:, -1]).flatten()
-  # )
   train_data, val_data = train_test_split(train_data, test_size=0.1)
-  print(train_data.shape)
-  print(val_data.shape)
-
-  # train_data,\
-  # val_data = torch.utils.data.dataset.random_split(
-  #   init_dataset,
-  #   [int(train_data.shape[0]*0.9), int(train_data.shape[0]*0.1)]
-  # )
   train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
   val_dataset = SimpleDataset(val_data, args, transforms=train_transform)
   known_labels = train_dataset.label_set

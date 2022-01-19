@@ -35,8 +35,7 @@ def train(
           batch,
           optim,
           miteration_item,
-          args
-        )
+          args)
         train_loss += loss
 
         ## == validation ==============
@@ -48,7 +47,7 @@ def train(
           # evalute on val_dataset
           val_loss_total, \
           val_acc_dis_total, \
-          val_acc_cls_total = learner.evaluate(feature_ext, val_dataloader, known_labels, args)  # For Pt.
+          val_acc_cls_total = learner.evaluate(feature_ext, val_loader, known_labels, args)  # For Pt.
 
           # print losses
           # print('scheduler: %f' % (optim.param_groups[0]['lr']))
