@@ -30,7 +30,7 @@ def init_learn(feature_ext, relation, learner, args, device):
 
   init_dataset = TensorDataset(
     torch.tensor(train_data[:-1]),
-    torch.tensor(train_data[-1])
+    torch.tensor(train_data[-1]).flatten()
   )
 
   train_data,\
