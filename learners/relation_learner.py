@@ -57,6 +57,10 @@ class RelationLearner:
     ### === Prepare data ===============================
     support_len = args.ways * args.shot 
     support_images, support_labels, query_images, query_labels = batch
+    support_images = support_images.reshape(-1, *support_images.shape[2:])
+    support_labels = support_labels.flatten()
+    query_images = query_images.reshape(-1, *query_images.shape[2:])
+    query_labels = query_labels.flatten()
     
     print(support_images.shape)
     print(query_images.shape)
