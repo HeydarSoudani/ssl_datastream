@@ -72,7 +72,7 @@ class RelationLearner:
     query_images = query_images.to(self.device)
     query_labels = query_labels.to(self.device)
 
-    images = torch.cat((support_images, query_images))
+    images = torch.cat((support_images, query_images), device=self.device)
     labels = torch.cat((support_labels, query_labels))
     print(images.shape)
 
