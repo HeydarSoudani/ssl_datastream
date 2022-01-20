@@ -198,7 +198,7 @@ class RelationLearner:
         relations = relation_net(relation_pairs).view(-1, args.ways)
 
         ## == Relation-based Acc. ============== 
-        _,predict_labels = torch.max(relations.data,1)
+        _,predict_labels = torch.max(relations.data, 1)
         total += labels.size(0)
         correct += (predict_labels == labels).sum().item()
 
@@ -208,6 +208,8 @@ class RelationLearner:
         # correct_cls_acc += (predicted == labels).sum().item()
 
         ## == loss =============================
+        print(relations.data.shape)
+        print(labels.shape)
         loss = self.criterion(relations.data, labels)
         loss = loss.mean()
         total_loss += loss.item()
