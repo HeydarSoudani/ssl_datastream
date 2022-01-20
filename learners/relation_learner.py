@@ -77,22 +77,22 @@ class RelationLearner:
     print('support_features: {}'.format(support_features.shape))
     print('query_features: {}'.format(query_features.shape))
 
-    support_features_ext = support_features.unsqueeze(0).repeat(args.ways, 1, 1)  #[w, w*sh, 128]
-    support_features_ext = torch.transpose(support_features_ext, 0, 1)            #[w*sh, w, 128]
-    support_labels = support_labels.unsqueeze(0).repeat(args.ways, 1)             #[w, w*sh]
-    support_labels = torch.transpose(support_labels, 0, 1)                        #[w*sh, w]
+    support_features_ext = support_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, w*sh, 128]
+    support_features_ext = torch.transpose(support_features_ext, 0, 1)            #[w*sh, q, 128]
+    support_labels = support_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, w*sh]
+    support_labels = torch.transpose(support_labels, 0, 1)                        #[w*sh, q]
 
     print('support_features_ext: {}'.format(support_features_ext.shape))
     print('support_labels: {}'.format(support_labels.shape))
 
-    query_features_ext = query_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, w, 128]
-    query_labels = query_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)            #[w*sh, w]
+    query_features_ext = query_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, q, 128]
+    query_labels = query_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)            #[w*sh, q]
 
     print('query_features_ext: {}'.format(query_features_ext.shape))
     print('query_labels: {}'.format(query_labels.shape))
 
-    relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[w*w*sh, 256]
-    relarion_labels = torch.zeros(args.ways*args.shot, args.ways).to(device)
+    relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
+    relarion_labels = torch.zeros(args.ways*args.shot, args.query_num).to(device)
     relarion_labels = torch.where(
       support_labels!=query_labels,
       relarion_labels,
