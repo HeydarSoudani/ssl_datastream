@@ -97,15 +97,14 @@ class RelationLearner:
     print('support_features: {}'.format(support_features.shape))
     print('query_features: {}'.format(query_features.shape))
 
-    support_features_ext = support_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, w*sh, 128]
-    support_features_ext = torch.transpose(support_features_ext, 0, 1)            #[w*sh, q, 128]
-    support_labels = support_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, w*sh]
-    support_labels = torch.transpose(support_labels, 0, 1)                        #[w*sh, q]
+    support_features_ext = support_features.unsqueeze(0).repeat(args.ways*args.query_num, 1, 1)  #[w*q, w*sh, 128]
+    support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, w*q, 128]
+    support_labels = support_labels.unsqueeze(0).repeat(args.ways*args.query_num, 1)      #[w*q, w*sh]
+    support_labels = torch.transpose(support_labels, 0, 1)                                #[w*sh, w*q]
     print('support_features_ext: {}'.format(support_features_ext.shape))
 
-
-    query_features_ext = query_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, q, 128]
-    query_labels = query_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)            #[w*sh, q]
+    query_features_ext = query_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, w*q, 128]
+    query_labels = query_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)            #[w*sh, w*q]
     print('query_features_ext: {}'.format(query_features_ext.shape))
 
     relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
