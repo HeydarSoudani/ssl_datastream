@@ -125,8 +125,8 @@ relation_net.to(device)
 feature_ext.apply(weights_init)
 relation_net.apply(weights_init)
 
-print(feature_ext.dummy_param.device)
-print(relation_net.dummy_param.device)
+print(feature_ext.device)
+print(relation_net.device)
 
 # === Print feature_ext layers and params ====
 # print(feature_ext)
