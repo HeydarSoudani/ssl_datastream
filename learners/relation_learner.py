@@ -165,11 +165,14 @@ class RelationLearner:
 
       for i, batch in enumerate(val_loader):
         sup_batch = next(trainloader)
-        sup_images, sup_label, _, _ = sup_batch
-        sup_label = sup_label.flatten()
-        sup_images, sup_label = sup_images.to(self.device), sup_label.to(self.device)
+        sup_images, sup_labels, _, _ = sup_batch
+        
+        sup_images = sup_images.reshape(-1, *sup_images.shape[2:])
+        sup_labels = sup_labels.flatten()
+        sup_images, sup_labels = sup_images.to(self.device), sup_labels.to(self.device)
         
         samples, labels = batch
+
         labels = labels.flatten()
         samples, labels = samples.to(self.device), labels.to(self.device)
 
