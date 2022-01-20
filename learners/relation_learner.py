@@ -208,7 +208,7 @@ class RelationLearner:
         # correct_cls_acc += (predicted == labels).sum().item()
 
         ## == loss =============================
-        loss = self.criterion(logits, labels)
+        loss = self.criterion(relations.data, labels)
         loss = loss.mean()
         total_loss += loss.item()
 
