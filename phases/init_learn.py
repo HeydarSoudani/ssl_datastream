@@ -33,6 +33,7 @@ def init_learn(feature_ext, relation, learner, args, device):
   train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
   val_dataset = SimpleDataset(val_data, args, transforms=train_transform)
   known_labels = train_dataset.label_set
+  print('Known labels: {}'.format(known_labels))
 
   sampler = RelationSampler(
     train_dataset,

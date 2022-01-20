@@ -1,4 +1,6 @@
 import torch
+import time
+from losses import W_MSE, W_BCE
 
 def compute_prototypes(
   support_features: torch.Tensor, support_labels: torch.Tensor
@@ -25,6 +27,7 @@ class RelationLearner:
   def __init__(self, device, args):
     # self.criterion = criterion
     self.criterion = torch.nn.CrossEntropyLoss()
+    self.criterion = W_MSE()
     self.device = device
 
     self.prototypes = {
@@ -32,8 +35,9 @@ class RelationLearner:
       for l in range(args.n_classes)
     }
   
-  def train(self, feature_ext, relation, batch, optimizer, iteration, args):
+  def train(self, feature_ext, relation_net, batch, optimizer, iteration, args):
     feature_ext.train()
+    relation_net.train()
     optimizer.zero_grad()
     
     ### === Prepare data ===============================
@@ -64,15 +68,45 @@ class RelationLearner:
     new_prototypes = beta * old_prototypes + (1 - beta) * episode_prototypes
 
     ### === Concat features ============================
-    # support_feature = features[:support_len]
-    # query_feature = features[support_len:]
+    support_features = features[:support_len]
+    query_features = features[support_len:] #[w, 128]
 
+    support_features_ext = support_features.unsqueeze(0).repeat(args.ways, 1, 1)  #[w, w*sh, 128]
+    support_features_ext = torch.transpose(support_features_ext, 0, 1)            #[w*sh, w, 128]
+    support_labels = support_labels.unsqueeze(0).repeat(args.ways, 1)             #[w, w*sh]
+    support_labels = torch.transpose(support_labels, 0, 1)                        #[w*sh, w]
+
+    query_features_ext = query_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, w, 128]
+    query_labels = query_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)            #[w*sh, w]
+
+    relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[w*w*sh, 256]
+    relarion_labels = torch.zeros(args.ways*args.shot, args.ways).to(device)
+    relarion_labels = torch.where(
+      support_labels!=query_labels,
+      relarion_labels,
+      torch.tensor(1.).to(device)
+    ).view(-1,1)
+
+    print(relation_pairs.shape)
+    print(relarion_labels)
+    time.sleep(5)
 
     ### === Relation Network ===========================
+    # relations = relation_net(relation_pairs)
+
+    # loss = criterion(relations, relarion_labels, weight=relarion_weights)
+    
+    # model_optim.zero_grad()
+    # mclassifer_optim.zero_grad()
+    # loss.backward()
+    
+    # torch.nn.utils.clip_grad_norm_(model.parameters(),0.5)
+    # torch.nn.utils.clip_grad_norm_(mclassifer.parameters(),0.5)
+    # model_optim.step()
+    # mclassifer_optim.step()
 
     ### === Loss & backward ============================
-    loss = self.criterion(outputs[:support_len], support_labels)
-    # loss = self.criterion(outputs, labels)   # without Relation network
+    loss = self.criterion(outputs[:support_len], support_labels) # without Relation network
 
 
     loss.backward()

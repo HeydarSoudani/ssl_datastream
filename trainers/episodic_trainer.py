@@ -63,13 +63,13 @@ def train(
             min_loss = val_loss_total
             print("= ...New best model saved")
           
-          if args.scheduler:
-            scheduler.step()
+        if args.scheduler:
+          scheduler.step()
   
   except KeyboardInterrupt:
     print('skipping training')
 
   # save last model
   torch.save(feature_ext.state_dict(), os.path.join(args.save, "model_last.pt"))
-  print("= ...New last model saved")
+  print("= ...last model saved")
 
