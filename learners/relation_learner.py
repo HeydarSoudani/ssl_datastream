@@ -77,7 +77,7 @@ class RelationLearner:
     print(images.shape)
 
     ### === Feature extractor ===========================
-    outputs, features = feature_ext.forward(support_images)
+    outputs, features = feature_ext.forward(images)
     
 
     ### === Prototypes ==================================

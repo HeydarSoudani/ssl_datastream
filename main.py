@@ -120,6 +120,7 @@ feature_ext = MyPretrainedResnet50(args)
 relation_net = MLP(args)
 
 feature_ext.to(device)
+feature_ext.pretrained.to(device)
 relation_net.to(device)
 
 feature_ext.apply(weights_init)
