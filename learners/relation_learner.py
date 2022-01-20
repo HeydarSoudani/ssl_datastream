@@ -116,7 +116,7 @@ class RelationLearner:
     
     ### === Loss & backward ============================
     # loss = self.criterion(outputs[:support_len], support_labels) # without Relation network
-    loss = self.criterion(relations, relarion_labels)  
+    loss = self.criterion(relations, relarion_labels)
     loss.backward()
 
     torch.nn.utils.clip_grad_norm_(feature_ext.parameters(), args.grad_clip)
@@ -194,18 +194,14 @@ class RelationLearner:
           relarion_labels,
           torch.tensor(1.).to(self.device)
         ).view(-1,1)
-        relations = relation_net(relation_pairs)
+        relations = relation_net(relation_pairs).view(-1, args.ways)
 
         ## == Relation-based Acc. ============== 
         print(relations)
         print(relations.shape)
-        predict_labels = torch.tensor([
-        1 if relations[i] > 0.5 else 0  for i in range(relations.shape[0])
-        ])
- 
-        # _,predict_labels = torch.max(relations.data,1)
+        _,predict_labels = torch.max(relations.data,1)
         print(predict_labels)
-        rewards = [1 if predict_labels[j]==test_labels[j] else 0 for j in range(args.ways*args.shot*args.query_num)]
+        rewards = [1 if predict_labels[j]==test_labels[j] else 0 for j in range(args.ways*args.query_num)]
         total_rewards += np.sum(rewards)
 
         ## == Cls-based Acc. ===================
