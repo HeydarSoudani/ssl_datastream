@@ -74,6 +74,7 @@ class RelationLearner:
 
     images = torch.cat((support_images, query_images))
     labels = torch.cat((support_labels, query_labels))
+    print(images.shape)
 
     ### === Feature extractor ===========================
     outputs, features = feature_ext.forward(images)
