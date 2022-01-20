@@ -44,6 +44,9 @@ class RelationLearner:
     support_len = args.ways * args.shot 
     support_images, support_labels, query_images, query_labels = batch
     
+    print(support_images.shape)
+    print(query_images.shape)
+
     unique_label = torch.unique(support_labels)
 
     support_images = support_images.to(self.device)
