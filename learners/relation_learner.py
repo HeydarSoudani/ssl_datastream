@@ -72,12 +72,12 @@ class RelationLearner:
     query_images = query_images.to(self.device)
     query_labels = query_labels.to(self.device)
 
-    images = torch.cat((support_images, query_images), device=self.device)
+    images = torch.cat((support_images, query_images))
     labels = torch.cat((support_labels, query_labels))
     print(images.shape)
 
     ### === Feature extractor ===========================
-    outputs, features = feature_ext.forward(images)
+    outputs, features = feature_ext.forward(support_images)
     
 
     ### === Prototypes ==================================
