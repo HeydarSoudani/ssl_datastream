@@ -11,7 +11,7 @@ import argparse
 import numpy as np
 from pandas import read_csv
 
-from model import MyPretrainedResnet50, MLP
+from model import MyPretrainedResnet50, MLP, weights_init
 from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
 from phases.batch_learn import batch_learn
@@ -114,14 +114,16 @@ if args.cuda:
 if not os.path.exists(args.save):
   os.makedirs(args.save)
 
-## == Define feature_ext ===============
+## == Define Feature extractor & Relation network ==
 print('feature_ext & relation are loading ...')
 feature_ext = MyPretrainedResnet50(args)
-feature_ext.to(device)
+relation_net = MLP(args)
 
-## == Define Relation network ==========
-relation = MLP(args)
-relation.to(device)
+feature_ext.to(device)
+relation_net.to(device)
+
+feature_ext.apply(weights_init)
+relation_net.apply(weights_init)
 
 # === Print feature_ext layers and params ====
 # print(feature_ext)
@@ -146,7 +148,7 @@ if __name__ == '__main__':
     batch_learn(feature_ext, args, device)
   ## == Data Stream ======
   elif args.phase == 'init_learn':
-    init_learn(feature_ext, relation, learner, args, device)
+    init_learn(feature_ext, relation_net, learner, args, device)
 
 ## == visualization ===================
 # visualization(model, test_dataset, args, device)

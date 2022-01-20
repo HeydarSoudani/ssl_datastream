@@ -7,7 +7,7 @@ import time
 
 def train(
   feature_ext,
-  relation,
+  relation_net,
   learner,
   train_loader,
   val_loader,
@@ -15,10 +15,10 @@ def train(
   args,
   device):
   
-  # criterion = torch.nn.CrossEntropyLoss()
-  # optim = SGD(feature_ext.parameters(), lr=args.lr, momentum=args.momentum)
-  optim = Adam(feature_ext.parameters(), lr=args.lr)
-  scheduler = StepLR(optim, step_size=args.step_size, gamma=args.gamma)
+  feature_ext_optim = Adam(feature_ext.parameters(), lr=args.lr)
+  feature_ext_scheduler = StepLR(feature_ext_optim, step_size=args.step_size, gamma=args.gamma)
+  relation_net_optim = Adam(relation_net.parameters(), lr=args.lr)
+  relation_net_scheduler = StepLR(relation_net_optim, step_size=args.step_size, gamma=args.gamma)
 
   global_time = time.time()
   min_loss = float('inf')
@@ -30,11 +30,12 @@ def train(
 
       for miteration_item in range(args.meta_iteration):
         batch = next(trainloader)
+        
         loss = learner.train(
           feature_ext,
-          relation,
+          relation_net,
           batch,
-          optim,
+          feature_ext_optim, relation_net_optim,
           miteration_item,
           args)
         train_loss += loss
@@ -46,14 +47,16 @@ def train(
           train_loss = 0.
 
           # evalute on val_dataset
-          val_loss_total, \
-          val_acc_dis_total, \
-          val_acc_cls_total = learner.evaluate(feature_ext, val_loader, known_labels, args)  # For Pt.
+          val_loss_total, val_acc_total = learner.evaluate(
+            feature_ext,
+            relation_net,
+            val_loader,
+            args)
 
           # print losses
           # print('scheduler: %f' % (optim.param_groups[0]['lr']))
-          print('=== Time: %.2f, Step: %d, Train Loss: %f, Val Loss: %f' % (
-            time.time()-global_time, miteration_item+1, train_loss_total, val_loss_total))
+          print('=== Time: %.2f, Step: %d, Train Loss: %f, Val Loss: %f, Val Acc: %f' % (
+            time.time()-global_time, miteration_item+1, train_loss_total, val_loss_total, val_acc_total))
           # print('===============================================')
           global_time = time.time()
     
@@ -64,7 +67,8 @@ def train(
             print("= ...New best model saved")
           
         if args.scheduler:
-          scheduler.step()
+          feature_ext_scheduler.step()
+          relation_net_scheduler.step()
   
   except KeyboardInterrupt:
     print('skipping training')

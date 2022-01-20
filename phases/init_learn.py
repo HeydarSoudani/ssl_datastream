@@ -6,11 +6,12 @@ from pandas import read_csv
 from sklearn.model_selection import train_test_split
 
 from dataset import SimpleDataset
+from samplers.pt_sampler import PtSampler
 from samplers.relation_sampler import RelationSampler
 from trainers.episodic_trainer import train
 
 
-def init_learn(feature_ext, relation, learner, args, device):
+def init_learn(feature_ext, relation_net, learner, args, device):
   ## == Data ============================
   train_data = read_csv(
     os.path.join(args.data_path, args.train_file),
@@ -35,7 +36,7 @@ def init_learn(feature_ext, relation, learner, args, device):
   known_labels = train_dataset.label_set
   print('Known labels: {}'.format(known_labels))
 
-  sampler = RelationSampler(
+  sampler = PtSampler(
     train_dataset,
     n_way=args.ways,
     n_shot=args.shot,
@@ -49,12 +50,12 @@ def init_learn(feature_ext, relation, learner, args, device):
     pin_memory=True,
     collate_fn=sampler.episodic_collate_fn,
   )
-  val_dataloader = DataLoader(dataset=val_dataset, batch_size=8, shuffle=False)
+  val_dataloader = DataLoader(dataset=val_dataset, batch_size=15, shuffle=False)
 
   ## == train ===========================
   train(
     feature_ext,
-    relation,
+    relation_net,
     learner,
     train_dataloader,
     val_dataloader,
