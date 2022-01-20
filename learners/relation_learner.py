@@ -145,7 +145,7 @@ class RelationLearner:
     train_dataset = SimpleDataset(train_data, args, transforms=transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
     sampler = PtSampler(
       train_dataset,
-      n_way=args.ways,
+      n_way=args.n_classes,
       n_shot=args.shot,
       n_query=0,
       n_tasks=500
@@ -161,7 +161,8 @@ class RelationLearner:
 
     with torch.no_grad():
       total_loss = 0.0
-      total_rewards = 0.0
+      total = 0.0
+      correct = 0.0 
 
       for i, batch in enumerate(val_loader):
         sup_batch = next(trainloader)
@@ -197,12 +198,9 @@ class RelationLearner:
         relations = relation_net(relation_pairs).view(-1, args.ways)
 
         ## == Relation-based Acc. ============== 
-        print(relations)
-        print(relations.shape)
         _,predict_labels = torch.max(relations.data,1)
-        print(predict_labels)
-        rewards = [1 if predict_labels[j]==test_labels[j] else 0 for j in range(args.ways*args.query_num)]
-        total_rewards += np.sum(rewards)
+        total += labels.size(0)
+        correct += (predict_labels == labels).sum().item()
 
         ## == Cls-based Acc. ===================
         # _, predicted = torch.max(logits, 1)
@@ -215,6 +213,6 @@ class RelationLearner:
         total_loss += loss.item()
 
       total_loss /= len(val_loader)
-      total_acc = total_rewards / len(val_loader)
+      total_acc = correct / total  
 
       return total_loss, total_acc
