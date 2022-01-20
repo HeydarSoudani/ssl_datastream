@@ -183,9 +183,9 @@ class RelationLearner:
         _, sup_features = feature_ext.forward(sup_images)
         _, test_features = feature_ext.forward(samples)
 
-        sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, w*sh, 128]
+        sup_features_ext = sup_features.unsqueeze(0).repeat(args.ways*args.query_num, 1, 1)  #[q, w*sh, 128]
         sup_features_ext = torch.transpose(sup_features_ext, 0, 1)            #[w*sh, q, 128]
-        sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)        #[q, w*sh]
+        sup_labels = sup_labels.unsqueeze(0).repeat(args.ways*args.query_num, 1)        #[q, w*sh]
         sup_labels = torch.transpose(sup_labels, 0, 1)                        #[w*sh, q]
 
         test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, q, 128]
@@ -211,8 +211,6 @@ class RelationLearner:
         # correct_cls_acc += (predicted == labels).sum().item()
 
         ## == loss =============================
-        print(relations.data.shape)
-        print(labels.shape)
         loss = criterion(relations.data, labels)
         loss = loss.mean()
         total_loss += loss.item()
