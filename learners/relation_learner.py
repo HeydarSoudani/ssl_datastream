@@ -37,6 +37,7 @@ class RelationLearner:
     
     # self.criterion = criterion
     # self.criterion = torch.nn.CrossEntropyLoss()
+    a = torch.nn.MSELoss()
     self.criterion = W_MSE()
     self.device = device
 
@@ -136,6 +137,8 @@ class RelationLearner:
     feature_ext.eval()
     relation_net.eval()
 
+    criterion = torch.nn.MSELoss()
+
     # known_labels = torch.tensor(list(known_labels), device=self.device)
     # pts = torch.cat(
     #   [self.prototypes[l.item()] for l in known_labels]
@@ -210,7 +213,7 @@ class RelationLearner:
         ## == loss =============================
         print(relations.data.shape)
         print(labels.shape)
-        loss = self.criterion(relations.data, labels)
+        loss = criterion(relations.data, labels)
         loss = loss.mean()
         total_loss += loss.item()
 
