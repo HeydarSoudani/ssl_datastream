@@ -1,6 +1,11 @@
 import torch
+from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
+
+import os
 import time
+from pandas import read_csv
+
 from losses import W_MSE, W_BCE
 
 from dataset import SimpleDataset
@@ -62,9 +67,6 @@ class RelationLearner:
     query_images = query_images.reshape(-1, *query_images.shape[2:])
     query_labels = query_labels.flatten()
 
-    print(support_images.shape)
-    print(query_images.shape)
-
     unique_label = torch.unique(support_labels)
 
     support_images = support_images.to(self.device)
@@ -74,7 +76,6 @@ class RelationLearner:
 
     images = torch.cat((support_images, query_images))
     labels = torch.cat((support_labels, query_labels))
-    print(images.shape)
 
     ### === Feature extractor ===========================
     outputs, features = feature_ext.forward(images)
@@ -94,18 +95,13 @@ class RelationLearner:
     support_features = features[:support_len]
     query_features = features[support_len:] #[w, 128]
 
-    print('support_features: {}'.format(support_features.shape))
-    print('query_features: {}'.format(query_features.shape))
-
     support_features_ext = support_features.unsqueeze(0).repeat(args.ways*args.query_num, 1, 1)  #[w*q, w*sh, 128]
     support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, w*q, 128]
     support_labels = support_labels.unsqueeze(0).repeat(args.ways*args.query_num, 1)      #[w*q, w*sh]
     support_labels = torch.transpose(support_labels, 0, 1)                                #[w*sh, w*q]
-    print('support_features_ext: {}'.format(support_features_ext.shape))
 
     query_features_ext = query_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, w*q, 128]
     query_labels = query_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)            #[w*sh, w*q]
-    print('query_features_ext: {}'.format(query_features_ext.shape))
 
     relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
     relarion_labels = torch.zeros(args.ways*args.shot, args.ways*args.query_num).to(self.device)
