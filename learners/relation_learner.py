@@ -61,7 +61,7 @@ class RelationLearner:
     support_labels = support_labels.flatten()
     query_images = query_images.reshape(-1, *query_images.shape[2:])
     query_labels = query_labels.flatten()
-    
+
     print(support_images.shape)
     print(query_images.shape)
 
@@ -77,6 +77,7 @@ class RelationLearner:
 
     ### === Feature extractor ===========================
     outputs, features = feature_ext.forward(images)
+    
 
     ### === Prototypes ==================================
     # episode_prototypes = compute_prototypes(

@@ -125,6 +125,9 @@ relation_net.to(device)
 feature_ext.apply(weights_init)
 relation_net.apply(weights_init)
 
+print(feature_ext.dummy_param.device)
+print(relation_net.dummy_param.device)
+
 # === Print feature_ext layers and params ====
 # print(feature_ext)
 total_params = sum(p.numel() for p in feature_ext.parameters())
