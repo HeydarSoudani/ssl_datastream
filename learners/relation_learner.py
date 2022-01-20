@@ -137,7 +137,7 @@ class RelationLearner:
     feature_ext.eval()
     relation_net.eval()
 
-    criterion = torch.nn.MSELoss()
+    criterion = torch.nn.CrossEntropyLoss()
 
     # known_labels = torch.tensor(list(known_labels), device=self.device)
     # pts = torch.cat(
