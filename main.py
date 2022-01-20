@@ -119,12 +119,11 @@ print('feature_ext & relation are loading ...')
 feature_ext = MyPretrainedResnet50(args)
 relation_net = MLP(args)
 
-feature_ext.to(device)
-# feature_ext.pretrained.to(device)
-relation_net.to(device)
+feature_ext.apply(weights_init)
+relation_net.apply(weights_init)
 
-# feature_ext.apply(weights_init)
-# relation_net.apply(weights_init)
+feature_ext.to(device)
+relation_net.to(device)
 
 
 # === Print feature_ext layers and params ====
