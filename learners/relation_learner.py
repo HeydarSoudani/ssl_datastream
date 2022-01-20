@@ -199,7 +199,11 @@ class RelationLearner:
         ## == Relation-based Acc. ============== 
         print(relations)
         print(relations.shape)
-        _,predict_labels = torch.max(relations.data,1)
+        predict_labels = torch.tensor([
+        1 if relations[i] > 0.5 else 0  for i in range(relations.shape[0])
+        ])
+ 
+        # _,predict_labels = torch.max(relations.data,1)
         print(predict_labels)
         rewards = [1 if predict_labels[j]==test_labels[j] else 0 for j in range(args.ways*args.shot*args.query_num)]
         total_rewards += np.sum(rewards)
