@@ -117,22 +117,29 @@ class RelationLearner:
     # print('query_labels: {}'.format(query_labels))
     # print('query_labels: {}'.format(query_labels.shape))
 
-    relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
+    relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[w*q*w*sh, 256]
     relarion_labels = torch.zeros(args.ways*args.shot, args.ways*args.query_num).to(self.device)
     relarion_labels = torch.where(
       support_labels!=query_labels,
       relarion_labels,
       torch.tensor(1.).to(self.device)
-    )
+    ).view(-1,1)
 
     print(relarion_labels)
     print(relarion_labels.shape)
 
     ### === Relation Network ===========================
-    relations = relation_net(relation_pairs)
+    relations = relation_net(relation_pairs).view(-1,args.ways) #[w, w*q]
     
     ### === Loss & backward ============================
     # loss = self.criterion(outputs[:support_len], support_labels) # without Relation network
+    query_labels_onehot = torch.zeros(args.ways*args.query_num, args.ways).scatter_(1, query_labels.view(-1,1), 1)
+
+    print(query_labels.view(-1,1))
+    print(query_labels_onehot)
+
+    query_labels_onehot = query_labels_onehot.to(self.device)
+
     loss = self.criterion(relations, relarion_labels)
     loss.backward()
 
