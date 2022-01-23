@@ -3,8 +3,12 @@
 ### CIFAR10, lr_0.0001, e_12, bs_64
 ###################################
 
+%----- trainable layers: FC
+
+%----- trainable layers: layer_4 & FC
+
 # Without pt
-*
+17.08
 
 # Normal pt
 73.39

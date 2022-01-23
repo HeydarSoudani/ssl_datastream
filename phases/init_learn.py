@@ -26,7 +26,8 @@ def init_learn(feature_ext, relation_net, learner, args, device):
     transforms.RandomRotation(10),
     transforms.ToTensor(),
     # Cutout(n_holes=1, length=16),
-    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+    transforms.Normalize(mean=[0.92206, 0.92206, 0.92206], std=[0.08426, 0.08426, 0.08426]),
+    # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     # transforms.RandomErasing(probability=args.p, sh=args.sh, r1=args.r1, mean=[0.5, 0.5, 0.5]),
   ])
 

@@ -68,6 +68,11 @@ class RelationLearner:
     query_images = query_images.reshape(-1, *query_images.shape[2:])
     query_labels = query_labels.flatten()
 
+    print('support_images: {}'.format(support_images.shape))
+    print('support_labels: {}'.format(support_labels))
+    print('query_images: {}'.format(query_images.shape))
+    print('query_labels: {}'.format(query_labels))
+
     unique_label = torch.unique(support_labels)
 
     support_images = support_images.to(self.device)
@@ -144,7 +149,9 @@ class RelationLearner:
     # )
     ## == Train data ====================
     train_data = read_csv(os.path.join(args.data_path, args.train_file), sep=',', header=None).values
-    train_dataset = SimpleDataset(train_data, args, transforms=transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
+    train_dataset = SimpleDataset(
+      train_data, args,
+      transforms=transforms.Normalize(mean=[0.92206, 0.92206, 0.92206], std=[0.08426, 0.08426, 0.08426]))
     sampler = PtSampler(
       train_dataset,
       n_way=args.n_classes,

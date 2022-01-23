@@ -115,7 +115,7 @@ if not os.path.exists(args.save):
   os.makedirs(args.save)
 
 ## == Define Feature extractor & Relation network ==
-print('feature_ext & relation are loading ...')
+print('Defining feature_ext & relation ...')
 feature_ext = MyPretrainedResnet50(args)
 relation_net = MLP(args)
 
