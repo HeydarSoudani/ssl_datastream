@@ -133,7 +133,9 @@ class RelationLearner:
     
     ### === Loss & backward ============================
     # loss = self.criterion(outputs[:support_len], support_labels) # without Relation network
-    query_labels_onehot = torch.zeros(args.ways*args.query_num, args.ways).to(self.device).scatter_(1, query_labels.view(-1,1), 1)
+
+    quety_label_pressed = torch.tensor([(unique_label == l).nonzero(as_tuple=True)[0] for l in query_labels], device=self.device)
+    query_labels_onehot = torch.zeros(args.ways*args.query_num, args.ways).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
 
     print(query_labels.view(-1,1))
     print(query_labels_onehot.view(-1,args.ways))
