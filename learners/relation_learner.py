@@ -225,7 +225,7 @@ class RelationLearner:
 
         ## == Relation-based Acc. ============== 
         _,predict_labels = torch.max(relations.data, 1)
-        total += labels.size(0)
+        total += test_labels.size(0)
         correct += (predict_labels == test_labels).sum().item()
 
         ## == Cls-based Acc. ===================
