@@ -51,7 +51,7 @@ def init_learn(feature_ext, relation_net, learner, args, device):
     pin_memory=True,
     collate_fn=sampler.episodic_collate_fn,
   )
-  val_dataloader = DataLoader(dataset=val_dataset, batch_size=15, drop_last=True, shuffle=False)
+  val_dataloader = DataLoader(dataset=val_dataset, batch_size=args.query_num, drop_last=True, shuffle=False)
 
   ## == train ===========================
   train(
