@@ -123,7 +123,7 @@ class RelationLearner:
       support_labels!=query_labels,
       relarion_labels,
       torch.tensor(1.).to(self.device)
-    ).view(-1,1)
+    )
 
     print(relarion_labels)
     print(relarion_labels.shape)
