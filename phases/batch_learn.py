@@ -1,8 +1,9 @@
+from torch.utils.data import DataLoader
+from torchvision.transforms import transforms
 import os
 from pandas import read_csv
-from dataset import SimpleDataset
-from torch.utils.data import DataLoader
 
+from dataset import SimpleDataset
 from trainers.batch_trainer import train, test
 
 

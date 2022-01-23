@@ -4,19 +4,19 @@
 ###########################
 
 # Without pt
-
+*
 
 # Normal pt
-
+73.39
 
 # with pt MoCO_V2
-
+74.49
 
 # with pt DINO
-
+76.43
 
 ###########################
-### CIFAR10
+### CIFAR100
 ###########################
 
 Without pt
@@ -26,6 +26,8 @@ Normal pt
 
 
 with pt MoCO_V2
+48.11
 
 
 with pt DINO
+49.69
