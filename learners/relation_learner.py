@@ -97,8 +97,11 @@ class RelationLearner:
     # new_prototypes = beta * old_prototypes + (1 - beta) * episode_prototypes
 
     ### === Concat features ============================
-    support_features = features[:support_len]
-    query_features = features[support_len:] #[w, 128]
+    support_features = features[:support_len] #[w*s, 128]
+    query_features = features[support_len:]   #[w*q, 128]
+
+    print('support_features: {}'.format(support_features.shape))
+    print('query_features: {}'.format(query_features.shape))
 
     support_features_ext = support_features.unsqueeze(0).repeat(args.ways*args.query_num, 1, 1)  #[w*q, w*sh, 128]
     support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, w*q, 128]
