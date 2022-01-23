@@ -1,0 +1,31 @@
+
+###########################
+### CIFAR10
+###########################
+
+# Without pt
+
+
+# Normal pt
+
+
+# with pt MoCO_V2
+
+
+# with pt DINO
+
+
+###########################
+### CIFAR10
+###########################
+
+Without pt
+
+
+Normal pt
+
+
+with pt MoCO_V2
+
+
+with pt DINO

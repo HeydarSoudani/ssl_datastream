@@ -81,7 +81,6 @@ class RelationLearner:
     ### === Feature extractor ===========================
     outputs, features = feature_ext.forward(images)
     
-
     ### === Prototypes ==================================
     # episode_prototypes = compute_prototypes(
     #   features[:support_len], support_labels
