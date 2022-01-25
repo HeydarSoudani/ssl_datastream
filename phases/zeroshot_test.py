@@ -42,7 +42,7 @@ def zeroshot_test(feature_ext,
     n_way=args.ways,
     n_shot=args.shot,
     n_query=0,
-    n_tasks=len(train_dataset)
+    n_tasks=len(stream_dataset)
   )
   train_dataloader = DataLoader(
     train_dataset,
@@ -79,8 +79,8 @@ def zeroshot_test(feature_ext,
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      if i > 5980:
-      
+      if i > 6000:
+        print(i)
         # Support set
         sup_batch = next(trainloader)
         sup_images, sup_labels, _, _ = sup_batch
