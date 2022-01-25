@@ -42,7 +42,7 @@ def zeroshot_test(feature_ext,
     n_way=args.n_classes,
     n_shot=args.shot,
     n_query=0,
-    n_tasks=len(dataloader)
+    n_tasks=len(streamloader)
   )
   train_dataloader = DataLoader(
     train_dataset,
