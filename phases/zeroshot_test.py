@@ -115,9 +115,9 @@ def zeroshot_test(feature_ext,
         _,predict_labels = torch.max(sim_score, 1)
         predict_labels = unique_label[predict_labels]
 
-        print("true label: {}".format(test_labels))
-        print("predict label: {}".format(predict_labels))
-        print(sim_score)
+        print("true label: {}".format(test_labels.data))
+        print("predict label: {}".format(predict_labels.data))
+        print(sim_score.data)
         print('---------------------------------------')
         time.sleep(2)
 
