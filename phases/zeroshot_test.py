@@ -39,8 +39,8 @@ def zeroshot_test(feature_ext,
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
   sampler = PtSampler(
     train_dataset,
-    n_way=5,
-    n_shot=1,
+    n_way=args.ways,
+    n_shot=args.shot,
     n_query=0,
     n_tasks=len(train_dataset)
   )
@@ -94,17 +94,17 @@ def zeroshot_test(feature_ext,
       _, test_features = feature_ext.forward(test_images)
 
       ## == Relation Network preparation =====
-      sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
-      sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
-      sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
-      sup_labels = torch.transpose(sup_labels, 0, 1)                             #[nc*sh, q]
-      test_features_ext = test_features.unsqueeze(0).repeat(args.n_classes*args.shot, 1, 1) #[nc*sh, q, 128]
-      test_labels_ext = test_labels.unsqueeze(0).repeat(args.n_classes*args.shot, 1)        #[nc*sh, q]
+      sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, w*sh, 128]
+      sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[w*sh, q, 128]
+      sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, w*sh]
+      sup_labels = torch.transpose(sup_labels, 0, 1)                             #[w*sh, q]
+      test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, q, 128]
+      test_labels_ext = test_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)        #[w*sh, q]
       relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
 
       ## == Similarity score ==================
       feature1, features2 = torch.split(relation_pairs, 2, dim=1)
-      sim_score = cos_sim(feature1, features2).view(-1, args.n_classes)
+      sim_score = cos_sim(feature1, features2).view(-1, args.ways)
 
       print(test_labels)
       print(sim_score)
