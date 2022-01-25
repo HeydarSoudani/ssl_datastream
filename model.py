@@ -39,21 +39,21 @@ class MyPretrainedResnet50(nn.Module):
     # self.pretrained.load_state_dict(state_dict, strict=False)
 
     ## == Pretrain with DINO
-    # self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
-    # self.pretrained.fc = nn.Linear(2048, 1000)
+    self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
+    self.pretrained.fc = nn.Linear(2048, 1000)
 
     # == Pretrain with torch
     # self.pretrained = models.resnet50(pretrained=True)
 
     # == Without Pretrain model
-    self.pretrained = models.resnet50(pretrained=False)
+    # self.pretrained = models.resnet50(pretrained=False)
 
     # freeze all layers but the last fc
     for name, param in self.pretrained.named_parameters():
       # print(name)
       # print(not name.startswith(('layer4', 'fc')))
-      # if name not in ['fc.weight', 'fc.bias']:
-      if not name.startswith(('layer4', 'fc')):
+      if name not in ['fc.weight', 'fc.bias']:
+      # if not name.startswith(('layer4', 'fc')):
         param.requires_grad = False
     
     self.fc1 = nn.Linear(1000, args.feature_dim)
