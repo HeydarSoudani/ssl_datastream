@@ -79,7 +79,7 @@ def zeroshot_test(feature_ext,
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      if i > 2950:
+      if i > 5980:
       
         # Support set
         sup_batch = next(trainloader)
