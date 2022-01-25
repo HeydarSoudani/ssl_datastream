@@ -52,7 +52,7 @@ def zeroshot_test(feature_ext,
     collate_fn=sampler.episodic_collate_fn,
   )
   trainloader = iter(train_dataloader)
-  unique_label = torch.unique(train_dataset.labels).to(device)
+  unique_label = torch.unique(torch.tensor(train_dataset.labels)).to(device)
 
   ## == Load models ===================================
   if args.which_model == 'best':
