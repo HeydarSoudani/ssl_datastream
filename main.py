@@ -16,6 +16,7 @@ from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
 from phases.batch_learn import batch_learn
 from phases.init_learn import init_learn
+from phases.zeroshot_test import zeroshot_test
 
 from visualize import visualization
 
@@ -146,6 +147,8 @@ if __name__ == '__main__':
   ## == Data Stream ======
   elif args.phase == 'init_learn':
     init_learn(feature_ext, relation_net, learner, args, device)
+  elif args.phase == 'zeroshot_test':
+    zeroshot_test(feature_ext, relation_net, args, device)
 
 ## == visualization ===================
 # visualization(model, test_dataset, args, device)

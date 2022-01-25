@@ -10,10 +10,7 @@ from dataset import SimpleDataset
 
 def zeroshot_test(feature_ext,
                   relation_net,
-                  detector,
-                  args,
-                  device,
-                  known_labels=None):
+                  args, device):
   print('================================ Zero-Shot Test ================================')
   feature_ext.eval()
   relation_net.eval()
@@ -85,12 +82,12 @@ def zeroshot_test(feature_ext,
       sup_images, sup_labels, _, _ = sup_batch
       sup_images = sup_images.reshape(-1, *sup_images.shape[2:])
       sup_labels = sup_labels.flatten()
-      sup_images, sup_labels = sup_images.to(self.device), sup_labels.to(self.device)
+      sup_images, sup_labels = sup_images.to(device), sup_labels.to(device)
 
       # Query set
       test_images, test_labels = batch
       test_labels = test_labels.flatten()
-      test_images, test_labels = test_images.to(self.device), test_labels.to(self.device)
+      test_images, test_labels = test_images.to(device), test_labels.to(device)
 
       _, sup_features = feature_ext.forward(sup_images)
       _, test_features = feature_ext.forward(test_images)
