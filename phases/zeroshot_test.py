@@ -116,7 +116,8 @@ def zeroshot_test(feature_ext,
         print("true label: {}".format(test_labels))
         print("predict label: {}".format(predict_labels))
         print(sim_score)
-        time.sleep(1)
+        print('---------------------------------------')
+        time.sleep(2)
 
 
 
