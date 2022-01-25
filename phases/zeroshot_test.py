@@ -107,7 +107,7 @@ def zeroshot_test(feature_ext,
       ## == Similarity score ==================
       # print(torch.split(relation_pairs, 2, dim=1))
       # print(len(torch.split(relation_pairs, args.feature_dim, dim=1)))
-      feature1, features2 = torch.split(relation_pairs, 2, dim=1)
+      feature1, features2 = torch.split(relation_pairs, args.feature_dim, dim=1)
       sim_score = cos_sim(feature1, features2).view(-1, args.ways)
 
       print(test_labels)
