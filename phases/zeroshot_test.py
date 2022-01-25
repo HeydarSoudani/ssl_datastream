@@ -112,7 +112,8 @@ def zeroshot_test(feature_ext,
         # print(len(torch.split(relation_pairs, args.feature_dim, dim=1)))
         feature1, features2 = torch.split(relation_pairs, args.feature_dim, dim=1)
         sim_score = cos_sim(feature1, features2).view(-1, args.ways)
-        _,predict_labels = unique_label[torch.max(sim_score, 1)]
+        _,predict_labels = torch.max(sim_score, 1)
+        predict_labels = unique_label[predict_labels]
 
         print("true label: {}".format(test_labels))
         print("predict label: {}".format(predict_labels))
