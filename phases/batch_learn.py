@@ -29,16 +29,14 @@ def batch_learn(model, args, device):
     transforms.RandomRotation(10),
     transforms.ToTensor(),
     # Cutout(n_holes=1, length=16),
-    # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-     transforms.Normalize((0.5), (0.5)) 
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     # transforms.RandomErasing(probability=args.p, sh=args.sh, r1=args.r1, mean=[0.5, 0.5, 0.5]),
   ])
 
   test_transform = transforms.Compose([
     transforms.ToPILImage(),
     transforms.ToTensor(),
-    # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-    transforms.Normalize((0.5), (0.5)) 
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
   ])
 
   train_dataset = SimpleDataset(train_data, args, transforms=train_transform)

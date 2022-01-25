@@ -1,12 +1,9 @@
 import torch
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
-
 import os
 import time
 from pandas import read_csv
-
-from losses import W_MSE, W_BCE
 
 from dataset import SimpleDataset
 from samplers.pt_sampler import PtSampler
@@ -38,6 +35,7 @@ class RelationLearner:
     # self.criterion = criterion
     # self.criterion = torch.nn.CrossEntropyLoss()
     self.criterion = torch.nn.MSELoss()
+    self.cos_sim = nn.CosineSimilarity(dim=1, eps=1e-6)
     # self.criterion = W_MSE()
     self.device = device
 
@@ -157,8 +155,6 @@ class RelationLearner:
     feature_ext.eval()
     relation_net.eval()
 
-    criterion = torch.nn.CrossEntropyLoss()
-
     # known_labels = torch.tensor(list(known_labels), device=self.device)
     # pts = torch.cat(
     #   [self.prototypes[l.item()] for l in known_labels]
@@ -167,8 +163,7 @@ class RelationLearner:
     train_data = read_csv(os.path.join(args.data_path, args.train_file), sep=',', header=None).values
     train_dataset = SimpleDataset(
       train_data, args,
-      transforms= transforms.Normalize((0.5), (0.5)))
-      #  transforms.Normalize(mean=[0.92206, 0.92206, 0.92206], std=[0.08426, 0.08426, 0.08426])
+      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
     sampler = PtSampler(
       train_dataset,
       n_way=args.n_classes,
@@ -207,6 +202,7 @@ class RelationLearner:
         _, sup_features = feature_ext.forward(sup_images)
         _, test_features = feature_ext.forward(test_images)
 
+        ## == Relation Network preparation =====
         sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
         sup_features_ext = torch.transpose(sup_features_ext, 0, 1)            #[nc*sh, q, 128]
         sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)        #[q, nc*sh]
@@ -223,6 +219,11 @@ class RelationLearner:
           torch.tensor(1.).to(self.device)
         ).view(-1,1)
         relations = relation_net(relation_pairs).view(-1, args.n_classes)
+
+
+        ## == Similarity test ==================
+        self.cos_sim()
+
 
         ## == Relation-based Acc. ============== 
         _,predict_labels = torch.max(relations.data, 1)
