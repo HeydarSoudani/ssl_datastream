@@ -83,8 +83,6 @@ parser.add_argument('--seed', type=int, default=2, help='')
 
 # Save and load model
 parser.add_argument('--save', type=str, default='saved/', help='')
-parser.add_argument('--best_model_path', type=str, default='saved/model_best.pt', help='')
-parser.add_argument('--last_model_path', type=str, default='saved/model_last.pt', help='')
 
 args = parser.parse_args()
 

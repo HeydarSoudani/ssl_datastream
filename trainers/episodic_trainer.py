@@ -62,7 +62,8 @@ def train(
     
           # save best feature_ext
           if val_loss_total < min_loss:
-            torch.save(feature_ext.state_dict(), os.path.join(args.save, "model_best.pt"))
+            torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_best.pt"))
+            torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_best.pt"))
             min_loss = val_loss_total
             print("= ...New best model saved")
           
@@ -74,6 +75,7 @@ def train(
     print('skipping training')
 
   # save last model
-  torch.save(feature_ext.state_dict(), os.path.join(args.save, "model_last.pt"))
+  torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_last.pt"))
+  torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_last.pt"))
   print("= ...last model saved")
 

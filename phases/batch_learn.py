@@ -16,10 +16,10 @@ def batch_learn(model, args, device):
     os.path.join(args.data_path, args.train_file),
     sep=',',
     header=None).values
-  test_data = read_csv(
-    os.path.join(args.data_path, args.test_file),
-    sep=',',
-    header=None).values
+  # test_data = read_csv(
+  #   os.path.join(args.data_path, args.test_file),
+  #   sep=',',
+  #   header=None).values
 
   train_transform = transforms.Compose([
     transforms.ToPILImage(),
@@ -33,15 +33,15 @@ def batch_learn(model, args, device):
     # transforms.RandomErasing(probability=args.p, sh=args.sh, r1=args.r1, mean=[0.5, 0.5, 0.5]),
   ])
 
-  test_transform = transforms.Compose([
-    transforms.ToPILImage(),
-    transforms.ToTensor(),
-    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-  ])
+  # test_transform = transforms.Compose([
+  #   transforms.ToPILImage(),
+  #   transforms.ToTensor(),
+  #   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+  # ])
 
   train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
-  train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [40000, 10000])
-  test_dataset = SimpleDataset(test_data, args, transforms=test_transform)
+  train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [5500, 500])
+  # test_dataset = SimpleDataset(test_data, args, transforms=test_transform)
 
   train_dataloader = DataLoader(dataset=train_dataset,
                                 batch_size=args.batch_size,
@@ -49,21 +49,21 @@ def batch_learn(model, args, device):
   val_dataloader = DataLoader(dataset=val_dataset,
                                 batch_size=args.batch_size,
                                 shuffle=False)
-  test_dataloader = DataLoader(dataset=test_dataset,
-                                batch_size=args.batch_size,
-                                shuffle=False)
+  # test_dataloader = DataLoader(dataset=test_dataset,
+  #                               batch_size=args.batch_size,
+  #                               shuffle=False)
 
   ## == train ===========================
   train(model, train_dataloader, val_dataloader, args, device)
 
   ## == Test model ======================
-  print('Test with last model')
-  test(model, test_dataloader, args, device)
+  # print('Test with last model')
+  # test(model, test_dataloader, args, device)
 
-  print('Test with best model')
-  try: model.load_state_dict(torch.load(args.best_model_path), strict=False)
-  except FileNotFoundError: pass
-  else: print("Load model from {}".format(args.best_model_path))
-  test(model, test_dataloader, args, device)
+  # print('Test with best model')
+  # try: model.load_state_dict(torch.load(args.best_model_path), strict=False)
+  # except FileNotFoundError: pass
+  # else: print("Load model from {}".format(args.best_model_path))
+  # test(model, test_dataloader, args, device)
 
 

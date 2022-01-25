@@ -204,12 +204,12 @@ class RelationLearner:
 
         ## == Relation Network preparation =====
         sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
-        sup_features_ext = torch.transpose(sup_features_ext, 0, 1)            #[nc*sh, q, 128]
-        sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)        #[q, nc*sh]
-        sup_labels = torch.transpose(sup_labels, 0, 1)                        #[nc*sh, q]
+        sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
+        sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
+        sup_labels = torch.transpose(sup_labels, 0, 1)                             #[nc*sh, q]
 
         test_features_ext = test_features.unsqueeze(0).repeat(args.n_classes*args.shot, 1, 1) #[nc*sh, q, 128]
-        test_labels_ext = test_labels.unsqueeze(0).repeat(args.n_classes*args.shot, 1)             #[nc*sh, q]
+        test_labels_ext = test_labels.unsqueeze(0).repeat(args.n_classes*args.shot, 1)        #[nc*sh, q]
 
         relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
         relarion_labels = torch.zeros(args.n_classes*args.shot, args.query_num).to(self.device)
@@ -218,24 +218,24 @@ class RelationLearner:
           relarion_labels,
           torch.tensor(1.).to(self.device)
         ).view(-1,1)
+        
+        ## == Relation Network ===================
         relations = relation_net(relation_pairs).view(-1, args.n_classes)
-
 
         # ## == Similarity test ==================
         # self.cos_sim()
 
-
-        ## == Relation-based Acc. ============== 
+        ## == Relation-based Acc. ================
         _,predict_labels = torch.max(relations.data, 1)
         total += test_labels.size(0)
         correct += (predict_labels == test_labels).sum().item()
 
-        ## == Cls-based Acc. ===================
+        ## == Cls-based Acc. =====================
         # _, predicted = torch.max(logits, 1)
         # total_cls_acc += labels.size(0)
         # correct_cls_acc += (predicted == labels).sum().item()
 
-        ## == loss =============================
+        ## == loss ===============================
         test_labels_onehot = torch.zeros(args.query_num, args.n_classes).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
         loss = self.criterion(relations.data, test_labels_onehot)
         loss = loss.mean()
