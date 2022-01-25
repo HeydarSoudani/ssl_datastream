@@ -167,7 +167,8 @@ class RelationLearner:
     train_data = read_csv(os.path.join(args.data_path, args.train_file), sep=',', header=None).values
     train_dataset = SimpleDataset(
       train_data, args,
-      transforms=transforms.Normalize(mean=[0.92206, 0.92206, 0.92206], std=[0.08426, 0.08426, 0.08426]))
+      transforms= transforms.Normalize((0.5), (0.5)))
+      #  transforms.Normalize(mean=[0.92206, 0.92206, 0.92206], std=[0.08426, 0.08426, 0.08426])
     sampler = PtSampler(
       train_dataset,
       n_way=args.n_classes,
