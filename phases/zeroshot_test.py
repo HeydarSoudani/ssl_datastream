@@ -39,10 +39,10 @@ def zeroshot_test(feature_ext,
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))
   sampler = PtSampler(
     train_dataset,
-    n_way=args.n_classes,
-    n_shot=args.shot,
+    n_way=5,
+    n_shot=1,
     n_query=0,
-    n_tasks=len(streamloader)
+    n_tasks=len(train_dataset)
   )
   train_dataloader = DataLoader(
     train_dataset,
