@@ -112,7 +112,7 @@ def zeroshot_test(feature_ext,
 
       print(test_labels)
       print(sim_score)
-      time.sleep(2)
+      time.sleep(1)
 
 
 
