@@ -47,8 +47,8 @@ def train(model, train_loader, val_loader, args, device):
 
           # save best model
           if total_val_loss < min_loss:
-            # model.save(os.path.join(args.save, "model_best.pt"))
-            torch.save(model.state_dict(), os.path.join(args.save, "model_best.pt"))
+            torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_best.pt"))
+            torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_best.pt"))
             min_loss = total_val_loss
             print("Saving new best model")
     
@@ -56,8 +56,8 @@ def train(model, train_loader, val_loader, args, device):
       scheduler.step()
     
   # save last model
-  # model.save(os.path.join(args.save, "model_last.pt"))
-  torch.save(model.state_dict(), os.path.join(args.save, "model_last.pt"))
+  torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_last.pt"))
+  torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_last.pt"))
   print("Saving new last model")
 
 
