@@ -50,7 +50,12 @@ parser.add_argument(
   default='cifar10',
   help=''
 )
-
+parser.add_argument(
+  '--which_model',
+  type=str,
+  choices=['best', 'last'],
+  default='best',
+  help='')
 parser.add_argument('--start_epoch', type=int, default=0, help='')
 parser.add_argument('--epochs', type=int, default=2, help='')
 parser.add_argument('--batch_size', type=int, default=16, help='')
