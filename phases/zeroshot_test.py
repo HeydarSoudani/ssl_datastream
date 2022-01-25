@@ -77,42 +77,44 @@ def zeroshot_test(feature_ext,
   ## == 
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
+
+      if i > 2950:
       
-      # Support set
-      sup_batch = next(trainloader)
-      sup_images, sup_labels, _, _ = sup_batch
-      sup_images = sup_images.reshape(-1, *sup_images.shape[2:])
-      sup_labels = sup_labels.flatten()
-      sup_images, sup_labels = sup_images.to(device), sup_labels.to(device)
+        # Support set
+        sup_batch = next(trainloader)
+        sup_images, sup_labels, _, _ = sup_batch
+        sup_images = sup_images.reshape(-1, *sup_images.shape[2:])
+        sup_labels = sup_labels.flatten()
+        sup_images, sup_labels = sup_images.to(device), sup_labels.to(device)
 
-      # Query set
-      test_images, test_labels = batch
-      test_labels = test_labels.flatten()
-      test_images, test_labels = test_images.to(device), test_labels.to(device)
+        # Query set
+        test_images, test_labels = batch
+        test_labels = test_labels.flatten()
+        test_images, test_labels = test_images.to(device), test_labels.to(device)
 
-      _, sup_features = feature_ext.forward(sup_images)
-      _, test_features = feature_ext.forward(test_images)
+        _, sup_features = feature_ext.forward(sup_images)
+        _, test_features = feature_ext.forward(test_images)
 
-      ## == Relation Network preparation =====
-      sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, w*sh, 128]
-      sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[w*sh, q, 128]
-      sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, w*sh]
-      sup_labels = torch.transpose(sup_labels, 0, 1)                             #[w*sh, q]
-      test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, q, 128]
-      test_labels_ext = test_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)        #[w*sh, q]
+        ## == Relation Network preparation =====
+        sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, w*sh, 128]
+        sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[w*sh, q, 128]
+        sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, w*sh]
+        sup_labels = torch.transpose(sup_labels, 0, 1)                             #[w*sh, q]
+        test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, q, 128]
+        test_labels_ext = test_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)        #[w*sh, q]
+        
       
-    
-      relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
+        relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
 
-      ## == Similarity score ==================
-      # print(torch.split(relation_pairs, 2, dim=1))
-      # print(len(torch.split(relation_pairs, args.feature_dim, dim=1)))
-      feature1, features2 = torch.split(relation_pairs, args.feature_dim, dim=1)
-      sim_score = cos_sim(feature1, features2).view(-1, args.ways)
+        ## == Similarity score ==================
+        # print(torch.split(relation_pairs, 2, dim=1))
+        # print(len(torch.split(relation_pairs, args.feature_dim, dim=1)))
+        feature1, features2 = torch.split(relation_pairs, args.feature_dim, dim=1)
+        sim_score = cos_sim(feature1, features2).view(-1, args.ways)
 
-      print(test_labels)
-      print(sim_score)
-      time.sleep(1)
+        print(test_labels)
+        print(sim_score)
+        time.sleep(1)
 
 
 
