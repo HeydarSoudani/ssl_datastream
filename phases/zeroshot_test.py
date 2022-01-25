@@ -100,6 +100,10 @@ def zeroshot_test(feature_ext,
       sup_labels = torch.transpose(sup_labels, 0, 1)                             #[w*sh, q]
       test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, q, 128]
       test_labels_ext = test_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)        #[w*sh, q]
+      
+      
+      print(sup_features_ext.shape)
+      print(test_features_ext.shape)
       relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
 
       ## == Similarity score ==================
