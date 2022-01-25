@@ -35,7 +35,7 @@ class RelationLearner:
     # self.criterion = criterion
     # self.criterion = torch.nn.CrossEntropyLoss()
     self.criterion = torch.nn.MSELoss()
-    self.cos_sim = nn.CosineSimilarity(dim=1, eps=1e-6)
+    # self.cos_sim = nn.CosineSimilarity(dim=1, eps=1e-6)
     # self.criterion = W_MSE()
     self.device = device
 
@@ -221,8 +221,8 @@ class RelationLearner:
         relations = relation_net(relation_pairs).view(-1, args.n_classes)
 
 
-        ## == Similarity test ==================
-        self.cos_sim()
+        # ## == Similarity test ==================
+        # self.cos_sim()
 
 
         ## == Relation-based Acc. ============== 

@@ -118,13 +118,10 @@ if not os.path.exists(args.save):
 print('Defining feature_ext & relation ...')
 feature_ext = MyPretrainedResnet50(args)
 relation_net = MLP(args)
-
 # feature_ext.apply(weights_init)
 # relation_net.apply(weights_init)
-
 feature_ext.to(device)
 relation_net.to(device)
-
 
 # === Print feature_ext layers and params ====
 # print(feature_ext)
@@ -141,6 +138,7 @@ print('Data loaading ...')
 args.data_path = 'data/'
 args.train_file = '{}_train.csv'.format(args.dataset)
 args.test_file = '{}_test.csv'.format(args.dataset)
+args.stream_file = '{}_stream.csv'.format(args.dataset)
 
 ## == training =========================
 if __name__ == '__main__':
