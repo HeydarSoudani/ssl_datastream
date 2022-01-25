@@ -60,7 +60,7 @@ def zeroshot_test(feature_ext,
     relation_net_path = os.path.join(args.save, "relation_net_best.pt")
     try:
       feature_ext.load_state_dict(torch.load(feature_ext_path))
-      relation_net.load_state_dict(torch.load(relation_net_path))
+      # relation_net.load_state_dict(torch.load(relation_net_path))
     except FileNotFoundError: pass
     else:
       print("Load feature_ext from {} and relation_net from {}".format(feature_ext_path, relation_net_path))
@@ -70,7 +70,7 @@ def zeroshot_test(feature_ext,
     relation_net_path = os.path.join(args.save, "relation_net_last.pt")
     try:
       feature_ext.load_state_dict(torch.load(feature_ext_path))
-      relation_net.load_state_dict(torch.load(relation_net_path))
+      # relation_net.load_state_dict(torch.load(relation_net_path))
     except FileNotFoundError: pass
     else:
       print("Load feature_ext from {} and relation_net from {}".format(feature_ext_path, relation_net_path))
