@@ -7,7 +7,7 @@ import time
 from pandas import read_csv
 
 from dataset import SimpleDataset
-
+from samplers.pt_sampler import PtSampler
 
 def zeroshot_test(feature_ext,
                   relation_net,
