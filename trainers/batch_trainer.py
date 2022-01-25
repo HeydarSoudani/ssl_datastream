@@ -3,11 +3,11 @@ from torch.optim import SGD, Adam
 from torch.optim.lr_scheduler import StepLR
 import os
 
-def train(model, train_loader, val_loader, args, device):
+def train(feature_ext, train_loader, val_loader, args, device):
   print('training ...')
   criterion = torch.nn.CrossEntropyLoss()
-  # optim = SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
-  optim = Adam(model.parameters(), lr=args.lr)
+  # optim = SGD(feature_ext.parameters(), lr=args.lr, momentum=args.momentum)
+  optim = Adam(feature_ext.parameters(), lr=args.lr)
   scheduler = StepLR(optim, step_size=args.step_size, gamma=args.gamma)
 
   min_loss = float('inf')
@@ -19,7 +19,7 @@ def train(model, train_loader, val_loader, args, device):
       images, labels = images.to(device), labels.to(device)
       
       optim.zero_grad()
-      outputs, _ = model.forward(images)
+      outputs, _ = feature_ext.forward(images)
       loss = criterion(outputs, labels)
       loss.backward()
       optim.step()
@@ -30,12 +30,12 @@ def train(model, train_loader, val_loader, args, device):
       if (i+1) % args.log_interval == 0:
         with torch.no_grad():
           total_val_loss = 0.0
-          model.eval()
+          feature_ext.eval()
           for j, data in enumerate(val_loader):
             sample, labels = data
             sample, labels = sample.to(device), labels.to(device)
 
-            logits, _ = model.forward(sample)
+            logits, _ = feature_ext.forward(sample)
             loss = criterion(logits, labels)
             loss = loss.mean()
             total_val_loss += loss.item()
@@ -48,7 +48,7 @@ def train(model, train_loader, val_loader, args, device):
           # save best model
           if total_val_loss < min_loss:
             torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_best.pt"))
-            torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_best.pt"))
+            # torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_best.pt"))
             min_loss = total_val_loss
             print("Saving new best model")
     
@@ -57,7 +57,7 @@ def train(model, train_loader, val_loader, args, device):
     
   # save last model
   torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_last.pt"))
-  torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_last.pt"))
+  # torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_last.pt"))
   print("Saving new last model")
 
 
