@@ -42,20 +42,14 @@ def init_learn(
   train_data,
   args, device
 ):
-  ## == Data ============================
-  train_dataloader,\
-    val_dataloader,\
-      known_labels = dataloader_preparation(train_data, [], args)
   
   ## == train ===========================
   train(
     feature_ext,
     relation_net,
     learner,
-    train_dataloader,
-    val_dataloader,
-    known_labels,
+    train_data,
     args, device)
 
   ## == Test ============================
-  init_test(feature_ext, learner, known_labels, args)
+  init_test(feature_ext, learner, args)

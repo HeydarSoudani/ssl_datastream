@@ -221,9 +221,9 @@ class RelationLearner:
     all_labels = []
     with torch.no_grad():
       for j, data in enumerate(dataloader):
-        sample, labels = data
-        sample, labels = sample.to(self.device), labels.to(self.device)
-        _, features = feature_ext.forward(sample)
+        samples, labels = data
+        samples, labels = samples.to(self.device), labels.to(self.device)
+        _, features = feature_ext.forward(samples)
         all_features.append(features)
         all_labels.append(labels)
       

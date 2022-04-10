@@ -1,18 +1,33 @@
 import torch
 from torch.optim import SGD, Adam
 from torch.optim.lr_scheduler import StepLR, OneCycleLR
+from torch.utils.data import DataLoader
 import os
 import time
+
+from dataset import SimpleDataset
+from utils.preparation import dataloader_preparation, transforms_preparation
 
 
 def train(
   feature_ext,
   relation_net,
   learner,
-  train_loader,
-  val_loader,
-  known_labels,
+  train_data,
   args, device):
+
+  ## == train_loader For calculate PTs ====
+  if args.use_transform:
+    train_transform, _ = transforms_preparation()
+    train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
+  else:
+    train_dataset = SimpleDataset(train_data, args)
+  train_loader = DataLoader(dataset=train_dataset, batch_size=8, shuffle=False)
+
+  ## == Loaders for training ==============
+  train_dataloader,\
+    val_dataloader,\
+      known_labels = dataloader_preparation(train_data, [], args)
   
   feature_ext_optim = Adam(feature_ext.parameters(), lr=args.lr)
   feature_ext_scheduler = StepLR(feature_ext_optim, step_size=args.step_size, gamma=args.gamma)
@@ -25,7 +40,7 @@ def train(
     for epoch_item in range(args.start_epoch, args.epochs):
       print('=== Epoch %d ===' % epoch_item)
       train_loss = 0.
-      trainloader = iter(train_loader)
+      trainloader = iter(train_dataloader)
 
       for miteration_item in range(args.meta_iteration):
         batch = next(trainloader)
@@ -50,7 +65,7 @@ def train(
           val_loss_total, val_acc_total = learner.evaluate(
             feature_ext,
             relation_net,
-            val_loader,
+            val_dataloader,
             known_labels,
             args)
 
