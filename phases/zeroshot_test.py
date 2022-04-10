@@ -104,7 +104,7 @@ def zeroshot_test(feature_ext,
         print("[stream %5d]: %d, %2d, %7.4f, (%5.2f, %5.2f, %5.2f, %5.2f, %5.2f)"%
           (
             i+1, test_labels.item(), predict_labels, prob,
-            tuple(np.around(np.array(relations.data.tolist()),2))
+            tuple(list(np.around(np.array(relations.data.tolist()),2)))
           )
         )
     
