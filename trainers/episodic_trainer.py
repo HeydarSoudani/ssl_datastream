@@ -41,15 +41,17 @@ def train(
 
         ## == validation ==============
         if (miteration_item + 1) % args.log_interval == 0:
-          
           train_loss_total = train_loss / args.log_interval
           train_loss = 0.
+
+          learner.calculate_prototypes(feature_ext, train_loader)
 
           # evalute on val_dataset
           val_loss_total, val_acc_total = learner.evaluate(
             feature_ext,
             relation_net,
             val_loader,
+            known_labels,
             args)
 
           # print losses
@@ -72,6 +74,8 @@ def train(
   
   except KeyboardInterrupt:
     print('skipping training')
+  
+  learner.calculate_prototypes(feature_ext, train_loader)
 
   # save last model
   torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_last.pt"))

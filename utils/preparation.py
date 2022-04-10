@@ -5,7 +5,6 @@ from dataset import SimpleDataset
 from samplers.pt_sampler import PtSampler
 from samplers.relation_sampler import RelationSampler
 
-
 def dataloader_preparation(train_data, val_data, args):
   train_transform, test_transform = transforms_preparation()
 
@@ -38,6 +37,11 @@ def dataloader_preparation(train_data, val_data, args):
     shuffle=False
   )
   return train_dataloader, val_dataloader, known_labels
+
+def test_dataloader_preparation(data, args):
+  _, test_transform = transforms_preparation()
+  val_dataset = SimpleDataset(data, args, transforms=test_transform)
+
 
 def transforms_preparation():
   train_transform = transforms.Compose([

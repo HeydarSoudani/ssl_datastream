@@ -35,7 +35,7 @@ class MyPretrainedResnet50(nn.Module):
         state_dict[k[len("module.encoder_q."):]] = state_dict[k]
       # delete renamed or unused k
       del state_dict[k]
-    print(list(state_dict.keys()))
+    # print(list(state_dict.keys()))
     self.pretrained.load_state_dict(state_dict, strict=False)
 
     ## == Pretrain with DINO
