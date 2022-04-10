@@ -39,7 +39,8 @@ def zeroshot_test(feature_ext,
       relation_net.load_state_dict(torch.load(relation_net_path))
     except FileNotFoundError: pass
     else:
-      print("Load feature_ext from {} and relation_net from {}".format(feature_ext_path, relation_net_path))
+      print("Load feature_ext from {}".format(feature_ext_path))
+      print("Load relation_net from {}".format(relation_net_path))
   
   elif args.which_model == 'last':
     feature_ext_path = os.path.join(args.save, "feature_ext_last.pt")
@@ -49,10 +50,11 @@ def zeroshot_test(feature_ext,
       relation_net.load_state_dict(torch.load(relation_net_path))
     except FileNotFoundError: pass
     else:
-      print("Load feature_ext from {} and relation_net from {}".format(feature_ext_path, relation_net_path))
-
+      print("Load feature_ext from {}".format(feature_ext_path))
+      print("Load relation_net from {}".format(relation_net_path))
   ##
   known_labels = torch.tensor(list(known_labels), device=device)
+  print('Known labels: {}'.format(known_labels))
   pts = torch.cat(
     [learner.prototypes[l.item()] for l in known_labels]
   )
@@ -61,7 +63,7 @@ def zeroshot_test(feature_ext,
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      if i > 2000:
+      if i < 2000:
         # Suppoer set
         sup_features = pts # if use prototypes
         sup_labels = known_labels
@@ -100,7 +102,7 @@ def zeroshot_test(feature_ext,
 
         print("[stream %5d]: %d, %2d"%
           (i+1, test_labels.item(), predict_labels))
-        print(relations.data)
+        print(relations.data.item())
     
 
 
