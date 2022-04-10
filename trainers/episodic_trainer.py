@@ -29,9 +29,9 @@ def train(
     val_dataloader,\
       known_labels = dataloader_preparation(train_data, [], args)
   
-  feature_ext_optim = Adam(feature_ext.parameters(), lr=args.lr)
+  feature_ext_optim = Adam(feature_ext.parameters(), lr=args.lr_ext)
   feature_ext_scheduler = StepLR(feature_ext_optim, step_size=args.step_size, gamma=args.gamma)
-  relation_net_optim = Adam(relation_net.parameters(), lr=args.lr)
+  relation_net_optim = Adam(relation_net.parameters(), lr=args.lr_rel)
   relation_net_scheduler = StepLR(relation_net_optim, step_size=args.step_size, gamma=args.gamma)
 
   global_time = time.time()

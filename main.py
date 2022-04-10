@@ -68,7 +68,8 @@ parser.add_argument('--shot', type=int, default=5, help='')
 parser.add_argument('--query_num', type=int, default=5, help='')
 
 # Optimizer
-parser.add_argument('--lr', type=float, default=0.001, help='')
+parser.add_argument('--lr_ext', type=float, default=0.001, help='')
+parser.add_argument('--lr_rel', type=float, default=0.001, help='')
 parser.add_argument('--momentum', type=float, default=0.9, help='')
 parser.add_argument('--wd', type=float, default=0.0005, help='')  #l2 regularization
 parser.add_argument('--grad_clip', type=float, default=5.0)
