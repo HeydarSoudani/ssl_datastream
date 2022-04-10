@@ -53,7 +53,8 @@ def zeroshot_test(feature_ext,
     else:
       print("Load feature_ext from {}".format(feature_ext_path))
       print("Load relation_net from {}".format(relation_net_path))
-  ##
+  
+  ## == Create prototypes and known_labels ============
   known_labels = torch.tensor(list(known_labels), device=device)
   print('Known labels: {}'.format(known_labels))
   pts = torch.cat(
@@ -89,7 +90,6 @@ def zeroshot_test(feature_ext,
         relations = relation_net(relation_pairs).view(-1, args.ways)
         prob, predict_labels = torch.max(relations.data, 1)
         
-
         ## == Similarity score ==================
         # print(torch.split(relation_pairs, 2, dim=1))
         # print(len(torch.split(relation_pairs, args.feature_dim, dim=1)))
@@ -100,17 +100,10 @@ def zeroshot_test(feature_ext,
         # print("true label: {}".format(test_labels.data))
         # print("predict label: {}".format(predict_labels.data))
         # print(sim_score.data)
-        print(tuple(np.around(np.array(relations.data.tolist()),2)[0]))
-        print("[stream %5d]: %d, %2d, %7.4f, (%s)"%
-          (
-            i+1, test_labels.item(), predict_labels, prob,
-            tuple(np.around(np.array(relations.data.tolist()),2)[0])
-          )
-        )
+        
+        # if (i+1) % 1000 == 0:
+        print("[stream %5d]: %d, %2d, %7.4f, %s"%(
+          i+1, test_labels.item(), predict_labels, prob,
+          tuple(np.around(np.array(relations.data.tolist()),2)[0])
+        ))
     
-
-
-
-      
-
-
