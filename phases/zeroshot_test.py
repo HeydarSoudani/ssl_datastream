@@ -102,7 +102,7 @@ def zeroshot_test(feature_ext,
 
         print("[stream %5d]: %d, %2d, %7.4f"%
           (i+1, test_labels.item(), predict_labels, prob))
-        print(relations.data.tolist())
+        print([round(elem, 2) for elem in relations.data.tolist()])
     
 
 
