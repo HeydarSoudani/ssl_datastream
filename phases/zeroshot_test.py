@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 import os
 import time
+import numpy as np
 from pandas import read_csv
 
 from dataset import SimpleDataset
@@ -102,7 +103,7 @@ def zeroshot_test(feature_ext,
 
         print("[stream %5d]: %d, %2d, %7.4f"%
           (i+1, test_labels.item(), predict_labels, prob))
-        print([round(elem, 2) for elem in relations.data.tolist()])
+        print(list(np.around(np.array(relations.data.tolist()),2)))
     
 
 
