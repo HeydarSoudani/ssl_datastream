@@ -6,13 +6,17 @@ from samplers.pt_sampler import PtSampler
 from samplers.relation_sampler import RelationSampler
 
 def dataloader_preparation(train_data, val_data, args):
-  train_transform, test_transform = transforms_preparation()
-
   if val_data == []:
     train_data, val_data = train_test_split(train_data, test_size=0.1)
   
-  train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
-  val_dataset = SimpleDataset(val_data, args, transforms=test_transform)
+  if args.use_transform:
+    train_transform, test_transform = transforms_preparation()
+    train_dataset = SimpleDataset(train_data, args, transforms=train_transform)
+    val_dataset = SimpleDataset(val_data, args, transforms=test_transform)
+  else:
+    train_dataset = SimpleDataset(train_data, args)
+    val_dataset = SimpleDataset(val_data, args)
+
   known_labels = train_dataset.label_set
   print('Known labels: {}'.format(known_labels))
 

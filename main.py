@@ -83,6 +83,9 @@ parser.add_argument('--n_classes', type=int, default=10)
 parser.add_argument('--dropout', type=float, default=0.5)
 parser.add_argument('--beta', type=float, default=1.0)
 
+# Transform
+parser.add_argument('--use_transform', action='store_true')
+
 # Device and Randomness
 parser.add_argument('--cuda', action='store_true',help='use CUDA')
 parser.add_argument('--seed', type=int, default=2, help='')
