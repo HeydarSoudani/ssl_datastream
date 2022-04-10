@@ -100,11 +100,11 @@ def zeroshot_test(feature_ext,
         # print("true label: {}".format(test_labels.data))
         # print("predict label: {}".format(predict_labels.data))
         # print(sim_score.data)
-        print(tuple(np.around(np.array(relations.data.tolist()),2)))
+        print(tuple(np.around(np.array(relations.data.tolist()),2)[0]))
         print("[stream %5d]: %d, %2d, %7.4f, (%7.4f, %7.4f, %7.4f, %7.4f, %7.4f)"%
           (
             i+1, test_labels.item(), predict_labels, prob,
-            tuple(np.around(np.array(relations.data.tolist()),2))
+            tuple(np.around(np.array(relations.data.tolist()),2)[0])
           )
         )
     
