@@ -23,8 +23,8 @@ class RelationLearner:
   def __init__(self, device, args):
     
     # self.criterion = criterion
-    self.criterion = torch.nn.CrossEntropyLoss()
-    # self.criterion = torch.nn.MSELoss()
+    # self.criterion = torch.nn.CrossEntropyLoss()
+    self.criterion = torch.nn.MSELoss()
     # self.cos_sim = nn.CosineSimilarity(dim=1, eps=1e-6)
     # self.criterion = W_MSE()
     self.device = device
@@ -111,7 +111,9 @@ class RelationLearner:
     
     ### === Loss & backward ============================
     quety_label_pressed = torch.tensor([(unique_label == l).nonzero(as_tuple=True)[0] for l in query_labels], device=self.device)
-    query_labels_onehot = torch.zeros(args.ways*args.query_num, args.ways).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
+    query_labels_onehot = torch.zeros(
+      args.ways*args.query_num, args.ways
+    ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
 
     loss = self.criterion(relations, query_labels_onehot)
