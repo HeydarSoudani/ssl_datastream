@@ -159,7 +159,6 @@ class RelationLearner:
         ## == Relation Network preparation =====
         sup_features = pts # if use prototypes
         sup_labels = known_labels
-        print(sup_features.shape)
 
         sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
         sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
