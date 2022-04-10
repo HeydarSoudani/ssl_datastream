@@ -183,7 +183,7 @@ class RelationLearner:
         # self.cos_sim()
 
         ## == Relation-based Acc. ================
-        _,predict_labels = torch.max(relations.data, 1)
+        _, predict_labels = torch.max(relations.data, 1)
         total += test_labels.size(0)
         correct += (predict_labels == test_labels).sum().item()
 

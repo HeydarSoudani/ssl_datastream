@@ -152,11 +152,15 @@ train_data = read_csv(
   sep=',',
   header=None).values
 
+## == Get base labels ==================
+base_labels = SimpleDataset(train_data, args).label_set
+
 ## == training =========================
 if __name__ == '__main__':
   ## == Batch learning ===
   if args.phase == 'batch_learn':
     batch_learn(feature_ext, args, device)
+  
   ## == Data Stream ======
   elif args.phase == 'init_learn':
     init_learn(
@@ -164,9 +168,16 @@ if __name__ == '__main__':
       relation_net,
       learner,
       train_data,
-      args, device)
+      args, device
+    )
   elif args.phase == 'zeroshot_test':
-    zeroshot_test(feature_ext, relation_net, args, device)
+    zeroshot_test(
+      feature_ext,
+      relation_net,
+      learner,
+      base_labels,
+      args, device
+    )
 
 ## == visualization ===================
 # visualization(model, test_dataset, args, device)

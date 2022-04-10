@@ -52,4 +52,4 @@ def init_learn(
     args, device)
 
   ## == Test ============================
-  init_test(feature_ext, learner, args)
+  # init_test(feature_ext, learner, args)
