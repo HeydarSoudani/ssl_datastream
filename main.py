@@ -144,6 +144,11 @@ args.train_file = '{}_train.csv'.format(args.dataset)
 args.test_file = '{}_test.csv'.format(args.dataset)
 args.stream_file = '{}_stream.csv'.format(args.dataset)
 
+train_data = read_csv(
+  os.path.join(args.data_path, args.train_file),
+  sep=',',
+  header=None).values
+
 ## == training =========================
 if __name__ == '__main__':
   ## == Batch learning ===
@@ -151,7 +156,12 @@ if __name__ == '__main__':
     batch_learn(feature_ext, args, device)
   ## == Data Stream ======
   elif args.phase == 'init_learn':
-    init_learn(feature_ext, relation_net, learner, args, device)
+    init_learn(
+      feature_ext,
+      relation_net,
+      learner,
+      train_data,
+      args, device)
   elif args.phase == 'zeroshot_test':
     zeroshot_test(feature_ext, relation_net, args, device)
 
