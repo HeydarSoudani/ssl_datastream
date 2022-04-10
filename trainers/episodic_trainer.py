@@ -12,8 +12,7 @@ def train(
   train_loader,
   val_loader,
   known_labels,
-  args,
-  device):
+  args, device):
   
   feature_ext_optim = Adam(feature_ext.parameters(), lr=args.lr)
   feature_ext_scheduler = StepLR(feature_ext_optim, step_size=args.step_size, gamma=args.gamma)

@@ -21,26 +21,26 @@ class MyPretrainedResnet50(nn.Module):
     super(MyPretrainedResnet50, self).__init__()
     
     ## == Pretrain with SSL model MoCo V2
-    # if not os.path.exists('moco_v2_800ep_pretrain.pth.tar'):
-    #   subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
-    # PATH = 'moco_v2_800ep_pretrain.pth.tar'
-    # checkpoint = torch.load(PATH)
-    # state_dict = checkpoint['state_dict']
-    # self.pretrained = models.resnet50()
+    if not os.path.exists('moco_v2_800ep_pretrain.pth.tar'):
+      subprocess.call("wget https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar", shell=True)
+    PATH = 'moco_v2_800ep_pretrain.pth.tar'
+    checkpoint = torch.load(PATH)
+    state_dict = checkpoint['state_dict']
+    self.pretrained = models.resnet50()
 
-    # for k in list(state_dict.keys()):
-    #   # retain only encoder_q up to before the embedding layer
-    #   if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
-    #     # remove prefix
-    #     state_dict[k[len("module.encoder_q."):]] = state_dict[k]
-    #   # delete renamed or unused k
-    #   del state_dict[k]
-    # print(list(state_dict.keys()))
-    # self.pretrained.load_state_dict(state_dict, strict=False)
+    for k in list(state_dict.keys()):
+      # retain only encoder_q up to before the embedding layer
+      if k.startswith('module.encoder_q') and not k.startswith('module.encoder_q.fc'):
+        # remove prefix
+        state_dict[k[len("module.encoder_q."):]] = state_dict[k]
+      # delete renamed or unused k
+      del state_dict[k]
+    print(list(state_dict.keys()))
+    self.pretrained.load_state_dict(state_dict, strict=False)
 
     ## == Pretrain with DINO
-    self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
-    self.pretrained.fc = nn.Linear(2048, 1000)
+    # self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
+    # self.pretrained.fc = nn.Linear(2048, 1000)
 
     # == Pretrain with torch
     # self.pretrained = models.resnet50(pretrained=True)

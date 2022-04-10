@@ -112,7 +112,7 @@ if __name__ == '__main__':
   train_data = np.array(train_data) #(6000, 785)
   
   np.random.shuffle(train_data)
-  print('train data: {}'.format(train_data.shape))
+  print('train_data size: {}'.format(train_data.shape))
   pd.DataFrame(train_data).to_csv(os.path.join(args.saved, args.train_file),
     header=None,
     index=None

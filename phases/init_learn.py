@@ -35,7 +35,6 @@ def init_test(feature_ext, learner, known_labels, args):
   print('Dist: {}, Cls: {}'.format(acc_dis, acc_cls))
   
 
-
 def init_learn(
   feature_ext,
   relation_net,
@@ -48,7 +47,6 @@ def init_learn(
     val_dataloader,\
       known_labels = dataloader_preparation(train_data, [], args)
   
-
   ## == train ===========================
   train(
     feature_ext,
