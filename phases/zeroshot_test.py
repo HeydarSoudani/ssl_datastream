@@ -86,7 +86,7 @@ def zeroshot_test(feature_ext,
 
         ## == Relation Network ===================
         relations = relation_net(relation_pairs).view(-1, args.ways)
-        _, predict_labels = torch.max(relations.data, 1)
+        prob, predict_labels = torch.max(relations.data, 1)
         
 
         ## == Similarity score ==================
@@ -100,9 +100,9 @@ def zeroshot_test(feature_ext,
         # print("predict label: {}".format(predict_labels.data))
         # print(sim_score.data)
 
-        print("[stream %5d]: %d, %2d"%
-          (i+1, test_labels.item(), predict_labels))
-        print(relations.data.item())
+        print("[stream %5d]: %d, %2d, %7.4f"%
+          (i+1, test_labels.item(), predict_labels, prob))
+        print(relations.data)
     
 
 
