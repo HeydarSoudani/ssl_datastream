@@ -20,7 +20,14 @@ def dataloader_preparation(train_data, val_data, args):
   known_labels = train_dataset.label_set
   print('Known labels: {}'.format(known_labels))
 
-  sampler = PtSampler(
+  # sampler = PtSampler(
+  #   train_dataset,
+  #   n_way=args.ways,
+  #   n_shot=args.shot,
+  #   n_query=args.query_num,
+  #   n_tasks=args.meta_iteration
+  # )
+  sampler = RelationSampler(
     train_dataset,
     n_way=args.ways,
     n_shot=args.shot,
