@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 import random
-from pytorch_metric_learning import distances, losses, miners
+# from pytorch_metric_learning import distances, losses, miners
 
 def compute_prototypes(
   support_features: torch.Tensor, support_labels: torch.Tensor
