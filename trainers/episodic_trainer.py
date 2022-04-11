@@ -87,10 +87,10 @@ def train(
           global_time = time.time()
     
           # save best feature_ext
-          if val_loss_total < min_loss:
+          if val_loss < min_loss:
             torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_best.pt"))
             torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_best.pt"))
-            min_loss = val_loss_total
+            min_loss = val_loss
             print("= ...New best model saved")
           
         if args.scheduler:
