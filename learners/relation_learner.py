@@ -71,8 +71,8 @@ class RelationLearner:
 
     support_features_ext = support_features.unsqueeze(0).repeat(args.ways*args.query_num, 1, 1)  #[w*q, w*sh, 128]
     support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, w*q, 128]
-    support_labels = support_labels.unsqueeze(0).repeat(args.ways*args.query_num, 1)      #[w*q, w*sh]
-    support_labels_ext = torch.transpose(support_labels, 0, 1)                                #[w*sh, w*q]
+    support_labels_ext = support_labels.unsqueeze(0).repeat(args.ways*args.query_num, 1)      #[w*q, w*sh]
+    support_labels_ext = torch.transpose(support_labels_ext, 0, 1)                                #[w*sh, w*q]
 
     # print('support_labels: {}'.format(support_labels))
     # print('support_labels: {}'.format(support_labels.shape))
@@ -104,8 +104,8 @@ class RelationLearner:
     ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
 
-    print(support_outputs.shape)
-    print(support_labels.shape)
+    # print(support_outputs.shape)
+    # print(support_labels.shape)
     loss = self.criterion(
       support_outputs,
       support_labels,
