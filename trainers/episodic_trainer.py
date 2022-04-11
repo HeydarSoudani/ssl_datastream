@@ -1,6 +1,5 @@
-import torch
 from torch.optim import SGD, Adam
-from torch.optim.lr_scheduler import StepLR, OneCycleLR
+from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 import os
 import time
@@ -50,13 +49,6 @@ def train(
       for miteration_item in range(args.meta_iteration):
         batch = next(trainloader)
         
-        # loss = learner.train(
-        #   feature_ext,
-        #   relation_net,
-        #   batch,
-        #   feature_ext_optim, relation_net_optim,
-        #   miteration_item,
-        #   args)
         ext_loss = learner.feature_ext_train(
           feature_ext,
           batch,
@@ -65,19 +57,19 @@ def train(
         train_ext_loss += ext_loss
 
         ## == train relation ==========
-        if (miteration_item + 1) % args.relation_train_interval == 0:
-          # learner.calculate_prototypes(feature_ext, train_loader)
-          learner.calculate_examplers(feature_ext, train_dataset)
+        # if (miteration_item + 1) % args.relation_train_interval == 0:
+        #   # learner.calculate_prototypes(feature_ext, train_loader)
+        #   learner.calculate_examplers(feature_ext, train_dataset)
 
-          rel_loss = learner.relation_train(
-            feature_ext,
-            relation_net,
-            batch,
-            feature_ext_optim,
-            relation_net_optim,
-            known_labels,
-            args)
-          train_rel_loss += rel_loss
+        #   rel_loss = learner.relation_train(
+        #     feature_ext,
+        #     relation_net,
+        #     batch,
+        #     feature_ext_optim,
+        #     relation_net_optim,
+        #     known_labels,
+        #     args)
+        #   train_rel_loss += rel_loss
           
         ## == validation ==============
         if (miteration_item + 1) % args.log_interval == 0:
@@ -109,7 +101,6 @@ def train(
             val_cw_acc,
             val_ow_acc
           ))
-          # print('===============================================')
           global_time = time.time()
     
           # save best feature_ext

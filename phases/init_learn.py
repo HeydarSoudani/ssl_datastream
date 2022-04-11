@@ -1,4 +1,3 @@
-import torch
 from torch.utils.data import DataLoader
 import os
 from pandas import read_csv
@@ -45,7 +44,6 @@ def init_test(
                                         known_labels,
                                         args)
   print('CW: {}, OW: {}'.format(cw_acc, ow_acc))
-  
 
 def init_learn(
   feature_ext,
@@ -55,7 +53,6 @@ def init_learn(
   known_labels,
   args, device
 ):
-  
   ## == train ===========================
   train(
     feature_ext,
