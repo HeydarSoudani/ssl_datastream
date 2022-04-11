@@ -91,6 +91,7 @@ class RelationLearner:
     query_labels = query_labels.to(self.device)
 
     ### === Feature extractor ==========================
+    print(query_images.shape)
     _, query_features = feature_ext.forward(query_images)
     support_features = pts
     support_labels = known_labels
