@@ -80,8 +80,8 @@ class RelationLearner:
     )
     known_labels = torch.tensor(list(known_labels), device=self.device)
 
-    print(known_labels)
-    print(self.prototypes)
+    # print(known_labels)
+    # print(self.prototypes)
 
     ### === Prepare data ===============================
     _, _, query_images, query_labels = batch
@@ -91,7 +91,7 @@ class RelationLearner:
     query_labels = query_labels.to(self.device)
 
     ### === Feature extractor ==========================
-    print(query_images.shape)
+    # print(query_images.shape)
     _, query_features = feature_ext.forward(query_images)
     support_features = pts
     support_labels = known_labels
