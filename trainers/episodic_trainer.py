@@ -39,25 +39,47 @@ def train(
   try:
     for epoch_item in range(args.start_epoch, args.epochs):
       print('=== Epoch %d ===' % epoch_item)
-      train_loss = 0.
+      train_ext_loss = 0.
+      train_rel_loss = 0.
+      
       trainloader = iter(train_dataloader)
 
       for miteration_item in range(args.meta_iteration):
         batch = next(trainloader)
         
-        loss = learner.train(
+        # loss = learner.train(
+        #   feature_ext,
+        #   relation_net,
+        #   batch,
+        #   feature_ext_optim, relation_net_optim,
+        #   miteration_item,
+        #   args)
+        ext_loss = learner.feature_ext_train(
           feature_ext,
-          relation_net,
           batch,
-          feature_ext_optim, relation_net_optim,
-          miteration_item,
+          feature_ext_optim,
           args)
-        train_loss += loss
+        train_ext_loss += ext_loss
 
+        ## == train relation ==========
+        if (miteration_item + 1) % args.relation_train_interval == 0:
+          learner.calculate_prototypes(feature_ext, train_loader)
+
+          rel_loss = learner.relation_train(
+            feature_ext,
+            relation_net,
+            batch,
+            feature_ext_optim,
+            relation_net_optim,
+            known_labels,
+            args)
+          train_rel_loss += rel_loss
+          
         ## == validation ==============
         if (miteration_item + 1) % args.log_interval == 0:
-          train_loss_total = train_loss / args.log_interval
-          train_loss = 0.
+          train_loss_total = (train_ext_loss+train_rel_loss) / args.log_interval
+          train_ext_loss = 0.
+          train_rel_loss = 0.
 
           learner.calculate_prototypes(feature_ext, train_loader)
 
@@ -70,8 +92,7 @@ def train(
               relation_net,
               val_dataloader,
               known_labels,
-              args
-            )
+              args)
 
           # print losses
           # print('scheduler: %f' % (optim.param_groups[0]['lr']))

@@ -60,8 +60,9 @@ parser.add_argument(
 parser.add_argument('--start_epoch', type=int, default=0, help='')
 parser.add_argument('--epochs', type=int, default=2, help='')
 parser.add_argument('--batch_size', type=int, default=16, help='')
-parser.add_argument('--log_interval', type=int, default=5, help='must be less then meta_iteration parameter')
 parser.add_argument('--meta_iteration', type=int, default=3000, help='')
+parser.add_argument('--log_interval', type=int, default=5, help='must be less then meta_iteration parameter')
+parser.add_argument('--relation_train_interval', type=int, default=5, help='must be less then meta_iteration parameter')
 
 # Sampler
 parser.add_argument('--ways', type=int, default=5, help='')
@@ -135,7 +136,7 @@ relation_net = MLP(args)
 # relation_net.apply(weights_init)
 feature_ext.to(device)
 relation_net.to(device)
-print(feature_ext)
+# print(feature_ext)
 
 # === Print feature_ext layers and params ====
 # print(feature_ext)

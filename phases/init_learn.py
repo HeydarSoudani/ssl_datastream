@@ -65,9 +65,9 @@ def init_learn(
     args, device)
 
   ## == Test ============================
-  init_test(
-    feature_ext,
-    relation_net,
-    learner,
-    known_labels,
-    args)
+  # init_test(
+  #   feature_ext,
+  #   relation_net,
+  #   learner,
+  #   known_labels,
+  #   args)
