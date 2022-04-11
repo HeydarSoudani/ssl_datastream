@@ -38,7 +38,6 @@ class RelationLearner:
     support_images, support_labels, _, _ = batch
     support_images = support_images.reshape(-1, *support_images.shape[2:])
     support_labels = support_labels.flatten()
-    print(support_labels)
 
     support_images = support_images.to(self.device)
     support_labels = support_labels.to(self.device)
@@ -116,7 +115,7 @@ class RelationLearner:
     ### === Loss & backward ============================
     quety_label_pressed = torch.tensor([(known_labels == l).nonzero(as_tuple=True)[0] for l in query_labels], device=self.device)
     query_labels_onehot = torch.zeros(
-      n_known*args.query_num, n_known
+      args.query_num, n_known
     ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
 
