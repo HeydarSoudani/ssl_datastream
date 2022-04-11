@@ -16,7 +16,7 @@ def init_test(
 ):
   _, test_transform = transforms_preparation()
   test_data = read_csv(
-    os.path.join(args.data_path, args.stream_file),
+    os.path.join(args.data_path, args.test_file),
     sep=',',
     header=None).values
   test_dataset = SimpleDataset(test_data, args, transforms=test_transform)
@@ -62,9 +62,9 @@ def init_learn(
     args, device)
 
   ## == Test ============================
-  # init_test(
-  #   feature_ext,
-  #   relation_net,
-  #   learner,
-  #   known_labels,
-  #   args)
+  init_test(
+    feature_ext,
+    relation_net,
+    learner,
+    known_labels,
+    args)

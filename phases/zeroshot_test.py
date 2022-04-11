@@ -71,7 +71,6 @@ def zeroshot_test(feature_ext,
         ## == Similarity score ==================
         all_sim = F.cosine_similarity(test_features.unsqueeze(1), sup_features, dim=-1)
         prob, predict_labels = torch.max(all_sim, 1)
-        print(all_sim)
         # if (i+1) % 1000 == 0:
         print("[stream %5d]: %d, %2d, %7.4f, %s"%(
           i+1, test_labels.item(), predict_labels, prob,

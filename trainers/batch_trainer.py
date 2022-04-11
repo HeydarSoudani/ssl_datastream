@@ -3,7 +3,13 @@ from torch.optim import SGD, Adam
 from torch.optim.lr_scheduler import StepLR
 import os
 
-def train(feature_ext, train_loader, val_loader, args, device):
+def train(
+  feature_ext,
+  relation_net,
+  train_loader,
+  val_loader,
+  args, device):
+
   print('training ...')
   criterion = torch.nn.CrossEntropyLoss()
   # optim = SGD(feature_ext.parameters(), lr=args.lr, momentum=args.momentum)
