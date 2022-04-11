@@ -14,6 +14,7 @@ from pandas import read_csv
 from model import MyPretrainedResnet50, MLP, weights_init
 from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
+from losses import TotalLoss
 from phases.batch_learn import batch_learn
 from phases.init_learn import init_learn
 from phases.zeroshot_test import zeroshot_test
@@ -139,7 +140,8 @@ print('Total params: {}'.format(total_params))
 print('Total trainable params: {}'.format(total_params_trainable))
 
 ## == Load learner =====================
-learner = RelationLearner(device, args)
+criterion = TotalLoss(args)
+learner = RelationLearner(criterion, device, args)
 
 ## == load data ========================
 print('Data loaading ...')

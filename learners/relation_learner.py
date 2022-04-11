@@ -1,12 +1,4 @@
 import torch
-from torch.utils.data import DataLoader
-from torchvision.transforms import transforms
-import os
-import time
-from pandas import read_csv
-
-from dataset import SimpleDataset
-from samplers.pt_sampler import PtSampler
 
 def compute_prototypes(
   support_features: torch.Tensor, support_labels: torch.Tensor
@@ -20,13 +12,8 @@ def compute_prototypes(
   )
 
 class RelationLearner:
-  def __init__(self, device, args):
-    
-    # self.criterion = criterion
-    # self.criterion = torch.nn.CrossEntropyLoss()
-    self.criterion = torch.nn.MSELoss()
-    # self.cos_sim = nn.CosineSimilarity(dim=1, eps=1e-6)
-    # self.criterion = W_MSE()
+  def __init__(self, criterion, device, args):
+    self.criterion = criterion
     self.device = device
 
     self.prototypes = {
@@ -116,7 +103,8 @@ class RelationLearner:
     ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
 
-    loss = self.criterion(relations, query_labels_onehot)
+    loss = self.criterion(outputs, query_labels, relations, query_labels_onehot)
+    # loss = self.criterion(relations, query_labels_onehot)
     # loss = self.criterion(outputs, labels) # For normal training
     loss.backward()
 
