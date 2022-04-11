@@ -193,9 +193,9 @@ class RelationLearner:
         test_outputs, test_features = feature_ext.forward(test_images)
 
         ## == Relation Network preparation =====
-        sup_features_ext = sup_features.unsqueeze(0).repeat(n_known*args.query_num, 1, 1)  #[q, nc*sh, 128]
+        sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
         sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
-        sup_labels_ext = sup_labels.unsqueeze(0).repeat(n_known*args.query_num, 1)             #[q, nc*sh]
+        sup_labels_ext = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
         sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                             #[nc*sh, q]
 
         test_features_ext = test_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1) #[nc*sh, q, 128]
@@ -227,7 +227,7 @@ class RelationLearner:
         
         ## == loss ================================
         test_labels_onehot = torch.zeros(
-          n_known*args.query_num, n_known
+          args.query_num, n_known
         ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
         loss = self.relation_criterion(relations.data, test_labels_onehot)
         # loss = self.criterion(test_outputs, test_labels) # For just CW
