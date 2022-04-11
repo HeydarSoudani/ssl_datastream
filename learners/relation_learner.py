@@ -104,6 +104,8 @@ class RelationLearner:
     ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
 
+    print(support_outputs.shape)
+    print(support_labels.shape)
     loss = self.criterion(
       support_outputs,
       support_labels,
