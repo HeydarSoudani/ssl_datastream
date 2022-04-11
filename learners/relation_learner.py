@@ -80,6 +80,9 @@ class RelationLearner:
     )
     known_labels = torch.tensor(list(known_labels), device=self.device)
 
+    print(known_labels)
+    print(self.prototypes)
+
     ### === Prepare data ===============================
     _, _, query_images, query_labels = batch
     query_images = query_images.reshape(-1, *query_images.shape[2:])
