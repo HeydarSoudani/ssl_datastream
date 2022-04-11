@@ -35,7 +35,8 @@ class TotalLoss(nn.Module):
     self.lambda_2 = args.lambda_2
     
     self.relation_loss = torch.nn.MSELoss()
-    self.metric_loss = losses.NTXentLoss(temperature=0.07)
+    self.metric_loss = torch.nn.CrossEntropyLoss()
+    # self.metric_loss = losses.NTXentLoss(temperature=0.07)
     # self.metric = losses.ContrastiveLoss(pos_margin=0, neg_margin=1)
     # self.metric = losses.TripletMarginLoss(margin=0.05)
 
