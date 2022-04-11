@@ -62,17 +62,27 @@ def train(
           learner.calculate_prototypes(feature_ext, train_loader)
 
           # evalute on val_dataset
-          val_loss_total, val_acc_total = learner.evaluate(
-            feature_ext,
-            relation_net,
-            val_dataloader,
-            known_labels,
-            args)
+          val_loss, \
+          val_cw_acc, \
+          val_ow_acc \
+            = learner.evaluate(
+              feature_ext,
+              relation_net,
+              val_dataloader,
+              known_labels,
+              args
+            )
 
           # print losses
           # print('scheduler: %f' % (optim.param_groups[0]['lr']))
-          print('=== Time: %.2f, Step: %d, Train Loss: %f, Val Loss: %f, Val Acc: %f' % (
-            time.time()-global_time, miteration_item+1, train_loss_total, val_loss_total, val_acc_total))
+          print('=== Time: %.2f, Step: %d, TrainLoss: %f, ValLoss: %f, Val-CwAcc: %f, Val-OwAcc: %f' % (
+            time.time()-global_time,
+            miteration_item+1,
+            train_loss_total,
+            val_loss,
+            val_cw_acc,
+            val_ow_acc
+          ))
           # print('===============================================')
           global_time = time.time()
     

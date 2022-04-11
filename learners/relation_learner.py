@@ -138,8 +138,10 @@ class RelationLearner:
     )
 
     total_loss = 0.0
-    total = 0.0
-    correct = 0.0 
+    cw_total = 0.0
+    cw_correct = 0.0
+    ow_total = 0.0
+    ow_correct = 0.0 
 
     with torch.no_grad():
       for i, batch in enumerate(val_loader):
@@ -149,7 +151,7 @@ class RelationLearner:
         test_labels = test_labels.flatten()
         test_images, test_labels = test_images.to(self.device), test_labels.to(self.device)
 
-        logits, test_features = feature_ext.forward(test_images)
+        test_outputs, test_features = feature_ext.forward(test_images)
 
         ## == Relation Network preparation =====
         sup_features = pts # if use prototypes
@@ -178,29 +180,29 @@ class RelationLearner:
         # self.cos_sim()
 
         ## == Relation-based Acc. ================
-        _, predict_labels = torch.max(relations.data, 1)
-        total += test_labels.size(0)
-        correct += (predict_labels == test_labels).sum().item()
+        _, ow_predict_labels = torch.max(relations.data, 1)
+        ow_total += test_labels.size(0)
+        ow_correct += (ow_predict_labels == test_labels).sum().item()
 
-        ## == loss ===============================
+        ## == Close World Acc. ====================
+        _, cw_predict_labels = torch.max(test_outputs, 1)
+        cw_total += test_labels.size(0)
+        cw_correct += (cw_predict_labels == test_labels).sum().item()
+        
+        ## == loss ================================
         test_labels_onehot = torch.zeros(
           args.query_num, args.ways
         ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
         loss = criterion(relations.data, test_labels_onehot)
         
-        ## == Cls-based Acc. =====================
-        # _, predicted = torch.max(logits, 1)
-        # total_cls_acc += test_labels.size(0)
-        # correct_cls_acc += (predicted == test_labels).sum().item()
-        # loss = self.criterion(logits, test_labels)
-
         loss = loss.mean()
         total_loss += loss.item()
 
       total_loss /= len(val_loader)
-      total_acc = correct / total  
+      total_cw_acc = cw_correct / cw_total
+      total_ow_acc = ow_correct / ow_total  
 
-      return total_loss, total_acc
+      return total_loss, total_cw_acc, total_ow_acc
 
   def calculate_prototypes(self, feature_ext, dataloader):
     feature_ext.eval()
