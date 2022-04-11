@@ -1,6 +1,4 @@
 import random
-from typing import List, Tuple
-
 import torch
 from torch.utils.data import Sampler, Dataset
 

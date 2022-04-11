@@ -1,4 +1,5 @@
 import torch
+import random
 
 def compute_prototypes(
   support_features: torch.Tensor, support_labels: torch.Tensor
@@ -22,7 +23,10 @@ class RelationLearner:
       l: torch.zeros(1, args.feature_dim, device=device)
       for l in range(args.n_classes)
     }
-    self.exampler = None
+    self.examplers = {
+      l: torch.zeros(1, args.feature_dim, device=device)
+      for l in range(args.n_classes)
+    }
   
   def feature_ext_train(
     self,
@@ -154,6 +158,24 @@ class RelationLearner:
       for idx, l in enumerate(unique_labels):
         self.prototypes[l.item()] = pts[idx].reshape(1, -1).detach()
 
+  def calculate_examplers(self, feature_ext, dataset, k=1):
+    
+    self.items_per_label = {}
+    for item, label in enumerate(dataset.labels):
+      if label in self.items_per_label.keys():
+        self.items_per_label[label].append(item)
+      else:
+        self.items_per_label[label] = [item]
+    
+    for label in self.items_per_label.keys():
+      self.examplers[label] = torch.cat(
+        [
+          feature_ext(dataset[idx])[0]
+          for idx in random.sample(self.items_per_label[label], k)
+        ]
+      )
+
+
   def evaluate(self,
     feature_ext,
     relation_net,
@@ -175,9 +197,13 @@ class RelationLearner:
     n_known = len(known_labels)
     pt_per_class = 1
     known_labels = torch.tensor(list(known_labels), device=self.device)
-    pts = torch.cat(
-      [self.prototypes[l.item()] for l in known_labels]
+    # sup_features = torch.cat(
+    #   [self.prototypes[l.item()] for l in known_labels]
+    # )
+    sup_features = torch.cat(
+      [self.examplers[l.item()] for l in known_labels]
     )
+    # print(sup_features.shape)
 
     with torch.no_grad():
       for i, batch in enumerate(val_loader):
@@ -188,7 +214,6 @@ class RelationLearner:
         test_images, test_labels = test_images.to(self.device), test_labels.to(self.device)
 
         ### === Feature extractor ==============
-        sup_features = pts # if use prototypes
         sup_labels = known_labels
         test_outputs, test_features = feature_ext.forward(test_images)
 

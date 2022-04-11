@@ -63,7 +63,8 @@ def train(
 
         ## == train relation ==========
         if (miteration_item + 1) % args.relation_train_interval == 0:
-          learner.calculate_prototypes(feature_ext, train_loader)
+          # learner.calculate_prototypes(feature_ext, train_loader)
+          learner.calculate_examplers(feature_ext, train_dataset)
 
           rel_loss = learner.relation_train(
             feature_ext,
@@ -82,6 +83,7 @@ def train(
           train_rel_loss = 0.
 
           learner.calculate_prototypes(feature_ext, train_loader)
+          learner.calculate_examplers(feature_ext, train_dataset)
 
           # evalute on val_dataset
           val_loss, \
