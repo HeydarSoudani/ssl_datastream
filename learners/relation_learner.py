@@ -62,55 +62,55 @@ class RelationLearner:
     outputs, features = feature_ext.forward(images)
     
     ### === Concat features ============================
-    support_features = features[:support_len] #[w*s, 128]
-    query_features = features[support_len:]   #[w*q, 128]
+    # support_features = features[:support_len] #[w*s, 128]
+    # query_features = features[support_len:]   #[w*q, 128]
     support_outputs = outputs[:support_len]
 
-    # print('support_features: {}'.format(support_features.shape))
-    # print('query_features: {}'.format(query_features.shape))
+    # # print('support_features: {}'.format(support_features.shape))
+    # # print('query_features: {}'.format(query_features.shape))
 
-    support_features_ext = support_features.unsqueeze(0).repeat(args.ways*args.query_num, 1, 1)  #[w*q, w*sh, 128]
-    support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, w*q, 128]
-    support_labels_ext = support_labels.unsqueeze(0).repeat(args.ways*args.query_num, 1)      #[w*q, w*sh]
-    support_labels_ext = torch.transpose(support_labels_ext, 0, 1)                                #[w*sh, w*q]
+    # support_features_ext = support_features.unsqueeze(0).repeat(args.ways*args.query_num, 1, 1)  #[w*q, w*sh, 128]
+    # support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, w*q, 128]
+    # support_labels_ext = support_labels.unsqueeze(0).repeat(args.ways*args.query_num, 1)      #[w*q, w*sh]
+    # support_labels_ext = torch.transpose(support_labels_ext, 0, 1)                                #[w*sh, w*q]
 
-    # print('support_labels: {}'.format(support_labels))
-    # print('support_labels: {}'.format(support_labels.shape))
+    # # print('support_labels: {}'.format(support_labels))
+    # # print('support_labels: {}'.format(support_labels.shape))
 
-    query_features_ext = query_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, w*q, 128]
-    query_labels_ext = query_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)            #[w*sh, w*q]
+    # query_features_ext = query_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, w*q, 128]
+    # query_labels_ext = query_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)            #[w*sh, w*q]
 
-    # print('query_labels: {}'.format(query_labels))
-    # print('query_labels: {}'.format(query_labels.shape))
+    # # print('query_labels: {}'.format(query_labels))
+    # # print('query_labels: {}'.format(query_labels.shape))
 
-    relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[w*q*w*sh, 256]
-    relarion_labels = torch.zeros(args.ways*args.shot, args.ways*args.query_num).to(self.device)
-    relarion_labels = torch.where(
-      support_labels_ext!=query_labels_ext,
-      relarion_labels,
-      torch.tensor(1.).to(self.device)
-    ).view(-1,1)
+    # relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[w*q*w*sh, 256]
+    # relarion_labels = torch.zeros(args.ways*args.shot, args.ways*args.query_num).to(self.device)
+    # relarion_labels = torch.where(
+    #   support_labels_ext!=query_labels_ext,
+    #   relarion_labels,
+    #   torch.tensor(1.).to(self.device)
+    # ).view(-1,1)
 
-    # print(relarion_labels)
-    # print(relarion_labels.shape)
+    # # print(relarion_labels)
+    # # print(relarion_labels.shape)
 
     ### === Relation Network ===========================
-    relations = relation_net(relation_pairs).view(-1,args.ways) #[w, w*q]
+    # relations = relation_net(relation_pairs).view(-1,args.ways) #[w, w*q]
     
     ### === Loss & backward ============================
-    quety_label_pressed = torch.tensor([(unique_label == l).nonzero(as_tuple=True)[0] for l in query_labels], device=self.device)
-    query_labels_onehot = torch.zeros(
-      args.ways*args.query_num, args.ways
-    ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
-    query_labels_onehot = query_labels_onehot.to(self.device)
+    # quety_label_pressed = torch.tensor([(unique_label == l).nonzero(as_tuple=True)[0] for l in query_labels], device=self.device)
+    # query_labels_onehot = torch.zeros(
+    #   args.ways*args.query_num, args.ways
+    # ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
+    # query_labels_onehot = query_labels_onehot.to(self.device)
 
     # print(support_outputs.shape)
     # print(support_labels.shape)
     loss = self.criterion(
       support_outputs,
       support_labels,
-      relations,
-      query_labels_onehot
+      # relations,
+      # query_labels_onehot
     )
     loss.backward()
 
@@ -154,35 +154,35 @@ class RelationLearner:
         test_outputs, test_features = feature_ext.forward(test_images)
 
         ## == Relation Network preparation =====
-        sup_features = pts # if use prototypes
-        sup_labels = known_labels
+        # sup_features = pts # if use prototypes
+        # sup_labels = known_labels
 
-        sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
-        sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
-        sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
-        sup_labels = torch.transpose(sup_labels, 0, 1)                             #[nc*sh, q]
+        # sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
+        # sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
+        # sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
+        # sup_labels = torch.transpose(sup_labels, 0, 1)                             #[nc*sh, q]
 
-        test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[nc*sh, q, 128]
-        test_labels_ext = test_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)        #[nc*sh, q]
+        # test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[nc*sh, q, 128]
+        # test_labels_ext = test_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)        #[nc*sh, q]
 
-        relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
-        relarion_labels = torch.zeros(args.ways*args.shot, args.query_num).to(self.device)
-        relarion_labels = torch.where(
-          sup_labels!=test_labels_ext,
-          relarion_labels,
-          torch.tensor(1.).to(self.device)
-        ).view(-1,1)
+        # relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
+        # relarion_labels = torch.zeros(args.ways*args.shot, args.query_num).to(self.device)
+        # relarion_labels = torch.where(
+        #   sup_labels!=test_labels_ext,
+        #   relarion_labels,
+        #   torch.tensor(1.).to(self.device)
+        # ).view(-1,1)
         
         ## == Relation Network ===================
-        relations = relation_net(relation_pairs).view(-1, args.ways)
+        # relations = relation_net(relation_pairs).view(-1, args.ways)
 
         # ## == Similarity test ==================
         # self.cos_sim()
 
         ## == Relation-based Acc. ================
-        _, ow_predict_labels = torch.max(relations.data, 1)
-        ow_total += test_labels.size(0)
-        ow_correct += (ow_predict_labels == test_labels).sum().item()
+        # _, ow_predict_labels = torch.max(relations.data, 1)
+        # ow_total += test_labels.size(0)
+        # ow_correct += (ow_predict_labels == test_labels).sum().item()
 
         ## == Close World Acc. ====================
         _, cw_predict_labels = torch.max(test_outputs, 1)
@@ -190,17 +190,18 @@ class RelationLearner:
         cw_correct += (cw_predict_labels == test_labels).sum().item()
         
         ## == loss ================================
-        test_labels_onehot = torch.zeros(
-          args.query_num, args.ways
-        ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
-        loss = criterion(relations.data, test_labels_onehot)
+        # test_labels_onehot = torch.zeros(
+        #   args.query_num, args.ways
+        # ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
+        # loss = criterion(relations.data, test_labels_onehot)
         
-        loss = loss.mean()
-        total_loss += loss.item()
+        # loss = loss.mean()
+        # total_loss += loss.item()
 
-      total_loss /= len(val_loader)
+      # total_loss /= len(val_loader)
       total_cw_acc = cw_correct / cw_total
-      total_ow_acc = ow_correct / ow_total  
+      # total_ow_acc = ow_correct / ow_total  
+      total_ow_acc = 0
 
       return total_loss, total_cw_acc, total_ow_acc
 
