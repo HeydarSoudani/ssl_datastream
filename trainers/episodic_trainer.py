@@ -88,8 +88,8 @@ def train(
     
           # save best feature_ext
           if val_loss < min_loss:
-            torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_best.pt"))
-            torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_best.pt"))
+            feature_ext.save(os.path.join(args.save, "feature_ext_best.pt"))
+            relation_net.save(os.path.join(args.save, "relation_net_best.pt"))
             min_loss = val_loss
             print("= ...New best model saved")
           
@@ -103,7 +103,7 @@ def train(
   learner.calculate_prototypes(feature_ext, train_loader)
 
   # save last model
-  torch.save(feature_ext.state_dict(), os.path.join(args.save, "feature_ext_last.pt"))
-  torch.save(relation_net.state_dict(), os.path.join(args.save, "relation_net_last.pt"))
+  feature_ext.save(os.path.join(args.save, "feature_ext_last.pt"))
+  relation_net.save(os.path.join(args.save, "relation_net_last.pt"))
   print("= ...last model saved")
 

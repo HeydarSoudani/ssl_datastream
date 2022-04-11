@@ -33,10 +33,7 @@ def init_test(
 
   print('Test with best model ...')
   try:
-    feature_ext.load_state_dict(
-      os.path.join(args.save, "feature_ext_best.pt"),
-      strict=False
-    )
+    feature_ext.load(os.path.join(args.save, "feature_ext_best.pt"))
   except FileNotFoundError: pass
   else:
     print("Load model from {}".format(

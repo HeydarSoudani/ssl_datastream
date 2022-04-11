@@ -48,13 +48,13 @@ class MyPretrainedResnet50(nn.Module):
     ## == Without Pretrain model
     # self.pretrained = models.resnet50(pretrained=False)
 
-    # # freeze all layers but the last fc
-    # for name, param in self.pretrained.named_parameters():
-    #   # print(name)
-    #   # print(not name.startswith(('layer4', 'fc')))
-    #   # if name not in ['fc.weight', 'fc.bias']:
-    #   if not name.startswith(('layer4', 'fc')):
-    #     param.requires_grad = False
+    # freeze all layers but the last fc
+    for name, param in self.pretrained.named_parameters():
+      # print(name)
+      # print(not name.startswith(('layer4', 'fc')))
+      # if name not in ['fc.weight', 'fc.bias']:
+      if not name.startswith(('layer4', 'fc')):
+        param.requires_grad = False
     
     self.fc1 = nn.Linear(1000, args.feature_dim)
     self.dp1 = nn.Dropout(args.dropout)
@@ -75,6 +75,12 @@ class MyPretrainedResnet50(nn.Module):
     out = self.fc2(self.dp2(features))
     return out, features
 
+  def save(self, path):
+    torch.save(self.state_dict(), path)
+
+  def load(self, path):
+    state_dict = torch.load(path)
+    self.load_state_dict(state_dict)
 
 class MLP(nn.Module):
   def __init__(self, args, bias=True):
@@ -88,6 +94,13 @@ class MLP(nn.Module):
     out = self.dp1(out)
     out = torch.sigmoid(self.fc2(out))
     return out
+  
+  def save(self, path):
+    torch.save(self.state_dict(), path)
+
+  def load(self, path):
+    state_dict = torch.load(path)
+    self.load_state_dict(state_dict)
 
 
 def weights_init(m):
