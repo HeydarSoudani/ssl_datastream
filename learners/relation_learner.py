@@ -79,10 +79,15 @@ class RelationLearner:
     ### === Prepare PTs ================================
     n_known = len(known_labels)
     pt_per_class = 1
-    pts = torch.cat(
-      [self.prototypes[l.item()] for l in known_labels]
+    # support_features = torch.cat(
+    #   [self.prototypes[l.item()] for l in known_labels]
+    # )
+    support_features = torch.cat(
+      [self.examplers[l.item()] for l in known_labels]
     )
+    print(support_features.shape)
     known_labels = torch.tensor(list(known_labels), device=self.device)
+    support_labels = known_labels
 
     ### === Prepare data ===============================
     _, _, query_images, query_labels = batch
@@ -93,8 +98,6 @@ class RelationLearner:
 
     ### === Feature extractor ==========================
     _, query_features = feature_ext.forward(query_images)
-    support_features = pts
-    support_labels = known_labels
 
     ### === Concat features ============================
     support_features_ext = support_features.unsqueeze(0).repeat(args.query_num, 1, 1)     #[q, w*sh, 128]
@@ -136,7 +139,6 @@ class RelationLearner:
 
     return loss.detach().item()
 
-
   def calculate_prototypes(self, feature_ext, dataloader):
     feature_ext.eval()
     
@@ -171,14 +173,12 @@ class RelationLearner:
 
     with torch.no_grad():
       for label in self.items_per_label.keys():
-        print(dataset[10][0].unsqueeze(0).to(self.device).shape)
         self.examplers[label] = torch.cat(
           [
             feature_ext(dataset[idx][0].unsqueeze(0).to(self.device))[0]
             for idx in random.sample(self.items_per_label[label], k)
           ]
         )
-
 
   def evaluate(self,
     feature_ext,
