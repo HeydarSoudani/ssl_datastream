@@ -85,7 +85,7 @@ class RelationLearner:
 
     ### === Prepare data ===============================
     _, _, query_images, query_labels = batch
-    query_images = query_images.reshape(-1, *query_images.shape[2:])
+    query_images = query_images.reshape(-1, *query_images.shape[1:])
     query_labels = query_labels.flatten()
     query_images = query_images.to(self.device)
     query_labels = query_labels.to(self.device)
