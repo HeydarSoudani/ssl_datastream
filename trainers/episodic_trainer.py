@@ -77,8 +77,8 @@ def train(
           train_ext_loss = 0.
           train_rel_loss = 0.
 
-          # learner.calculate_prototypes(feature_ext, train_loader)
-          learner.calculate_examplers(feature_ext, train_dataset)
+          learner.calculate_prototypes(feature_ext, train_loader)
+          # learner.calculate_examplers(feature_ext, train_dataset)
 
           # evalute on val_dataset
           val_loss, \
@@ -117,8 +117,8 @@ def train(
   except KeyboardInterrupt:
     print('skipping training')
   
-  # learner.calculate_prototypes(feature_ext, train_loader)
-  learner.calculate_examplers(feature_ext, train_dataset)
+  learner.calculate_prototypes(feature_ext, train_loader)
+  # learner.calculate_examplers(feature_ext, train_dataset)
 
   # save last model
   feature_ext.save(os.path.join(args.save, "feature_ext_last.pt"))

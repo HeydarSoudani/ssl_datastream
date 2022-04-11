@@ -33,12 +33,12 @@ def zeroshot_test(feature_ext,
   pt_per_class = 1
   known_labels = torch.tensor(list(known_labels), device=device)
   print('Known labels: {}'.format(known_labels))
-  # sup_features = torch.cat(
-  #   [learner.prototypes[l.item()] for l in known_labels]
-  # )
   sup_features = torch.cat(
-    [learner.examplers[l.item()] for l in known_labels]
+    [learner.prototypes[l.item()] for l in known_labels]
   )
+  # sup_features = torch.cat(
+  #   [learner.examplers[l.item()] for l in known_labels]
+  # )
   sup_labels = known_labels
 
   ## == 

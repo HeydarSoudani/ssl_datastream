@@ -200,12 +200,12 @@ class RelationLearner:
     n_known = len(known_labels)
     pt_per_class = 1
     known_labels = torch.tensor(list(known_labels), device=self.device)
-    # sup_features = torch.cat(
-    #   [self.prototypes[l.item()] for l in known_labels]
-    # )
     sup_features = torch.cat(
-      [self.examplers[l.item()] for l in known_labels]
+      [self.prototypes[l.item()] for l in known_labels]
     )
+    # sup_features = torch.cat(
+    #   [self.examplers[l.item()] for l in known_labels]
+    # )
     sup_labels = known_labels
 
     with torch.no_grad():
