@@ -72,7 +72,7 @@ class RelationLearner:
     support_features_ext = support_features.unsqueeze(0).repeat(args.ways*args.query_num, 1, 1)  #[w*q, w*sh, 128]
     support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, w*q, 128]
     support_labels = support_labels.unsqueeze(0).repeat(args.ways*args.query_num, 1)      #[w*q, w*sh]
-    support_labels = torch.transpose(support_labels, 0, 1)                                #[w*sh, w*q]
+    support_labels_ext = torch.transpose(support_labels, 0, 1)                                #[w*sh, w*q]
 
     # print('support_labels: {}'.format(support_labels))
     # print('support_labels: {}'.format(support_labels.shape))
@@ -86,7 +86,7 @@ class RelationLearner:
     relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[w*q*w*sh, 256]
     relarion_labels = torch.zeros(args.ways*args.shot, args.ways*args.query_num).to(self.device)
     relarion_labels = torch.where(
-      support_labels!=query_labels_ext,
+      support_labels_ext!=query_labels_ext,
       relarion_labels,
       torch.tensor(1.).to(self.device)
     ).view(-1,1)
