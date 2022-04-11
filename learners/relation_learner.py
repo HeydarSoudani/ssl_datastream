@@ -64,6 +64,7 @@ class RelationLearner:
     ### === Concat features ============================
     support_features = features[:support_len] #[w*s, 128]
     query_features = features[support_len:]   #[w*q, 128]
+    support_outputs = outputs[:support_len]
 
     # print('support_features: {}'.format(support_features.shape))
     # print('query_features: {}'.format(query_features.shape))
@@ -103,9 +104,12 @@ class RelationLearner:
     ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
 
-    loss = self.criterion(outputs, query_labels, relations, query_labels_onehot)
-    # loss = self.criterion(relations, query_labels_onehot)
-    # loss = self.criterion(outputs, labels) # For normal training
+    loss = self.criterion(
+      support_outputs,
+      support_labels,
+      relations,
+      query_labels_onehot
+    )
     loss.backward()
 
     torch.nn.utils.clip_grad_norm_(feature_ext.parameters(), args.grad_clip)
