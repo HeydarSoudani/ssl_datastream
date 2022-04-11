@@ -55,6 +55,8 @@ def zeroshot_test(feature_ext,
       print("Load relation_net from {}".format(relation_net_path))
   
   ## == Create prototypes and known_labels ============
+  n_known = len(known_labels)
+  pt_per_class = 1
   known_labels = torch.tensor(list(known_labels), device=device)
   print('Known labels: {}'.format(known_labels))
   pts = torch.cat(
@@ -79,10 +81,11 @@ def zeroshot_test(feature_ext,
         ## == Relation Network preparation =====
         sup_features_ext = sup_features.unsqueeze(0).repeat(stream_batch, 1, 1)  #[q, w*sh, 128]
         sup_features_ext = torch.transpose(sup_features_ext, 0, 1)               #[w*sh, q, 128]
-        sup_labels = sup_labels.unsqueeze(0).repeat(stream_batch, 1)             #[q, w*sh]
-        sup_labels = torch.transpose(sup_labels, 0, 1)                           #[w*sh, q]
-        test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[w*sh, q, 128]
-        test_labels_ext = test_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)        #[w*sh, q]
+        sup_labels_ext = sup_labels.unsqueeze(0).repeat(stream_batch, 1)             #[q, w*sh]
+        sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)
+                                   #[w*sh, q]
+        test_features_ext = test_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1) #[w*sh, q, 128]
+        test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)        #[w*sh, q]
         
         relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
 

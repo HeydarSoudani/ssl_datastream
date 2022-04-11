@@ -220,12 +220,12 @@ class RelationLearner:
         ow_total += test_labels.size(0)
         ow_correct += (ow_predict_labels == test_labels).sum().item()
 
-        ## == Close World Acc. ====================
+        ## == Close World Acc. =================
         _, cw_predict_labels = torch.max(test_outputs, 1)
         cw_total += test_labels.size(0)
         cw_correct += (cw_predict_labels == test_labels).sum().item()
         
-        ## == loss ================================
+        ## == loss =============================
         test_labels_onehot = torch.zeros(
           args.query_num, n_known
         ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
