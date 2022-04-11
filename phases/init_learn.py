@@ -32,9 +32,16 @@ def init_test(
   print('CW: {}, OW: {}'.format(cw_acc, ow_acc))
 
   print('Test with best model ...')
-  try: feature_ext.load_state_dict(torch.load(args.best_model_path), strict=False)
+  try:
+    feature_ext.load_state_dict(
+      os.path.join(args.save, "feature_ext_best.pt"),
+      strict=False
+    )
   except FileNotFoundError: pass
-  else: print("Load model from {}".format(args.best_model_path))
+  else:
+    print("Load model from {}".format(
+      os.path.join(args.save, "feature_ext_best.pt")
+    ))
   _, cw_acc, ow_acc = learner.evaluate(feature_ext,
                                         relation_net,
                                         test_dataloader,
