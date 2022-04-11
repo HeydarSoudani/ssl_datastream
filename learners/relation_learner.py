@@ -74,6 +74,7 @@ class RelationLearner:
 
     ### === Prepare PTs ================================
     n_known = len(known_labels)
+    pt_per_class = 1
     known_labels = torch.tensor(list(known_labels), device=self.device)
     pts = torch.cat(
       [self.prototypes[l.item()] for l in known_labels]
@@ -97,11 +98,11 @@ class RelationLearner:
     support_labels_ext = support_labels.unsqueeze(0).repeat(n_known*args.query_num, 1)      #[w*q, w*sh]
     support_labels_ext = torch.transpose(support_labels_ext, 0, 1)                                #[w*sh, w*q]
 
-    query_features_ext = query_features.unsqueeze(0).repeat(n_known*args.shot, 1, 1) #[w*sh, w*q, 128]
-    query_labels_ext = query_labels.unsqueeze(0).repeat(n_known*args.shot, 1)            #[w*sh, w*q]
+    query_features_ext = query_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1) #[w*sh, w*q, 128]
+    query_labels_ext = query_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)            #[w*sh, w*q]
 
     relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[w*q*w*sh, 256]
-    relarion_labels = torch.zeros(n_known*args.shot, n_known*args.query_num).to(self.device)
+    relarion_labels = torch.zeros(n_known*pt_per_class, n_known*args.query_num).to(self.device)
     relarion_labels = torch.where(
       support_labels_ext!=query_labels_ext,
       relarion_labels,
@@ -172,6 +173,7 @@ class RelationLearner:
 
     ### === Prepare PTs ================================
     n_known = len(known_labels)
+    pt_per_class = 1
     known_labels = torch.tensor(list(known_labels), device=self.device)
     pts = torch.cat(
       [self.prototypes[l.item()] for l in known_labels]
@@ -196,11 +198,11 @@ class RelationLearner:
         sup_labels_ext = sup_labels.unsqueeze(0).repeat(n_known*args.query_num, 1)             #[q, nc*sh]
         sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                             #[nc*sh, q]
 
-        test_features_ext = test_features.unsqueeze(0).repeat(n_known*args.shot, 1, 1) #[nc*sh, q, 128]
-        test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*args.shot, 1)        #[nc*sh, q]
+        test_features_ext = test_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1) #[nc*sh, q, 128]
+        test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)        #[nc*sh, q]
 
         relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
-        relarion_labels = torch.zeros(n_known*args.shot, args.query_num).to(self.device)
+        relarion_labels = torch.zeros(n_known*pt_per_class, args.query_num).to(self.device)
         relarion_labels = torch.where(
           sup_labels_ext!=test_labels_ext,
           relarion_labels,
