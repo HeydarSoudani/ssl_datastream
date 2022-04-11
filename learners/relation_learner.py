@@ -74,6 +74,7 @@ class RelationLearner:
 
     ### === Prepare PTs ================================
     n_known = len(known_labels)
+    known_labels = torch.tensor(list(known_labels), device=self.device)
     pts = torch.cat(
       [self.prototypes[l.item()] for l in known_labels]
     )
@@ -206,13 +207,13 @@ class RelationLearner:
           torch.tensor(1.).to(self.device)
         ).view(-1,1)
         
-        ## == Relation Network ===================
+        ## == Relation Network =================
         relations = relation_net(relation_pairs).view(-1, n_known)
 
-        # ## == Similarity test ==================
+        # ## == Similarity test ================
         # self.cos_sim()
 
-        ## == Relation-based Acc. ================
+        ## == Relation-based Acc. ==============
         _, ow_predict_labels = torch.max(relations.data, 1)
         ow_total += test_labels.size(0)
         ow_correct += (ow_predict_labels == test_labels).sum().item()
