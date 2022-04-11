@@ -65,6 +65,13 @@ class RelationSampler(Sampler):
       all_labels,
       [self.n_way * self.n_shot, self.n_query]
     )
+
+    support_images = support_images.reshape(
+      (self.n_way, self.n_shot, *support_images.shape[1:])
+    )
+    support_labels = support_labels.reshape(
+      (self.n_way, self.n_shot)
+    )
     
     return (
       support_images,
