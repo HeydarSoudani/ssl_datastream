@@ -42,10 +42,10 @@ class MyPretrainedResnet50(nn.Module):
     # self.pretrained = torch.hub.load('facebookresearch/dino:main', 'dino_resnet50')
     # self.pretrained.fc = nn.Linear(2048, 1000)
 
-    # == Pretrain with torch
+    ## == Pretrain with torch
     self.pretrained = models.resnet50(pretrained=True)
 
-    # == Without Pretrain model
+    ## == Without Pretrain model
     # self.pretrained = models.resnet50(pretrained=False)
 
     # freeze all layers but the last fc

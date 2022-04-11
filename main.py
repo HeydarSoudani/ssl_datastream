@@ -82,7 +82,7 @@ parser.add_argument('--gamma', type=float, default=0.5)
 # Model
 parser.add_argument('--feature_dim', type=int, default=128)
 parser.add_argument('--n_classes', type=int, default=10)
-parser.add_argument('--dropout', type=float, default=0.5)
+parser.add_argument('--dropout', type=float, default=0.1)
 parser.add_argument('--beta', type=float, default=1.0)
 
 # Transform
