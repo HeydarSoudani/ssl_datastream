@@ -24,6 +24,9 @@ def train(
     train_dataset = SimpleDataset(train_data, args)
   train_loader = DataLoader(dataset=train_dataset, batch_size=8, shuffle=False)
 
+  ## == Set in learner ====================
+  learner.set_items_per_label(train_dataset)
+
   ## == Loaders for training ==============
   train_dataloader,\
     val_dataloader,\

@@ -158,18 +158,20 @@ class RelationLearner:
       for idx, l in enumerate(unique_labels):
         self.prototypes[l.item()] = pts[idx].reshape(1, -1).detach()
 
+  def set_items_per_label(self, dataset):
+    self.items_per_label = {}
+    for item, label in enumerate(dataset.labels):
+      if label in self.items_per_label.keys():
+        self.items_per_label[label].append(item)
+      else:
+        self.items_per_label[label] = [item]
+
   def calculate_examplers(self, feature_ext, dataset, k=1):
     feature_ext.eval()
 
     with torch.no_grad():
-      self.items_per_label = {}
-      for item, label in enumerate(dataset.labels):
-        if label in self.items_per_label.keys():
-          self.items_per_label[label].append(item)
-        else:
-          self.items_per_label[label] = [item]
-      
       for label in self.items_per_label.keys():
+        print(dataset[10][0].to(self.device).shape)
         self.examplers[label] = torch.cat(
           [
             feature_ext(dataset[idx][0].to(self.device))[0]
