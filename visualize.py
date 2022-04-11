@@ -28,6 +28,7 @@ def tsne_plot(features, labels, file_name='tsne'):
 
   plt.savefig('{}.png'.format(file_name))
   plt.show()
+  print('Done!')
 
 
 def pca_plot(features, labels, file_name='pca'):
@@ -47,6 +48,7 @@ def pca_plot(features, labels, file_name='pca'):
 
   plt.savefig('{}.png'.format(file_name))
   plt.show()
+  print('Done!')
 
 
 def visualization(model, dataset, args, device):

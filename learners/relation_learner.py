@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 import random
+from pytorch_metric_learning import distances, losses, miners
 
 def compute_prototypes(
   support_features: torch.Tensor, support_labels: torch.Tensor
@@ -15,7 +16,9 @@ def compute_prototypes(
 
 class RelationLearner:
   def __init__(self, device, args):
-    self.metric_criterion = torch.nn.CrossEntropyLoss()
+    # self.metric_criterion = torch.nn.CrossEntropyLoss()
+    self.metric_criterion = losses.TripletMarginLoss(margin=0.05)
+
     self.relation_criterion = torch.nn.MSELoss()
     self.device = device
 
