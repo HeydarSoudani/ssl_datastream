@@ -88,6 +88,10 @@ parser.add_argument('--beta', type=float, default=1.0)
 # Transform
 parser.add_argument('--use_transform', action='store_true')
 
+# Loss function
+parser.add_argument("--lambda_1", type=float, default=1.0, help="Metric Coefficien in loss function")
+parser.add_argument("--lambda_2", type=float, default=1.0, help="relation Coefficient in loss function")
+
 # Device and Randomness
 parser.add_argument('--cuda', action='store_true',help='use CUDA')
 parser.add_argument('--seed', type=int, default=2, help='')
