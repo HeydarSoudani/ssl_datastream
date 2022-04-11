@@ -25,9 +25,7 @@ parser.add_argument(
     'zeroshot_test',
     'stream_learn',
     'zeroshot_test_base',
-    'batch_incremental_learn',
-    'episodic_incremental_learn',
-    'plot'
+    'visualization'
   ],
   default='plot',
   help='')
@@ -179,9 +177,14 @@ if __name__ == '__main__':
       base_labels,
       args, device
     )
-
-## == visualization ===================
-# visualization(model, test_dataset, args, device)
+  ## == visualization ===== 
+  elif args.phase == 'visualization':
+    stream_data = read_csv(
+      os.path.join(args.data_path, args.stream_file),
+      sep=',',
+      header=None).values
+    stream_dataset = SimpleDataset(stream_data, args)
+    visualization(feature_ext, stream_dataset, args, device)
 
 
 

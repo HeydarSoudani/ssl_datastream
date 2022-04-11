@@ -93,13 +93,13 @@ def train(
 
           # print losses
           # print('scheduler: %f' % (optim.param_groups[0]['lr']))
-          print('=== Time: %.2f, Step: %d, TrainLoss: %f, ValLoss: %f, Val-CwAcc: %f, Val-OwAcc: %f' % (
+          print('=== Time: %.2f, Step: %d, TrainLoss: %f, ValLoss: %f, Val-CwAcc: %.2f, Val-OwAcc: %.2f' % (
             time.time()-global_time,
             miteration_item+1,
             train_loss_total,
             val_loss,
-            val_cw_acc,
-            val_ow_acc
+            val_cw_acc*100,
+            val_ow_acc*100
           ))
           global_time = time.time()
     
