@@ -67,7 +67,7 @@ def zeroshot_test(feature_ext,
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      if i < 2000:
+      if i < 200:
         
         # Query set
         test_images, test_labels = batch

@@ -246,7 +246,9 @@ class RelationLearner:
 
         ## == Similarity test ================
         all_sim = F.cosine_similarity(test_features.unsqueeze(1), sup_features, dim=-1)
-        print(all_sim.shape)
+        _, ow_predict_labels = torch.max(all_sim, 1)
+        ow_total += test_labels.size(0)
+        ow_correct += (ow_predict_labels == test_labels).sum().item()
 
         ## == Close World Acc. =================
         _, cw_predict_labels = torch.max(test_outputs, 1)
@@ -265,8 +267,8 @@ class RelationLearner:
 
       total_loss /= len(val_loader)
       total_cw_acc = cw_correct / cw_total
-      # total_ow_acc = ow_correct / ow_total  
-      total_ow_acc = 0
+      total_ow_acc = ow_correct / ow_total  
+      # total_ow_acc = 0
 
       return total_loss, total_cw_acc, total_ow_acc
 
