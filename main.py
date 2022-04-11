@@ -135,6 +135,7 @@ relation_net = MLP(args)
 # relation_net.apply(weights_init)
 feature_ext.to(device)
 relation_net.to(device)
+print(feature_ext)
 
 # === Print feature_ext layers and params ====
 # print(feature_ext)
