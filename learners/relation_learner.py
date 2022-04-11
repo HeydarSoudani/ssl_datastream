@@ -94,12 +94,12 @@ class RelationLearner:
 
     ### === Concat features ============================
     support_features_ext = support_features.unsqueeze(0).repeat(n_known*args.query_num, 1, 1)  #[w*q, w*sh, 128]
-    support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, w*q, 128]
-    support_labels_ext = support_labels.unsqueeze(0).repeat(n_known*args.query_num, 1)      #[w*q, w*sh]
-    support_labels_ext = torch.transpose(support_labels_ext, 0, 1)                                #[w*sh, w*q]
+    support_features_ext = torch.transpose(support_features_ext, 0, 1)                         #[w*sh, w*q, 128]
+    support_labels_ext = support_labels.unsqueeze(0).repeat(n_known*args.query_num, 1)         #[w*q, w*sh]
+    support_labels_ext = torch.transpose(support_labels_ext, 0, 1)                             #[w*sh, w*q]
 
-    query_features_ext = query_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1) #[w*sh, w*q, 128]
-    query_labels_ext = query_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)            #[w*sh, w*q]
+    query_features_ext = query_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1)        #[w*sh, w*q, 128]
+    query_labels_ext = query_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)               #[w*sh, w*q]
 
     relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[w*q*w*sh, 256]
     relarion_labels = torch.zeros(n_known*pt_per_class, n_known*args.query_num).to(self.device)
