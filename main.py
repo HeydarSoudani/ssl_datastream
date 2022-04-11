@@ -176,6 +176,7 @@ if __name__ == '__main__':
       relation_net,
       learner,
       train_data,
+      base_labels,
       args, device
     )
   elif args.phase == 'zeroshot_test':

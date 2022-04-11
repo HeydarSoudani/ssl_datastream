@@ -8,7 +8,13 @@ from utils.preparation import dataloader_preparation, transforms_preparation
 from trainers.episodic_trainer import train
 
 
-def init_test(feature_ext, learner, known_labels, args):
+def init_test(
+  feature_ext,
+  relation_net,
+  learner,
+  known_labels,
+  args
+):
   _, test_transform = transforms_preparation()
   test_data = read_csv(
     os.path.join(args.data_path, args.stream_file),
@@ -18,21 +24,23 @@ def init_test(feature_ext, learner, known_labels, args):
   test_dataloader = DataLoader(dataset=test_dataset, batch_size=8, shuffle=False)
 
   print('Test with last model ...')
-  _, acc_dis, acc_cls = learner.evaluate(feature_ext,
+  _, cw_acc, ow_acc = learner.evaluate(feature_ext,
+                                        relation_net,
                                         test_dataloader,
                                         known_labels,
                                         args)
-  print('Dist: {}, Cls: {}'.format(acc_dis, acc_cls))
+  print('CW: {}, OW: {}'.format(cw_acc, ow_acc))
 
   print('Test with best model ...')
   try: feature_ext.load_state_dict(torch.load(args.best_model_path), strict=False)
   except FileNotFoundError: pass
   else: print("Load model from {}".format(args.best_model_path))
-  _, acc_dis, acc_cls = learner.evaluate(feature_ext,
+  _, cw_acc, ow_acc = learner.evaluate(feature_ext,
+                                        relation_net,
                                         test_dataloader,
                                         known_labels,
                                         args)
-  print('Dist: {}, Cls: {}'.format(acc_dis, acc_cls))
+  print('CW: {}, OW: {}'.format(cw_acc, ow_acc))
   
 
 def init_learn(
@@ -40,6 +48,7 @@ def init_learn(
   relation_net,
   learner,
   train_data,
+  known_labels,
   args, device
 ):
   
@@ -52,4 +61,9 @@ def init_learn(
     args, device)
 
   ## == Test ============================
-  # init_test(feature_ext, learner, args)
+  init_test(
+    feature_ext,
+    relation_net,
+    learner,
+    known_labels,
+    args)
