@@ -33,7 +33,7 @@ class RelationLearner:
     relation_net.train()
 
     feature_ext_optim.zero_grad()
-    relation_net_optim.zero_grad()
+    # relation_net_optim.zero_grad()
 
     ### === Prepare data ===============================
     support_len = args.ways * args.shot 
@@ -115,9 +115,9 @@ class RelationLearner:
     loss.backward()
 
     torch.nn.utils.clip_grad_norm_(feature_ext.parameters(), args.grad_clip)
-    torch.nn.utils.clip_grad_norm_(relation_net.parameters(), args.grad_clip)
+    # torch.nn.utils.clip_grad_norm_(relation_net.parameters(), args.grad_clip)
     feature_ext_optim.step()
-    relation_net_optim.step()
+    # relation_net_optim.step()
 
     return loss.detach().item()
 
