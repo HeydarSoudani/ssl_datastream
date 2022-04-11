@@ -175,7 +175,7 @@ class RelationLearner:
       for label in self.items_per_label.keys():
         self.examplers[label] = torch.cat(
           [
-            feature_ext(dataset[idx][0].unsqueeze(0).to(self.device))[0]
+            feature_ext(dataset[idx][0].unsqueeze(0).to(self.device))[1]
             for idx in random.sample(self.items_per_label[label], k)
           ]
         )
