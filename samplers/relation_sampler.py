@@ -56,16 +56,14 @@ class RelationSampler(Sampler):
   def episodic_collate_fn(self, input_data):
     all_images = torch.cat([x[0].unsqueeze(0) for x in input_data])
     all_labels = torch.tensor([x[1] for x in input_data])
-    print('all_labels')
-    print(all_labels)
-
-    query_images, support_images = torch.split(
+  
+    support_images, query_images = torch.split(
       all_images,
-      [ self.n_query, self.n_way * self.n_shot]
+      [self.n_way * self.n_shot, self.n_query]
     )
-    query_labels, support_labels = torch.split(
+    support_labels, query_labels = torch.split(
       all_labels,
-      [self.n_query, self.n_way * self.n_shot]
+      [self.n_way * self.n_shot, self.n_query]
     )
     
     return (
