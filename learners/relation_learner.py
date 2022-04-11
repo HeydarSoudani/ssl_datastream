@@ -92,6 +92,8 @@ class RelationLearner:
     support_features = pts
     support_labels = known_labels
 
+    print(query_features.shape)
+    print(support_features.shape)
     ### === Concat features ============================
     support_features_ext = support_features.unsqueeze(0).repeat(n_known*args.query_num, 1, 1)  #[w*q, w*sh, 128]
     support_features_ext = torch.transpose(support_features_ext, 0, 1)                         #[w*sh, w*q, 128]
