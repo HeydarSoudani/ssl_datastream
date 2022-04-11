@@ -206,6 +206,7 @@ class RelationLearner:
     sup_features = torch.cat(
       [self.examplers[l.item()] for l in known_labels]
     )
+    sup_labels = known_labels
 
     with torch.no_grad():
       for i, batch in enumerate(val_loader):
@@ -216,7 +217,6 @@ class RelationLearner:
         test_images, test_labels = test_images.to(self.device), test_labels.to(self.device)
 
         ### === Feature extractor ==============
-        sup_labels = known_labels
         test_outputs, test_features = feature_ext.forward(test_images)
 
         # ## == Relation Network preparation =====
@@ -236,19 +236,19 @@ class RelationLearner:
         #   torch.tensor(1.).to(self.device)
         # ).view(-1,1)
         
-        # ## == Relation Network =================
+        # ## == Relation Network ===============
         # relations = relation_net(relation_pairs).view(-1, n_known)
 
-        # ## == Relation-based Acc. ==============
+        # ## == Relation-based Acc. ============
         # _, ow_predict_labels = torch.max(relations.data, 1)
         # ow_total += test_labels.size(0)
         # ow_correct += (ow_predict_labels == test_labels).sum().item()
 
-        ## == Similarity test ================
+        ## == Similarity test ==================
         all_sim = F.cosine_similarity(test_features.unsqueeze(1), sup_features, dim=-1)
         _, ow_predict_labels = torch.max(all_sim, 1)
         ow_total += test_labels.size(0)
-        ow_correct += (ow_predict_labels == test_labels).sum().item()
+        ow_correct += (known_labels[ow_predict_labels] == test_labels).sum().item()
 
         ## == Close World Acc. =================
         _, cw_predict_labels = torch.max(test_outputs, 1)

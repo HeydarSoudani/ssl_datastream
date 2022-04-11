@@ -84,10 +84,8 @@ def visualization(model, dataset, args, device):
 
     # model.layer4[2].bn3.register_forward_hook(get_activation('features'))
     # features = torch.squeeze(activation['features'])
-
+    
     outputs, features = model.forward(support_images)
-    print(features.shape)
-
     features = features.cpu().detach().numpy()
     support_labels = support_labels.cpu().detach().numpy()
 
