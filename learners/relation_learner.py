@@ -194,11 +194,12 @@ class RelationLearner:
         #   args.query_num, args.ways
         # ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
         # loss = criterion(relations.data, test_labels_onehot)
-        
-        # loss = loss.mean()
-        # total_loss += loss.item()
+        loss = self.criterion(test_outputs, test_labels) # For just CW
 
-      # total_loss /= len(val_loader)
+        loss = loss.mean()
+        total_loss += loss.item()
+
+      total_loss /= len(val_loader)
       total_cw_acc = cw_correct / cw_total
       # total_ow_acc = ow_correct / ow_total  
       total_ow_acc = 0
