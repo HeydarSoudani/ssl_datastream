@@ -85,7 +85,6 @@ class RelationLearner:
     support_features = torch.cat(
       [self.examplers[l.item()] for l in known_labels]
     )
-    print(support_features.shape)
     known_labels = torch.tensor(list(known_labels), device=self.device)
     support_labels = known_labels
 
@@ -207,7 +206,6 @@ class RelationLearner:
     sup_features = torch.cat(
       [self.examplers[l.item()] for l in known_labels]
     )
-    # print(sup_features.shape)
 
     with torch.no_grad():
       for i, batch in enumerate(val_loader):
