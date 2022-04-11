@@ -162,17 +162,19 @@ class RelationLearner:
     feature_ext.eval()
     relation_net.eval()
 
-    criterion = torch.nn.MSELoss()
-    known_labels = torch.tensor(list(known_labels), device=self.device)
-    pts = torch.cat(
-      [self.prototypes[l.item()] for l in known_labels]
-    )
-
+    ### === Params =====================================
     total_loss = 0.0
     cw_total = 0.0
     cw_correct = 0.0
     ow_total = 0.0
     ow_correct = 0.0 
+
+    ### === Prepare PTs ================================
+    n_known = len(known_labels)
+    known_labels = torch.tensor(list(known_labels), device=self.device)
+    pts = torch.cat(
+      [self.prototypes[l.item()] for l in known_labels]
+    )
 
     with torch.no_grad():
       for i, batch in enumerate(val_loader):
@@ -182,30 +184,30 @@ class RelationLearner:
         test_labels = test_labels.flatten()
         test_images, test_labels = test_images.to(self.device), test_labels.to(self.device)
 
+        ### === Feature extractor ==============
+        sup_features = pts # if use prototypes
+        sup_labels = known_labels
         test_outputs, test_features = feature_ext.forward(test_images)
 
         ## == Relation Network preparation =====
-        sup_features = pts # if use prototypes
-        sup_labels = known_labels
-
-        sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
+        sup_features_ext = sup_features.unsqueeze(0).repeat(n_known*args.query_num, 1, 1)  #[q, nc*sh, 128]
         sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
-        sup_labels = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
-        sup_labels = torch.transpose(sup_labels, 0, 1)                             #[nc*sh, q]
+        sup_labels_ext = sup_labels.unsqueeze(0).repeat(n_known*args.query_num, 1)             #[q, nc*sh]
+        sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                             #[nc*sh, q]
 
-        test_features_ext = test_features.unsqueeze(0).repeat(args.ways*args.shot, 1, 1) #[nc*sh, q, 128]
-        test_labels_ext = test_labels.unsqueeze(0).repeat(args.ways*args.shot, 1)        #[nc*sh, q]
+        test_features_ext = test_features.unsqueeze(0).repeat(n_known*args.shot, 1, 1) #[nc*sh, q, 128]
+        test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*args.shot, 1)        #[nc*sh, q]
 
         relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
-        relarion_labels = torch.zeros(args.ways*args.shot, args.query_num).to(self.device)
+        relarion_labels = torch.zeros(n_known*args.shot, args.query_num).to(self.device)
         relarion_labels = torch.where(
-          sup_labels!=test_labels_ext,
+          sup_labels_ext!=test_labels_ext,
           relarion_labels,
           torch.tensor(1.).to(self.device)
         ).view(-1,1)
         
         ## == Relation Network ===================
-        relations = relation_net(relation_pairs).view(-1, args.ways)
+        relations = relation_net(relation_pairs).view(-1, n_known)
 
         # ## == Similarity test ==================
         # self.cos_sim()
@@ -222,9 +224,9 @@ class RelationLearner:
         
         ## == loss ================================
         test_labels_onehot = torch.zeros(
-          args.query_num, args.ways
+          n_known*args.query_num, n_known
         ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
-        loss = criterion(relations.data, test_labels_onehot)
+        loss = self.relation_criterion(relations.data, test_labels_onehot)
         # loss = self.criterion(test_outputs, test_labels) # For just CW
 
         loss = loss.mean()
