@@ -131,6 +131,7 @@ class RelationLearner:
     feature_ext.eval()
     relation_net.eval()
 
+    criterion = torch.nn.MSELoss()
     known_labels = torch.tensor(list(known_labels), device=self.device)
     pts = torch.cat(
       [self.prototypes[l.item()] for l in known_labels]
@@ -185,7 +186,7 @@ class RelationLearner:
         test_labels_onehot = torch.zeros(
           args.query_num, args.ways
         ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
-        loss = self.criterion(relations.data, test_labels_onehot)
+        loss = criterion(relations.data, test_labels_onehot)
         
         ## == Cls-based Acc. =====================
         # _, predicted = torch.max(logits, 1)
