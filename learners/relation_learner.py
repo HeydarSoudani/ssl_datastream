@@ -38,6 +38,7 @@ class RelationLearner:
     support_images, support_labels, _, _ = batch
     support_images = support_images.reshape(-1, *support_images.shape[2:])
     support_labels = support_labels.flatten()
+    print(support_labels)
 
     support_images = support_images.to(self.device)
     support_labels = support_labels.to(self.device)
@@ -105,6 +106,7 @@ class RelationLearner:
     support_labels_ext = support_labels.unsqueeze(0).repeat(n_known*args.query_num, 1)         #[w*q, w*sh]
     support_labels_ext = torch.transpose(support_labels_ext, 0, 1)                             #[w*sh, w*q]
 
+    query_features = query_features()
     query_features_ext = query_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1)        #[w*sh, w*q, 128]
     query_labels_ext = query_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)               #[w*sh, w*q]
 
