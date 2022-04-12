@@ -35,16 +35,17 @@ class TotalLoss(nn.Module):
     self.lambda_2 = args.lambda_2
     
     self.relation_loss = torch.nn.MSELoss()
-    self.metric_loss = torch.nn.CrossEntropyLoss()
-    # self.metric_loss = losses.NTXentLoss(temperature=0.07)
+    self.ce_loss = torch.nn.CrossEntropyLoss()
+    self.metric_loss = losses.NTXentLoss(temperature=0.07)
     # self.metric = losses.ContrastiveLoss(pos_margin=0, neg_margin=1)
     # self.metric = losses.TripletMarginLoss(margin=0.05)
 
   def forward(self, outputs, labels, relations, labels_onehot):
   # def forward(self, outputs, labels):
     metric_loss = self.metric_loss(outputs, labels.long())
-    rel_loss = self.relation_loss(relations, labels_onehot)
+    ce_loss = self.ce_loss(outputs, labels.long())
+    # rel_loss = self.relation_loss(relations, labels_onehot)
 
     # return self.lambda_1 * metric_loss
     return self.lambda_1 * metric_loss +\
-           self.lambda_2 * rel_loss
+           self.lambda_2 * ce_loss

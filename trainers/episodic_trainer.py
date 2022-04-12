@@ -77,8 +77,10 @@ def train(
           train_ext_loss = 0.
           train_rel_loss = 0.
 
-          learner.calculate_prototypes(feature_ext, train_loader)
-          # learner.calculate_examplers(feature_ext, train_dataset)
+          if args.rep_approach == 'prototype':
+            learner.calculate_prototypes(feature_ext, train_loader)
+          elif args.rep_approach == 'exampler':
+            learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
 
           # evalute on val_dataset
           val_loss, \
@@ -117,8 +119,10 @@ def train(
   except KeyboardInterrupt:
     print('skipping training')
   
-  learner.calculate_prototypes(feature_ext, train_loader)
-  # learner.calculate_examplers(feature_ext, train_dataset)
+  if args.rep_approach == 'prototype':
+    learner.calculate_prototypes(feature_ext, train_loader)
+  elif args.rep_approach == 'exampler':
+    learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
 
   # save last model
   feature_ext.save(os.path.join(args.save, "feature_ext_last.pt"))

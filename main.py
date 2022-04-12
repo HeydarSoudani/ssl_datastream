@@ -75,6 +75,14 @@ parser.add_argument('--feature_dim', type=int, default=64)
 parser.add_argument('--n_classes', type=int, default=10)
 parser.add_argument('--dropout', type=float, default=0.1)
 parser.add_argument('--beta', type=float, default=1.0)
+parser.add_argument(
+  '--rep_approach',
+  type=str,
+  default='exampler',
+  choices=['exampler, prototype'],
+  help='representation approach to show known classes'
+)
+parser.add_argument('--n_examplers', type=int, default=1)
 
 # Transform
 parser.add_argument('--use_transform', action='store_true')
