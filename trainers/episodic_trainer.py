@@ -43,20 +43,35 @@ def train(
       print('=== Epoch %d ===' % epoch_item)
       train_ext_loss = 0.
       train_rel_loss = 0.
+      train_loss = 0.
       
       trainloader = iter(train_dataloader)
 
       for miteration_item in range(args.meta_iteration):
         batch = next(trainloader)
         
-        ext_loss = learner.feature_ext_train(
+        ## == End-to-End training ===================
+        loss = learner.together_train(
           feature_ext,
+          relation_net,
           batch,
           feature_ext_optim,
+          relation_net_optim,
+          miteration_item,
+          known_labels,
           args)
-        train_ext_loss += ext_loss
+        train_loss += loss
 
-        ## == train relation ==========
+        ### == Seperate training =====================
+        ## = Feature extraction ===
+        # ext_loss = learner.feature_ext_train(
+        #   feature_ext,
+        #   batch,
+        #   feature_ext_optim,
+        #   args)
+        # train_ext_loss += ext_loss
+
+        ## = train relation =======
         # if (miteration_item + 1) % args.relation_train_interval == 0:
         #   # learner.calculate_prototypes(feature_ext, train_loader)
         #   learner.calculate_examplers(feature_ext, train_dataset)
@@ -71,11 +86,13 @@ def train(
         #     args)
         #   train_rel_loss += rel_loss
           
-        ## == validation ==============
+        ### == validation ============================
         if (miteration_item + 1) % args.log_interval == 0:
-          train_loss_total = (train_ext_loss+train_rel_loss) / args.log_interval
+          # train_loss_total = (train_ext_loss+train_rel_loss) / args.log_interval
+          train_loss_total = train_loss / args.log_interval
           train_ext_loss = 0.
           train_rel_loss = 0.
+          train_loss = 0.
 
           if args.rep_approach == 'prototype':
             learner.calculate_prototypes(feature_ext, train_loader)

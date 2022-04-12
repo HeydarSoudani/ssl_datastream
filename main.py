@@ -79,7 +79,7 @@ parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument(
   '--rep_approach',
   type=str,
-  default='exampler',
+  default='prototype',
   choices=['exampler, prototype'],
   help='representation approach to show known classes'
 )
