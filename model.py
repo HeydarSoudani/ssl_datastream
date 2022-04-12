@@ -94,7 +94,7 @@ class MLP(nn.Module):
   def forward(self, x):
     out = F.relu(self.fc1(x))
     out = self.dp1(out)
-    out = F.relu(self.fc2(x))
+    out = F.relu(self.fc2(out))
     out = self.dp2(out)
     out = torch.sigmoid(self.fc3(out))
     return out
