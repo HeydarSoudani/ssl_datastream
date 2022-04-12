@@ -40,8 +40,8 @@ class TotalLoss(nn.Module):
     # self.metric = losses.ContrastiveLoss(pos_margin=0, neg_margin=1)
     # self.metric = losses.TripletMarginLoss(margin=0.05)
 
-  def forward(self, outputs, labels, relations, labels_onehot):
-  # def forward(self, outputs, labels):
+  # def forward(self, outputs, labels, relations, labels_onehot):
+  def forward(self, outputs, labels):
     metric_loss = self.metric_loss(outputs, labels.long())
     ce_loss = self.ce_loss(outputs, labels.long())
     # rel_loss = self.relation_loss(relations, labels_onehot)
