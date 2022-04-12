@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 import random
+import numpy as np
 # from pytorch_metric_learning import distances, losses, miners
 
 def compute_prototypes(
@@ -74,17 +75,25 @@ class RelationLearner:
     support_features = features[:support_len] #[w*s, 128]
     query_features = features[support_len:]   #[w*q, 128]
 
-    episode_pts = compute_prototypes(support_features, support_labels)
-    for idx, l in enumerate(unique_labels):
-      self.prototypes[l.item()] = episode_pts[idx].reshape(1, -1).detach()
     
-    pts = torch.cat(
-      [self.prototypes[l.item()] for l in known_labels]
-    )
+    if args.rep_approach == 'prototype':
+      episode_pts = compute_prototypes(support_features, support_labels)
+      for idx, l in enumerate(unique_labels):
+        self.prototypes[l.item()] = episode_pts[idx].reshape(1, -1).detach()
+  
+      reps = torch.cat([self.prototypes[l.item()] for l in known_labels])
+
+    elif args.rep_approach == 'exampler':
+      for idx, l in enumerate(unique_labels):
+        k = random.sample(np.arange(args.shot), 1)
+        self.examplers[l.item()] = support_features[idx*args.shot+k]
+      
+      reps = torch.cat([self.examplers[l.item()] for l in known_labels])
+      
     known_labels = torch.tensor(list(known_labels), device=self.device)
 
     ### === Concat features ============================
-    support_features_ext = pts.unsqueeze(0).repeat(args.query_num, 1, 1)     #[q, w*sh, 128]
+    support_features_ext = reps.unsqueeze(0).repeat(args.query_num, 1, 1)     #[q, w*sh, 128]
     support_features_ext = torch.transpose(support_features_ext, 0, 1)                    #[w*sh, q, 128]
     support_labels_ext = known_labels.unsqueeze(0).repeat(args.query_num, 1)    #[q, w*sh]
     support_labels_ext = torch.transpose(support_labels_ext, 0, 1)                        #[w*sh, q]
@@ -122,8 +131,6 @@ class RelationLearner:
     relation_net_optim.step()
 
     return loss.detach().item()
-
-
 
   def feature_ext_train(
     self,
