@@ -349,9 +349,10 @@ class RelationLearner:
         
         ## == Relation Network ===============
         relations = relation_net(relation_pairs).view(-1, n_known)
-        print(relations.data)
+        # print(relations.data)
         ## == Relation-based Acc. ============
         _, ow_predict_labels = torch.max(relations.data, 1)
+        print(ow_predict_labels)
         ow_total += test_labels.size(0)
         ow_correct += (ow_predict_labels == test_labels).sum().item()
 
