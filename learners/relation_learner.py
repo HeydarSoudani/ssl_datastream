@@ -87,7 +87,7 @@ class RelationLearner:
       print(list(np.arange(args.shot)))
       for idx, l in enumerate(unique_labels):
         k = random.sample(list(np.arange(args.shot)), 1)
-        self.examplers[l.item()] = support_features[idx*args.shot+k]
+        self.examplers[l.item()] = support_features[int(idx*args.shot)+int(k)]
       
       reps = torch.cat([self.examplers[l.item()] for l in known_labels])
       
