@@ -64,6 +64,8 @@ class RelationLearner:
     query_labels = query_labels.to(self.device)
 
     unique_labels = torch.unique(support_labels).to(self.device)
+    print(support_images.shape)
+    print(query_images.shape)
     images = torch.cat((support_images, query_images))
     labels = torch.cat((support_labels, query_labels))
     
