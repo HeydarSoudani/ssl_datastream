@@ -55,7 +55,7 @@ class RelationLearner:
     support_images, support_labels, query_images, query_labels = batch
     support_images = support_images.reshape(-1, *support_images.shape[2:])
     support_labels = support_labels.flatten()
-    query_images = query_images.reshape(-1, *query_images.shape[2:])
+    query_images = query_images.reshape(-1, *query_images.shape[1:])
     query_labels = query_labels.flatten()
 
     support_images = support_images.to(self.device)
@@ -64,8 +64,8 @@ class RelationLearner:
     query_labels = query_labels.to(self.device)
 
     unique_labels = torch.unique(support_labels).to(self.device)
-    print(support_images.shape)
-    print(query_images.shape)
+    # print(support_images.shape)
+    # print(query_images.shape)
     images = torch.cat((support_images, query_images))
     labels = torch.cat((support_labels, query_labels))
     
