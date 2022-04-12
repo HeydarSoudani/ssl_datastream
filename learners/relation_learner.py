@@ -352,9 +352,9 @@ class RelationLearner:
         # print(relations.data)
         ## == Relation-based Acc. ============
         _, ow_predict_labels = torch.max(relations.data, 1)
-        print(test_labels)
-        print(ow_predict_labels)
-        print('===')
+        # print(test_labels)
+        # print(ow_predict_labels)
+        # print('===')
         ow_total += test_labels.size(0)
         ow_correct += (ow_predict_labels == test_labels).sum().item()
 
@@ -381,8 +381,8 @@ class RelationLearner:
 
       total_loss /= len(val_loader)
       total_cw_acc = cw_correct / cw_total
-      # total_ow_acc = ow_correct / ow_total  
-      total_ow_acc = 0
+      total_ow_acc = ow_correct / ow_total  
+      # total_ow_acc = 0
 
       return total_loss, total_cw_acc, total_ow_acc
 
