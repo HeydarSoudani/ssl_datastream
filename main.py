@@ -162,7 +162,7 @@ if args.phase in ['zeroshot_test', 'visualization']:
       print("Load relation_net from {}".format(relation_net_path))
 
 # === Print feature_ext layers and params ====
-# print(feature_ext)
+print(feature_ext)
 total_params = sum(p.numel() for p in feature_ext.parameters())
 total_params_trainable = sum(p.numel() for p in feature_ext.parameters() if p.requires_grad)
 print('Total params: {}'.format(total_params))
