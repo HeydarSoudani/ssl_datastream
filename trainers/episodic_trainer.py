@@ -15,7 +15,7 @@ def end2end_training(
   relation_net_optim,
   
   train_dataset,
-  trainloader,
+  train_dataloader,
   train_loader, # For prototypes
   val_dataloader,
   known_labels,
@@ -26,8 +26,9 @@ def end2end_training(
 ):
   global_time = time.time()
   min_loss = float('inf')
-
   train_loss = 0.
+  trainloader = iter(train_dataloader)
+
   for miteration_item in range(args.meta_iteration):
     batch = next(trainloader)
     
@@ -94,7 +95,7 @@ def separate_training(
   relation_net_optim,
   
   train_dataset,
-  trainloader,
+  train_dataloader,
   train_loader, # For prototypes
   val_dataloader,
   known_labels,
@@ -110,6 +111,7 @@ def separate_training(
   train_rel_loss = 0.
 
   ## = Fine-tune Feature extraction ===
+  trainloader = iter(train_dataloader)
   for miteration_item in range(args.meta_iteration):
     batch = next(trainloader)
 
@@ -171,6 +173,7 @@ def separate_training(
 
 
   ## = Train relation network ==========
+  trainloader = iter(train_dataloader)
   for miteration_item in range(args.meta_iteration):
     batch = next(trainloader)
 
@@ -260,7 +263,6 @@ def train(
   try:
     for epoch_item in range(args.start_epoch, args.epochs):
       print('=== Epoch %d ===' % epoch_item)
-      trainloader = iter(train_dataloader)
 
       ### == End-to-End training ==========
       # end2end_training(
@@ -271,7 +273,7 @@ def train(
       #   relation_net_optim,
         
       #   train_dataset,
-      #   trainloader,
+      #   train_dataloader,
       #   train_loader, # For prototypes
       #   val_dataloader,
       #   known_labels,
@@ -290,7 +292,7 @@ def train(
         relation_net_optim,
         
         train_dataset,
-        trainloader,
+        train_dataloader,
         train_loader, # For prototypes
         val_dataloader,
         known_labels,
