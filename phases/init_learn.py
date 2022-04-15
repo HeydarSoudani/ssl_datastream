@@ -3,7 +3,7 @@ import os
 from pandas import read_csv
 
 from dataset import SimpleDataset
-from utils.preparation import dataloader_preparation, transforms_preparation
+from utils.preparation import transforms_preparation
 from trainers.episodic_trainer import train
 
 
@@ -53,15 +53,15 @@ def init_learn(
   known_labels,
   args, device
 ):
-  ## == train ===========================
+  ## == Episodic train ===========
   train(
     feature_ext,
     relation_net,
     learner,
     train_data,
-    args, device)
+    args)
 
-  ## == Test ============================
+  ## == Test =====================
   # init_test(
   #   feature_ext,
   #   relation_net,
