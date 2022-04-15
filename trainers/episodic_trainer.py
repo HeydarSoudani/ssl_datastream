@@ -111,6 +111,7 @@ def separate_training(
   train_rel_loss = 0.
 
   ## = Fine-tune Feature extraction ===
+  print('===== Feature extractor fine-tuning ... =====')
   trainloader = iter(train_dataloader)
   for miteration_item in range(args.meta_iteration):
     batch = next(trainloader)
@@ -164,7 +165,7 @@ def separate_training(
     if args.scheduler:
       feature_ext_scheduler.step()
     
-
+  print('===== Relation Network training ... =====')
   ## = Update Pts or Examplers =========
   if args.rep_approach == 'prototype':
     learner.calculate_prototypes(feature_ext, train_loader)
