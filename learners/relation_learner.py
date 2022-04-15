@@ -18,7 +18,7 @@ def compute_prototypes(
 class RelationLearner:
   def __init__(self, device, args):
     # self.metric_criterion = criterion
-    # self.metric_criterion = torch.nn.CrossEntropyLoss()
+    self.metric_criterion = torch.nn.CrossEntropyLoss()
     # self.metric_criterion = losses.TripletMarginLoss(margin=0.05)
     self.relation_criterion = torch.nn.MSELoss()
     self.device = device
