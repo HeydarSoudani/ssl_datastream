@@ -4,7 +4,7 @@ import argparse
 import numpy as np
 from pandas import read_csv
 
-from model import MyPretrainedResnet50, MLP, weights_init
+from model import MyReducedRes50, MyPretrainedResnet50, MLP, weights_init
 from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
 # from losses import TotalLoss
@@ -129,7 +129,8 @@ if not os.path.exists(args.save):
 
 ## == Define Feature extractor & Relation network ==
 print('Defining feature_ext & relation ...')
-feature_ext = MyPretrainedResnet50(args)
+feature_ext = MyReducedRes50(args)
+# feature_ext = MyPretrainedResnet50(args)
 relation_net = MLP(args)
 # feature_ext.apply(weights_init)
 # relation_net.apply(weights_init)

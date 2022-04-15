@@ -16,6 +16,23 @@ def Xavier(m):
     if m.bias is not None:
       m.bias.data.fill_(0.0)
 
+
+class MyReducedRes50(nn.Module):
+  def __init__(self, args):
+    super(MyReducedRes50, self).__init__()
+
+    pretrained_model = models.resnet50(pretrained=True)
+    res = pretrained_model.resnet18(pretrained=True)
+    res = list(res.children())[:-2]
+    self.reduced_pretrained = nn.Sequential(*res)
+  
+  def forward(self, x):
+    # x = x.view(x.size(0), -1)
+    x = self.reduced_pretrained(x)
+    print(x)
+
+
+
 class MyPretrainedResnet50(nn.Module):
   def __init__(self, args):
     super(MyPretrainedResnet50, self).__init__()
@@ -48,7 +65,8 @@ class MyPretrainedResnet50(nn.Module):
     ## == Without Pretrain model
     # self.pretrained = models.resnet50(pretrained=False)
 
-    # freeze all layers except the last fc
+
+    ### === freeze all layers except the last fc
     for name, param in self.pretrained.named_parameters():
       # print(name)
       # print(not name.startswith(('layer4', 'fc')))

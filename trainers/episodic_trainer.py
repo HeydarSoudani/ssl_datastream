@@ -7,6 +7,43 @@ import time
 from dataset import SimpleDataset
 from utils.preparation import dataloader_preparation, transforms_preparation
 
+def end2end_3d_training(
+  feature_ext,
+  relation_net,
+  learner,
+  feature_ext_optim,
+  relation_net_optim,
+  
+  train_dataset,
+  train_dataloader,
+  train_loader, # For prototypes
+  val_dataloader,
+  known_labels,
+
+  feature_ext_scheduler,
+  relation_net_scheduler,
+  args
+):
+  global_time = time.time()
+  min_loss = float('inf')
+  train_loss = 0.
+  trainloader = iter(train_dataloader)
+
+  for miteration_item in range(args.meta_iteration):
+    batch = next(trainloader)
+
+    loss = learner.end2end_3d_train(
+      feature_ext,
+      relation_net,
+      batch,
+      feature_ext_optim,
+      relation_net_optim,
+      miteration_item,
+      known_labels,
+      args)
+    train_loss += loss
+
+
 def end2end_training(
   feature_ext,
   relation_net,
@@ -32,7 +69,7 @@ def end2end_training(
   for miteration_item in range(args.meta_iteration):
     batch = next(trainloader)
     
-    loss = learner.together_train(
+    loss = learner.end2end_train(
       feature_ext,
       relation_net,
       batch,
@@ -265,6 +302,25 @@ def train(
     for epoch_item in range(args.start_epoch, args.epochs):
       print('=== Epoch %d ===' % epoch_item)
 
+      ### == 3D End-to-End training ========
+      end2end_3d_training(
+        feature_ext,
+        relation_net,
+        learner,
+        feature_ext_optim,
+        relation_net_optim,
+        
+        train_dataset,
+        train_dataloader,
+        train_loader, # For prototypes
+        val_dataloader,
+        known_labels,
+
+        feature_ext_scheduler,
+        relation_net_scheduler,
+        args
+      )
+
       ### == End-to-End training ==========
       # end2end_training(
       #   feature_ext,
@@ -285,23 +341,23 @@ def train(
       # )
 
       ### == Seperate training ============
-      separate_training(
-        feature_ext,
-        relation_net,
-        learner,
-        feature_ext_optim,
-        relation_net_optim,
+      # separate_training(
+      #   feature_ext,
+      #   relation_net,
+      #   learner,
+      #   feature_ext_optim,
+      #   relation_net_optim,
         
-        train_dataset,
-        train_dataloader,
-        train_loader, # For prototypes
-        val_dataloader,
-        known_labels,
+      #   train_dataset,
+      #   train_dataloader,
+      #   train_loader, # For prototypes
+      #   val_dataloader,
+      #   known_labels,
 
-        feature_ext_scheduler,
-        relation_net_scheduler,
-        args
-      )
+      #   feature_ext_scheduler,
+      #   relation_net_scheduler,
+      #   args
+      # )
 
 
   

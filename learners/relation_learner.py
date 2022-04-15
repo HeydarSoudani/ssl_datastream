@@ -32,7 +32,53 @@ class RelationLearner:
       for l in range(args.n_classes)
     }
   
-  def together_train(
+  def end2end_3d_train(
+    self,
+    feature_ext,
+    relation_net,
+    batch,
+    feature_ext_optim,
+    relation_net_optim,
+    miteration_item,
+    known_labels,
+    args
+  ):
+    feature_ext.train()
+    relation_net.train()
+    feature_ext_optim.zero_grad()
+    relation_net_optim.zero_grad()
+
+    n_known = len(known_labels)
+    rep_per_class = 1
+
+    ### === Prepare data ===============================
+    support_len = args.ways * args.shot 
+    support_images, support_labels, query_images, query_labels = batch
+    support_images = support_images.reshape(-1, *support_images.shape[2:])
+    support_labels = support_labels.flatten()
+    query_images = query_images.reshape(-1, *query_images.shape[1:])
+    query_labels = query_labels.flatten()
+
+    support_images = support_images.to(self.device)
+    support_labels = support_labels.to(self.device)
+    query_images = query_images.to(self.device)
+    query_labels = query_labels.to(self.device)
+
+    unique_labels = torch.unique(support_labels).to(self.device)
+    # print(support_images.shape)
+    # print(query_images.shape)
+    images = torch.cat((support_images, query_images))
+    labels = torch.cat((support_labels, query_labels))
+    
+    ### === Feature extractor ==========================
+    outputs, features = feature_ext.forward(images)
+    support_features = features[:support_len] #[w*s, 128]
+    query_features = features[support_len:]   #[w*q, 128]
+
+
+
+
+  def end2end_train(
     self,
     feature_ext,
     relation_net,
