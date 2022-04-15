@@ -22,7 +22,7 @@ class MyReducedRes50(nn.Module):
     super(MyReducedRes50, self).__init__()
 
     res = models.resnet50(pretrained=True)
-    res = list(res.children())[:-2]
+    res = list(res.children())[:-3]
     self.reduced_pretrained = nn.Sequential(*res)
   
   def forward(self, x):
