@@ -303,26 +303,7 @@ def train(
       print('=== Epoch %d ===' % epoch_item)
 
       ### == 3D End-to-End training ========
-      end2end_3d_training(
-        feature_ext,
-        relation_net,
-        learner,
-        feature_ext_optim,
-        relation_net_optim,
-        
-        train_dataset,
-        train_dataloader,
-        train_loader, # For prototypes
-        val_dataloader,
-        known_labels,
-
-        feature_ext_scheduler,
-        relation_net_scheduler,
-        args
-      )
-
-      ### == End-to-End training ==========
-      # end2end_training(
+      # end2end_3d_training(
       #   feature_ext,
       #   relation_net,
       #   learner,
@@ -339,6 +320,25 @@ def train(
       #   relation_net_scheduler,
       #   args
       # )
+
+      ### == End-to-End training ==========
+      end2end_training(
+        feature_ext,
+        relation_net,
+        learner,
+        feature_ext_optim,
+        relation_net_optim,
+        
+        train_dataset,
+        train_dataloader,
+        train_loader, # For prototypes
+        val_dataloader,
+        known_labels,
+
+        feature_ext_scheduler,
+        relation_net_scheduler,
+        args
+      )
 
       ### == Seperate training ============
       # separate_training(

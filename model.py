@@ -86,10 +86,16 @@ class MyPretrainedResnet50(nn.Module):
     
   def forward(self, x):
     # x = x.view(x.size(0), -1)
-    x = self.pretrained(x)
-    x = self.dp1(torch.relu(x))
-    features = torch.relu(self.fc1(x))
-    out = self.fc2(self.dp2(features))
+    # x = self.pretrained(x)
+    # x = self.dp1(torch.relu(x))
+    # features = torch.relu(self.fc1(x))
+    # out = self.fc2(self.dp2(features))
+    # return out, features
+
+    features = self.pretrained(x)
+    out = self.dp1(torch.relu(features))
+    out = torch.relu(self.fc1(out))
+    out = self.fc2(self.dp2(out))
     return out, features
 
   def save(self, path):

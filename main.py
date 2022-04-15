@@ -72,7 +72,7 @@ parser.add_argument('--step_size', type=int, default=5)
 parser.add_argument('--gamma', type=float, default=0.5)
 
 # Model
-parser.add_argument('--feature_dim', type=int, default=64)
+parser.add_argument('--feature_dim', type=int, default=1000)
 parser.add_argument('--n_classes', type=int, default=10)
 parser.add_argument('--dropout', type=float, default=0.1)
 parser.add_argument('--beta', type=float, default=1.0)
@@ -129,8 +129,8 @@ if not os.path.exists(args.save):
 
 ## == Define Feature extractor & Relation network ==
 print('Defining feature_ext & relation ...')
-feature_ext = MyReducedRes50(args)
-# feature_ext = MyPretrainedResnet50(args)
+# feature_ext = MyReducedRes50(args)
+feature_ext = MyPretrainedResnet50(args)
 relation_net = MLP(args)
 # feature_ext.apply(weights_init)
 # relation_net.apply(weights_init)
