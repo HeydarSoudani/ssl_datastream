@@ -20,9 +20,8 @@ def Xavier(m):
 class MyReducedRes50(nn.Module):
   def __init__(self, args):
     super(MyReducedRes50, self).__init__()
-
-    pretrained_model = models.resnet50(pretrained=True)
-    res = pretrained_model.resnet18(pretrained=True)
+    
+    res = models.resnet50(pretrained=True)
     res = list(res.children())[:-2]
     self.reduced_pretrained = nn.Sequential(*res)
   
