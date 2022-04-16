@@ -69,8 +69,8 @@ class MyPretrainedResnet50(nn.Module):
     for name, param in self.pretrained.named_parameters():
       # print(name)
       # print(not name.startswith(('layer4', 'fc')))
-      if name not in ['fc.weight', 'fc.bias']:
-      # if not name.startswith(('layer4', 'fc')):
+      # if name not in ['fc.weight', 'fc.bias']:
+      if not name.startswith(('layer4', 'fc')):
         param.requires_grad = False
     
     self.fc1 = nn.Linear(1000, args.feature_dim)
