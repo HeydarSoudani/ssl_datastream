@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import random
 import numpy as np
+from losses import cos_similarity
 # from pytorch_metric_learning import distances, losses, miners
 
 def compute_prototypes(
@@ -394,33 +395,36 @@ class RelationLearner:
         ).view(-1,1)
         
         ## == Relation Network ===============
-        relations = relation_net(relation_pairs).view(-1, n_known)
-        # print(relations.data)
-        ## == Relation-based Acc. ============
-        _, ow_predict_labels = torch.max(relations.data, 1)
-        # print(test_labels)
-        # print(ow_predict_labels)
-        # print('===')
-        ow_total += test_labels.size(0)
-        ow_correct += (ow_predict_labels == test_labels).sum().item()
+        # relations = relation_net(relation_pairs).view(-1, n_known)
+        # # print(relations.data)
+        
+        # ## == Relation-based Acc. ============
+        # _, ow_predict_labels = torch.max(relations.data, 1)
+        # # print(test_labels)
+        # # print(ow_predict_labels)
+        # # print('===')
+        # ow_total += test_labels.size(0)
+        # ow_correct += (ow_predict_labels == test_labels).sum().item()
 
         ## == Similarity test ==================
-        # all_sim = F.cosine_similarity(test_features.unsqueeze(1), sup_features, dim=-1)
-        # _, ow_predict_labels = torch.max(all_sim, 1)
-        # ow_total += test_labels.size(0)
-        # ow_correct += (known_labels[ow_predict_labels] == test_labels).sum().item()
+        all_sim = cos_similarity(test_features, sup_features)
+        _, ow_predict_labels = torch.max(all_sim, 1)
+        ow_total += test_labels.size(0)
+        ow_correct += (known_labels[ow_predict_labels] == test_labels).sum().item()
 
         ## == Close World Acc. =================
         _, cw_predict_labels = torch.max(test_outputs, 1)
         cw_total += test_labels.size(0)
         cw_correct += (cw_predict_labels == test_labels).sum().item()
         
-        ## == loss =============================
-        test_labels_onehot = torch.zeros(
-          args.query_num, n_known
-        ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
-        loss = self.relation_criterion(relations.data, test_labels_onehot)
-        # loss = self.metric_criterion(test_outputs, test_labels) # For just CW
+        ## == loss relation ====================
+        # test_labels_onehot = torch.zeros(
+        #   args.query_num, n_known
+        # ).to(self.device).scatter_(1, test_labels.view(-1,1), 1)
+        # loss = self.relation_criterion(relations.data, test_labels_onehot)
+        
+        ## == Metric Loss ======================
+        loss = self.metric_criterion(test_outputs, test_labels) # For just CW
         
         loss = loss.mean()
         total_loss += loss.item()
@@ -428,7 +432,6 @@ class RelationLearner:
       total_loss /= len(val_loader)
       total_cw_acc = cw_correct / cw_total
       total_ow_acc = ow_correct / ow_total  
-      # total_ow_acc = 0
 
       return total_loss, total_cw_acc, total_ow_acc
 

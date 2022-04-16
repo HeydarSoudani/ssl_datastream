@@ -6,6 +6,7 @@ import os
 import time
 import numpy as np
 from pandas import read_csv
+from losses import cos_similarity
 
 from dataset import SimpleDataset
 
@@ -72,7 +73,7 @@ def zeroshot_test(feature_ext,
         # prob, predict_labels = torch.max(relations.data, 1)
         
         ## == Similarity score ==================
-        all_sim = F.cosine_similarity(test_features.unsqueeze(1), sup_features, dim=-1)
+        all_sim = cos_similarity(test_features, sup_features)
         prob, predict_labels = torch.max(all_sim, 1)
         # if (i+1) % 1000 == 0:
         print("[stream %5d]: %d, %2d, %7.4f, %s"%(

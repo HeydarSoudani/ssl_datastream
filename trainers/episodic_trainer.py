@@ -211,63 +211,63 @@ def separate_training(
 
 
   ## = Train relation network ==========
-  trainloader = iter(train_dataloader)
-  for miteration_item in range(args.meta_iteration):
-    batch = next(trainloader)
+  # trainloader = iter(train_dataloader)
+  # for miteration_item in range(args.meta_iteration):
+  #   batch = next(trainloader)
 
-    rel_loss = learner.relation_train(
-      feature_ext,
-      relation_net,
-      batch,
-      feature_ext_optim,
-      relation_net_optim,
-      known_labels,
-      args)
-    train_rel_loss += rel_loss
+  #   rel_loss = learner.relation_train(
+  #     feature_ext,
+  #     relation_net,
+  #     batch,
+  #     feature_ext_optim,
+  #     relation_net_optim,
+  #     known_labels,
+  #     args)
+  #   train_rel_loss += rel_loss
 
-    # = validation ===
-    if (miteration_item + 1) % args.log_interval == 0:
-      train_loss_total = train_rel_loss / args.log_interval
-      train_rel_loss = 0.
+  #   # = validation ===
+  #   if (miteration_item + 1) % args.log_interval == 0:
+  #     train_loss_total = train_rel_loss / args.log_interval
+  #     train_rel_loss = 0.
       
-      if args.rep_approach == 'prototype':
-        learner.calculate_prototypes(feature_ext, train_loader)
-      elif args.rep_approach == 'exampler':
-        learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
+  #     if args.rep_approach == 'prototype':
+  #       learner.calculate_prototypes(feature_ext, train_loader)
+  #     elif args.rep_approach == 'exampler':
+  #       learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
 
-      # evalute on val_dataset
-      val_loss, \
-      val_cw_acc, \
-      val_ow_acc \
-        = learner.evaluate(
-          feature_ext,
-          relation_net,
-          val_dataloader,
-          known_labels,
-          args)
+  #     # evalute on val_dataset
+  #     val_loss, \
+  #     val_cw_acc, \
+  #     val_ow_acc \
+  #       = learner.evaluate(
+  #         feature_ext,
+  #         relation_net,
+  #         val_dataloader,
+  #         known_labels,
+  #         args)
 
-      # print losses
-      # print('scheduler: %f' % (optim.param_groups[0]['lr']))
-      print('=== Time: %.2f, Step: %d, TrainLoss: %f, ValLoss: %f, Val-CwAcc: %.2f, Val-OwAcc: %.2f' % (
-        time.time()-global_time,
-        miteration_item+1,
-        train_loss_total,
-        val_loss,
-        val_cw_acc*100,
-        val_ow_acc*100
-      ))
-      global_time = time.time()
+  #     # print losses
+  #     # print('scheduler: %f' % (optim.param_groups[0]['lr']))
+  #     print('=== Time: %.2f, Step: %d, TrainLoss: %f, ValLoss: %f, Val-CwAcc: %.2f, Val-OwAcc: %.2f' % (
+  #       time.time()-global_time,
+  #       miteration_item+1,
+  #       train_loss_total,
+  #       val_loss,
+  #       val_cw_acc*100,
+  #       val_ow_acc*100
+  #     ))
+  #     global_time = time.time()
 
-      # save best feature_ext
-      if val_loss < min_loss:
-        feature_ext.save(os.path.join(args.save, "feature_ext_best.pt"))
-        relation_net.save(os.path.join(args.save, "relation_net_best.pt"))
-        min_loss = val_loss
-        print("= ...New best model saved")
+  #     # save best feature_ext
+  #     if val_loss < min_loss:
+  #       feature_ext.save(os.path.join(args.save, "feature_ext_best.pt"))
+  #       relation_net.save(os.path.join(args.save, "relation_net_best.pt"))
+  #       min_loss = val_loss
+  #       print("= ...New best model saved")
     
-    if args.scheduler:
-      feature_ext_scheduler.step()
-      relation_net_scheduler.step()
+  #   if args.scheduler:
+  #     feature_ext_scheduler.step()
+  #     relation_net_scheduler.step()
   
 
 def train(
@@ -322,26 +322,7 @@ def train(
       # )
 
       ### == End-to-End training ==========
-      end2end_training(
-        feature_ext,
-        relation_net,
-        learner,
-        feature_ext_optim,
-        relation_net_optim,
-        
-        train_dataset,
-        train_dataloader,
-        train_loader, # For prototypes
-        val_dataloader,
-        known_labels,
-
-        feature_ext_scheduler,
-        relation_net_scheduler,
-        args
-      )
-
-      ### == Seperate training ============
-      # separate_training(
+      # end2end_training(
       #   feature_ext,
       #   relation_net,
       #   learner,
@@ -358,6 +339,25 @@ def train(
       #   relation_net_scheduler,
       #   args
       # )
+
+      ### == Seperate training ============
+      separate_training(
+        feature_ext,
+        relation_net,
+        learner,
+        feature_ext_optim,
+        relation_net_optim,
+        
+        train_dataset,
+        train_dataloader,
+        train_loader, # For prototypes
+        val_dataloader,
+        known_labels,
+
+        feature_ext_scheduler,
+        relation_net_scheduler,
+        args
+      )
 
 
   

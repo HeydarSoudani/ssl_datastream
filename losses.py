@@ -3,6 +3,22 @@ import torch.nn as nn
 import torch.nn.functional as F
 # from pytorch_metric_learning import distances, losses, miners
 
+def cos_similarity(x, y):
+  # x: N x D
+  # y: M x D
+  n = x.size(0)
+  m = y.size(0)
+  d = x.size(1)
+  if d != y.size(1):
+    raise Exception
+  
+  sim = torch.zeros((n, m))
+
+  for i in range(n):
+    for j in range(m):
+      sim[i, j] = torch.dot(x[i], y[j])/(torch.norm(x[i])*torch.norm(y[j]))
+
+  return sim
 
 class W_MSE(nn.Module):
   def __init__(self):
