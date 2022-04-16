@@ -13,6 +13,7 @@ from dataset import SimpleDataset
 def zeroshot_test(feature_ext,
                   relation_net,
                   learner,
+                  detector,
                   known_labels,
                   args, device):
   print('================================ Zero-Shot Test ================================')
@@ -37,12 +38,12 @@ def zeroshot_test(feature_ext,
   
   if args.rep_approach == 'prototype':
     rep_per_class = 1
-    sup_features = torch.cat(
+    representors = torch.cat(
       [learner.prototypes[l.item()] for l in known_labels]
     )
   elif args.rep_approach == 'exampler':
     rep_per_class = args.n_examplers
-    sup_features = torch.cat(
+    representors = torch.cat(
       [learner.examplers[l.item()] for l in known_labels]
     )
   sup_labels = known_labels
@@ -74,24 +75,11 @@ def zeroshot_test(feature_ext,
         # prob, predict_labels = torch.max(relations.data, 1)
         
         ## == Similarity score ==================
-        all_sim = cos_similarity(test_feature, sup_features)
-        # prob, ow_predict_label = torch.max(all_sim, 1)
+        detected_novelty, predicted_label, prob, avg_sim = detector(test_feature, representors, rep_per_class)
         
-        avg_sim = torch.tensor([
-          torch.mean(all_sim[:, i*rep_per_class:(i+1)*rep_per_class])
-          for i in range(n_known)
-        ])
-        prob, ow_predict_label = torch.max(avg_sim, 0)
-
         if (i+1) % 500 == 0:
-          # predict_label = known_labels[torch.div(ow_predict_label, rep_per_class, rounding_mode='trunc')]
-          # print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
-          #   i+1, test_label.item(), predict_label.item(), prob, real_novelty,
-          #   tuple(np.around(np.array(all_sim.tolist()),2)[0])
-          # ))
-          predict_label = known_labels[ow_predict_label]
-          print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
-            i+1, test_label.item(), predict_label.item(), prob, real_novelty,
+          print("[stream %5d]: %d, %2d, %7.4f, %s, %s, %s"%(
+            i+1, test_label.item(), predicted_label.item(), prob, real_novelty, detected_novelty,
             tuple(np.around(np.array(avg_sim.tolist()),2))
           ))
     

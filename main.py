@@ -223,6 +223,7 @@ if __name__ == '__main__':
       feature_ext,
       relation_net,
       learner,
+      detector,
       base_labels,
       args, device
     )

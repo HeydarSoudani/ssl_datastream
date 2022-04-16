@@ -10,29 +10,46 @@ from losses import cos_similarity
 class SimDetector(object):
   def __init__(self, device):
     self.device = device
-    pass
 
-  def __call__(self, feature, prototypes):
-    
-    pts_dict = { label: prototypes[label] for label in self._known_labels }
-
+  def __call__(self, feature, representors, rep_per_class):
     detected_novelty = False
-    pts = torch.cat(list(pts_dict.values()))
-    labels = torch.tensor(list(pts_dict.keys()))
-    dists = torch.cdist(feature.reshape(1, -1), pts).flatten()
-    probs = torch.nn.functional.softmax(-dists)
+    
+    all_sim = cos_similarity(feature, representors)
+    # prob, predicted_idx = torch.max(all_sim, 1)
+    # predicted_label = self._known_labels[torch.div(predicted_idx, rep_per_class, rounding_mode='trunc')]
+    
+    avg_sim = torch.tensor([
+      torch.mean(all_sim[:, i*rep_per_class:(i+1)*rep_per_class])
+      for i in self._known_labels
+    ])
+    prob, predicted_idx = torch.max(avg_sim, 0)
+    predicted_label = self._known_labels[predicted_idx]
 
-    idx = torch.argmin(dists)
-    min_dist = torch.min(dists)
-    predicted_label = labels[idx].item()
-    prob = probs[idx]
-
-    if min_dist > self.thresholds[predicted_label]:
+    if prob < self.thresholds[predicted_label]:
       detected_novelty = True
       predicted_label = -1
       prob = 0.0
+    
+    return detected_novelty, predicted_label, prob, avg_sim
+    
+    # reps_dict = { l: representors[l] for l in self._known_labels }
+
+    # pts = torch.cat(list(pts_dict.values()))
+    # labels = torch.tensor(list(pts_dict.keys()))
+    # dists = torch.cdist(feature.reshape(1, -1), pts).flatten()
+    # probs = torch.nn.functional.softmax(-dists)
+
+    # idx = torch.argmin(dists)
+    # min_dist = torch.min(dists)
+    # predicted_label = labels[idx].item()
+    # prob = probs[idx]
+
+    # if min_dist > self.thresholds[predicted_label]:
+    #   detected_novelty = True
+    #   predicted_label = -1
+    #   prob = 0.0
       
-    return detected_novelty, predicted_label, prob
+    # return detected_novelty, predicted_label, prob
   
   def set_known_labels(self, label_set):
     self._known_labels = set(label_set)
