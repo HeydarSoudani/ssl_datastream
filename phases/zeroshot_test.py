@@ -75,12 +75,18 @@ def zeroshot_test(feature_ext,
       
       ## == Similarity score ==================
       all_sim = cos_similarity(test_feature, sup_features)
-      prob, ow_predict_label = torch.max(all_sim, 1)
-      predict_label = known_labels[ow_predict_label//args.n_examplers]
+      # prob, ow_predict_label = torch.max(all_sim, 1)
+      
+      avg_sim = torch.tensor([
+        torch.mean(all_sim[i*rep_per_class:(i+1)*rep_per_class])
+        for i in range(rep_per_class)
+      ])
+      prob, ow_predict_label = torch.max(avg_sim, 1)
 
+      predict_label = known_labels[torch.div(ow_predict_label, rep_per_class, rounding_mode='trunc')]
       if (i+1) % 500 == 0:
         print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
-          i+1, test_label.item(), predict_label, prob, real_novelty,
-          tuple(np.around(np.array(all_sim.tolist()),2)[0])
+          i+1, test_label.item(), predict_label.item(), prob, real_novelty,
+          tuple(np.around(np.array(avg_sim.tolist()),2)[0])
         ))
     
