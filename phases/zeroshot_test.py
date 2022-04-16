@@ -50,11 +50,11 @@ def zeroshot_test(feature_ext,
     for i, batch in enumerate(streamloader):
 
       if i < 20:
-        # real_novelty = label.item() not in detector._known_labels
         # Query set
         test_image, test_label = batch
         test_label = test_label.flatten()
         test_image, test_label = test_image.to(device), test_label.to(device)
+        real_novelty = test_label.item() not in known_labels
         _, test_feature = feature_ext.forward(test_image)
 
         # ## == Relation Network preparation =====
@@ -75,11 +75,11 @@ def zeroshot_test(feature_ext,
         ## == Similarity score ==================
         print(test_feature)
         print(sup_features)
-        all_sim = cos_similarity(test_features, sup_features)
-        prob, predict_labels = torch.max(all_sim, 1)
+        all_sim = cos_similarity(test_feature, sup_features)
+        prob, predict_label = torch.max(all_sim, 1)
         # if (i+1) % 1000 == 0:
-        print("[stream %5d]: %d, %2d, %7.4f, %s"%(
-          i+1, test_labels.item(), predict_labels, prob,
+        print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
+          i+1, test_label.item(), predict_label, prob, real_novelty,
           tuple(np.around(np.array(all_sim.tolist()),2)[0])
         ))
     

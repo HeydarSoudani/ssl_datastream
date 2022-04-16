@@ -370,6 +370,7 @@ def train(
   elif args.rep_approach == 'exampler':
     learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
   learner.save(os.path.join(args.save, "learner.pt"))
+  print("= ...learner saved")
 
   # == Save last model ========
   feature_ext.save(os.path.join(args.save, "feature_ext_last.pt"))
