@@ -14,6 +14,7 @@ class SimDetector(object):
   def __call__(self, feature, representors, rep_per_class):
     detected_novelty = False
     
+    known_labels = torch.tensor(list(self._known_labels), device=self.device)
     all_sim = cos_similarity(feature, representors)
     # prob, predicted_idx = torch.max(all_sim, 1)
     # predicted_label = self._known_labels[torch.div(predicted_idx, rep_per_class, rounding_mode='trunc')]
@@ -22,7 +23,7 @@ class SimDetector(object):
       for i in self._known_labels
     ])
     prob, predicted_idx = torch.max(avg_sim, 0)
-    predicted_label = self._known_labels[predicted_idx]
+    predicted_label = known_labels[predicted_idx]
 
     if prob < self.thresholds[predicted_label]:
       detected_novelty = True
@@ -36,8 +37,8 @@ class SimDetector(object):
     self._known_labels = torch.tensor(list(label_set), device=self.device)
   
   def threshold_calculation(self, data, feature_ext, representors, known_labels, args):
-    # self._known_labels = set(known_labels)
-    self._known_labels = torch.tensor(list(known_labels), device=self.device)
+    self._known_labels = set(known_labels)
+    
     features_per_class = {l: [] for l in self._known_labels}
     dataset = SimpleDataset(data, args)
     dataloader = DataLoader(dataset=dataset, batch_size=1, shuffle=False)
