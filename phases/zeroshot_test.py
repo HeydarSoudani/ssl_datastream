@@ -6,9 +6,10 @@ import os
 import time
 import numpy as np
 from pandas import read_csv
-from losses import cos_similarity
 
+from losses import cos_similarity
 from dataset import SimpleDataset
+from evaluation import final_step_evaluation
 
 def zeroshot_test(feature_ext,
                   relation_net,
@@ -49,10 +50,11 @@ def zeroshot_test(feature_ext,
   sup_labels = known_labels
 
   ## == 
+  detection_results = []
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      # if i < 20:
+      if i < 20:
         test_image, test_label = batch
         test_label = test_label.flatten()
         test_image, test_label = test_image.to(device), test_label.to(device)
@@ -77,9 +79,15 @@ def zeroshot_test(feature_ext,
         ## == Similarity score ==================
         detected_novelty, predicted_label, prob, avg_sim = detector(test_feature, representors, rep_per_class)
         
-        if (i+1) % 500 == 0:
-          print("[stream %5d]: %d, %2d, %7.4f, %s, %s, %s"%(
-            i+1, test_label.item(), predicted_label, prob, real_novelty, detected_novelty,
-            tuple(np.around(np.array(avg_sim.tolist()),2))
-          ))
+        detection_results.append((test_label.item(), predicted_label, real_novelty, detected_novelty))
+        # if (i+1) % 500 == 0:
+        print("[stream %5d]: %d, %2d, %7.4f, %s, %s, %s"%(
+          i+1, test_label.item(), predicted_label, prob, real_novelty, detected_novelty,
+          tuple(np.around(np.array(avg_sim.tolist()),2))
+        ))
+  
+  CwCA, NcCA, AcCA, OwCA, M_new, F_new = final_step_evaluation(detection_results, known_labels, detector._known_labels)
+  print("Evaluation: %7.2f, %7.2f, %7.2f, %7.2f, %7.2f, %7.2f"%(CwCA*100, NcCA*100, AcCA*100, OwCA*100, M_new*100, F_new*100))
+  # print("confusion matrix: \n%s"% cm)
+  
     
