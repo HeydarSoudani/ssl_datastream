@@ -24,7 +24,10 @@ class SimDetector(object):
     prob, predicted_idx = torch.max(avg_sim, 0)
     predicted_label = known_labels[predicted_idx].item()
 
-    if prob < self.thresholds[predicted_label]:
+    sec_max = torch.topk(avg_sim, 2)[0][-1]
+    if prob > self.thresholds[predicted_label] or (prob - sec_max) > 5.0:
+      pass
+    else:
       detected_novelty = True
       predicted_label = -1
       prob = 0.0
