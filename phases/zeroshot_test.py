@@ -31,15 +31,17 @@ def zeroshot_test(feature_ext,
   
   ## == Create prototypes and known_labels ============
   n_known = len(known_labels)
-  pt_per_class = 1
+  
   known_labels = torch.tensor(list(known_labels), device=device)
   print('Known labels: {}'.format(known_labels))
   
   if args.rep_approach == 'prototype':
+    rep_per_class = 1
     sup_features = torch.cat(
       [learner.prototypes[l.item()] for l in known_labels]
     )
   elif args.rep_approach == 'exampler':
+    rep_per_class = args.n_examplers
     sup_features = torch.cat(
       [learner.examplers[l.item()] for l in known_labels]
     )
@@ -62,8 +64,8 @@ def zeroshot_test(feature_ext,
       # sup_labels_ext = sup_labels.unsqueeze(0).repeat(stream_batch, 1)             #[q, w*sh]
       # sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)
       #                            #[w*sh, q]
-      # test_features_ext = test_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1) #[w*sh, q, 128]
-      # test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)        #[w*sh, q]
+      # test_features_ext = test_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[w*sh, q, 128]
+      # test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[w*sh, q]
       
       # relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
 
@@ -73,7 +75,9 @@ def zeroshot_test(feature_ext,
       
       ## == Similarity score ==================
       all_sim = cos_similarity(test_feature, sup_features)
-      prob, predict_label = torch.max(all_sim, 1)
+      prob, ow_predict_label = torch.max(all_sim, 1)
+      predict_label = known_labels[ow_predict_label] // args.n_examplers
+      
       if (i+1) % 500 == 0:
         print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
           i+1, test_label.item(), predict_label, prob, real_novelty,

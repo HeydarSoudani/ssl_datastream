@@ -410,7 +410,7 @@ class RelationLearner:
         all_sim = cos_similarity(test_features, sup_features)
         _, ow_predict_labels = torch.max(all_sim, 1)
         ow_total += test_labels.size(0)
-        ow_correct += (known_labels[ow_predict_labels] == test_labels).sum().item()
+        ow_correct += ((known_labels[ow_predict_labels] // args.n_examplers) == test_labels).sum().item()
 
         ## == Close World Acc. =================
         _, cw_predict_labels = torch.max(test_outputs, 1)

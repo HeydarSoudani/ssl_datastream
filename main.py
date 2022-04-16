@@ -79,11 +79,11 @@ parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument(
   '--rep_approach',
   type=str,
-  default='prototype',
+  default='exampler',
   choices=['exampler, prototype'],
   help='representation approach to show known classes'
 )
-parser.add_argument('--n_examplers', type=int, default=1)
+parser.add_argument('--n_examplers', type=int, default=5)
 
 # Transform
 parser.add_argument('--use_transform', action='store_true')
@@ -173,7 +173,9 @@ print('Total trainable params: {}'.format(total_params_trainable))
 # criterion = TotalLoss(args)
 learner = RelationLearner(device, args)
 if args.phase in ['zeroshot_test', 'visualization']:
-  learner.load(os.path.join(args.save, "learner.pt"))
+  learner_path = os.path.join(args.save, "learner.pt")
+  learner.load(learner_path)
+  print("Load learner from {}".format(learner_path))
 
 ## == load data ========================
 print('Data loaading ...')
