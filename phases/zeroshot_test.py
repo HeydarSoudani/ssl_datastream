@@ -49,35 +49,32 @@ def zeroshot_test(feature_ext,
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      if i < 20:
-        # Query set
-        test_image, test_label = batch
-        test_label = test_label.flatten()
-        test_image, test_label = test_image.to(device), test_label.to(device)
-        real_novelty = test_label.item() not in known_labels
-        _, test_feature = feature_ext.forward(test_image)
+      # if i < 20:
+      test_image, test_label = batch
+      test_label = test_label.flatten()
+      test_image, test_label = test_image.to(device), test_label.to(device)
+      real_novelty = test_label.item() not in known_labels
+      _, test_feature = feature_ext.forward(test_image)
 
-        # ## == Relation Network preparation =====
-        # sup_features_ext = sup_features.unsqueeze(0).repeat(stream_batch, 1, 1)  #[q, w*sh, 128]
-        # sup_features_ext = torch.transpose(sup_features_ext, 0, 1)               #[w*sh, q, 128]
-        # sup_labels_ext = sup_labels.unsqueeze(0).repeat(stream_batch, 1)             #[q, w*sh]
-        # sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)
-        #                            #[w*sh, q]
-        # test_features_ext = test_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1) #[w*sh, q, 128]
-        # test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)        #[w*sh, q]
-        
-        # relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
+      # ## == Relation Network preparation =====
+      # sup_features_ext = sup_features.unsqueeze(0).repeat(stream_batch, 1, 1)  #[q, w*sh, 128]
+      # sup_features_ext = torch.transpose(sup_features_ext, 0, 1)               #[w*sh, q, 128]
+      # sup_labels_ext = sup_labels.unsqueeze(0).repeat(stream_batch, 1)             #[q, w*sh]
+      # sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)
+      #                            #[w*sh, q]
+      # test_features_ext = test_features.unsqueeze(0).repeat(n_known*pt_per_class, 1, 1) #[w*sh, q, 128]
+      # test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*pt_per_class, 1)        #[w*sh, q]
+      
+      # relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
 
-        # ## == Relation Network ===================
-        # relations = relation_net(relation_pairs).view(-1, args.ways)
-        # prob, predict_labels = torch.max(relations.data, 1)
-        
-        ## == Similarity score ==================
-        # print(test_feature)
-        # print(sup_features)
-        all_sim = cos_similarity(test_feature, sup_features)
-        prob, predict_label = torch.max(all_sim, 1)
-        # if (i+1) % 1000 == 0:
+      # ## == Relation Network ===================
+      # relations = relation_net(relation_pairs).view(-1, args.ways)
+      # prob, predict_labels = torch.max(relations.data, 1)
+      
+      ## == Similarity score ==================
+      all_sim = cos_similarity(test_feature, sup_features)
+      prob, predict_label = torch.max(all_sim, 1)
+      if (i+1) % 500 == 0:
         print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
           i+1, test_label.item(), predict_label, prob, real_novelty,
           tuple(np.around(np.array(all_sim.tolist()),2)[0])
