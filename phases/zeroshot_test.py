@@ -73,8 +73,8 @@ def zeroshot_test(feature_ext,
         # prob, predict_labels = torch.max(relations.data, 1)
         
         ## == Similarity score ==================
-        print(test_feature)
-        print(sup_features)
+        # print(test_feature)
+        # print(sup_features)
         all_sim = cos_similarity(test_feature, sup_features)
         prob, predict_label = torch.max(all_sim, 1)
         # if (i+1) % 1000 == 0:
