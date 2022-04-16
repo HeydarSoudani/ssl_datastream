@@ -52,10 +52,10 @@ def zeroshot_test(feature_ext,
       if i < 20:
         # real_novelty = label.item() not in detector._known_labels
         # Query set
-        test_images, test_labels = batch
-        test_labels = test_labels.flatten()
-        test_images, test_labels = test_images.to(device), test_labels.to(device)
-        _, test_features = feature_ext.forward(test_images)
+        test_image, test_label = batch
+        test_label = test_label.flatten()
+        test_image, test_label = test_image.to(device), test_label.to(device)
+        _, test_feature = feature_ext.forward(test_image)
 
         # ## == Relation Network preparation =====
         # sup_features_ext = sup_features.unsqueeze(0).repeat(stream_batch, 1, 1)  #[q, w*sh, 128]
@@ -73,7 +73,7 @@ def zeroshot_test(feature_ext,
         # prob, predict_labels = torch.max(relations.data, 1)
         
         ## == Similarity score ==================
-        print(test_features)
+        print(test_feature)
         print(sup_features)
         all_sim = cos_similarity(test_features, sup_features)
         prob, predict_labels = torch.max(all_sim, 1)

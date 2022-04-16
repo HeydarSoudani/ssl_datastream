@@ -364,12 +364,14 @@ def train(
   except KeyboardInterrupt:
     print('skipping training')
   
-  # if args.rep_approach == 'prototype':
-  #   learner.calculate_prototypes(feature_ext, train_loader)
-  # elif args.rep_approach == 'exampler':
-  #   learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
+  # == Save learner ===========
+  if args.rep_approach == 'prototype':
+    learner.calculate_prototypes(feature_ext, train_loader)
+  elif args.rep_approach == 'exampler':
+    learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
+  learner.save(os.path.join(args.save, "learner.pt"))
 
-  # save last model
+  # == Save last model ========
   feature_ext.save(os.path.join(args.save, "feature_ext_last.pt"))
   relation_net.save(os.path.join(args.save, "relation_net_last.pt"))
   print("= ...last model saved")

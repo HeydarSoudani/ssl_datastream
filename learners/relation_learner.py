@@ -435,6 +435,11 @@ class RelationLearner:
 
       return total_loss, total_cw_acc, total_ow_acc
 
+  def load(self, pkl_path):
+    self.__dict__.update(torch.load(pkl_path))
+
+  def save(self, pkl_path):
+    torch.save(self.__dict__, pkl_path)
 
 
 

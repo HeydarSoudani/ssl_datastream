@@ -172,6 +172,8 @@ print('Total trainable params: {}'.format(total_params_trainable))
 ## == Load learner =====================
 # criterion = TotalLoss(args)
 learner = RelationLearner(device, args)
+if args.phase in ['zeroshot_test', 'visualization']:
+  learner.load(os.path.join(args.save, "learner.pt"))
 
 ## == load data ========================
 print('Data loaading ...')
