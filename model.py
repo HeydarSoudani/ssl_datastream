@@ -85,7 +85,7 @@ class MyPretrainedResnet50(nn.Module):
     self.fc2.apply(Xavier)
     
   def forward(self, x):
-    x = x.view(x.size(0), -1)
+    # x = x.view(x.size(0), -1)
     x = self.pretrained(x)
     x = self.dp1(torch.relu(x))
     features = torch.relu(self.fc1(x))
