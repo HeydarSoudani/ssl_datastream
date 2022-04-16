@@ -6,7 +6,6 @@ from dataset import SimpleDataset
 from losses import cos_similarity
 
 
-
 class SimDetector(object):
   def __init__(self, device):
     self.device = device
@@ -51,7 +50,7 @@ class SimDetector(object):
         features_per_class[label.item()].append(feature.detach())
 
     self.thresholds = {
-      l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).mean().item(), 4)
+      l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).max(axis=1)[0].mean().item(), 4)
       for l in self._known_labels
     }
 
