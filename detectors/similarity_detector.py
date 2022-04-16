@@ -50,7 +50,10 @@ class SimDetector(object):
         features_per_class[label.item()].append(feature.detach())
 
     self.thresholds = {
-      l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).max(axis=1)[0].mean().item(), 4)
+      ## Max
+      # l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).max(axis=1)[0].mean().item(), 4)
+      ## Mean
+      l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).mean().item(), 4)
       for l in self._known_labels
     }
 

@@ -25,12 +25,10 @@ def zeroshot_test(feature_ext,
   stream_data = read_csv(
     os.path.join(args.data_path, args.stream_file),
     sep=',', header=None).values
-  
   stream_batch = 1
   stream_dataset = SimpleDataset(stream_data, args)
   streamloader = DataLoader(dataset=stream_dataset, batch_size=stream_batch, shuffle=False)
 
-  
   ## == Create prototypes and known_labels ============
   n_known = len(known_labels)
   
@@ -54,7 +52,7 @@ def zeroshot_test(feature_ext,
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      # if i < 20:
+      if i < 20:
         test_image, test_label = batch
         test_label = test_label.flatten()
         test_image, test_label = test_image.to(device), test_label.to(device)
@@ -80,12 +78,13 @@ def zeroshot_test(feature_ext,
         detected_novelty, predicted_label, prob, avg_sim = detector(test_feature, representors, rep_per_class)
         
         detection_results.append((test_label.item(), predicted_label, real_novelty, detected_novelty))
-        if (i+1) % 500 == 0:
-          print("[stream %5d]: %d, %2d, %7.4f, %s, %s, %s"%(
-            i+1, test_label.item(), predicted_label, prob, real_novelty, detected_novelty,
-            tuple(np.around(np.array(avg_sim.tolist()),2))
+        # if (i+1) % 500 == 0:
+        print("[stream %5d]: %d, %2d, %7.4f, %s, %s, %s"%(
+          i+1, test_label.item(), predicted_label, prob, real_novelty, detected_novelty,
+          tuple(np.around(np.array(avg_sim.tolist()),2))
         ))
   
+  print(detection_results)
   CwCA, NcCA, AcCA, OwCA, M_new, F_new = final_step_evaluation(detection_results, known_labels, detector._known_labels)
   print("Evaluation: %7.2f, %7.2f, %7.2f, %7.2f, %7.2f, %7.2f"%(CwCA*100, NcCA*100, AcCA*100, OwCA*100, M_new*100, F_new*100))
   # print("confusion matrix: \n%s"% cm)

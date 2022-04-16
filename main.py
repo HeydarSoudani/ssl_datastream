@@ -84,7 +84,7 @@ parser.add_argument(
   choices=['exampler, prototype'],
   help='representation approach to show known classes'
 )
-parser.add_argument('--n_examplers', type=int, default=20)
+parser.add_argument('--n_examplers', type=int, default=10)
 
 # Transform
 parser.add_argument('--use_transform', action='store_true')
