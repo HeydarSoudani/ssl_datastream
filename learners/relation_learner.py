@@ -77,8 +77,6 @@ class RelationLearner:
     query_features = features[support_len:]   #[w*q, 128]
 
 
-
-
   def end2end_train(
     self,
     feature_ext,
@@ -378,21 +376,21 @@ class RelationLearner:
         test_outputs, test_features = feature_ext.forward(test_images)
 
         ## == Relation Network preparation =====
-        sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
-        sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
-        sup_labels_ext = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
-        sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                             #[nc*sh, q]
+        # sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
+        # sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
+        # sup_labels_ext = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
+        # sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                             #[nc*sh, q]
 
-        test_features_ext = test_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[nc*sh, q, 128]
-        test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[nc*sh, q]
+        # test_features_ext = test_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[nc*sh, q, 128]
+        # test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[nc*sh, q]
 
-        relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
-        relarion_labels = torch.zeros(n_known*rep_per_class, args.query_num).to(self.device)
-        relarion_labels = torch.where(
-          sup_labels_ext!=test_labels_ext,
-          relarion_labels,
-          torch.tensor(1.).to(self.device)
-        ).view(-1,1)
+        # relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
+        # relarion_labels = torch.zeros(n_known*rep_per_class, args.query_num).to(self.device)
+        # relarion_labels = torch.where(
+        #   sup_labels_ext!=test_labels_ext,
+        #   relarion_labels,
+        #   torch.tensor(1.).to(self.device)
+        # ).view(-1,1)
         
         ## == Relation Network ===============
         # relations = relation_net(relation_pairs).view(-1, n_known)
