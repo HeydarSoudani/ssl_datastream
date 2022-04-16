@@ -81,15 +81,15 @@ def zeroshot_test(feature_ext,
           torch.mean(all_sim[:, i*rep_per_class:(i+1)*rep_per_class])
           for i in range(rep_per_class)
         ])
-        print(avg_sim)
         prob, ow_predict_label = torch.max(avg_sim, 0)
 
-        predict_label = known_labels[torch.div(ow_predict_label, rep_per_class, rounding_mode='trunc')]
         # if (i+1) % 500 == 0:
+        # predict_label = known_labels[torch.div(ow_predict_label, rep_per_class, rounding_mode='trunc')]
         # print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
         #   i+1, test_label.item(), predict_label.item(), prob, real_novelty,
         #   tuple(np.around(np.array(all_sim.tolist()),2)[0])
         # ))
+        predict_label = known_labels[ow_predict_label]
         print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
           i+1, test_label.item(), predict_label.item(), prob, real_novelty,
           tuple(np.around(np.array(avg_sim.tolist()),2))
