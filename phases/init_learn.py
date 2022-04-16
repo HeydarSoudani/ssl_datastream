@@ -76,6 +76,7 @@ def init_learn(
     known_labels,
     args
   )
+  print("Detector Threshold: {}".format(detector.thresholds))  
   detector_path = os.path.join(args.save, "detector.pt") 
   detector.save(detector_path)
   print("Detector has been saved in {}.".format(detector_path))

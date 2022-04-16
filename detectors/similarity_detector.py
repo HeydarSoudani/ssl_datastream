@@ -1,8 +1,10 @@
 import torch
+from torch.utils.data import DataLoader
 import numpy as np
 
-from torch.utils.data import DataLoader
 from dataset import SimpleDataset
+from losses import cos_similarity
+
 
 
 class SimDetector(object):
@@ -45,31 +47,13 @@ class SimDetector(object):
         image, label = batch
         label = label.flatten()
         image, label = image.to(self.device), label.to(self.device)
-
         _, feature = feature_ext(image)
-
         features_per_class[label.item()].append(feature.detach())
 
-      for l in self._known_labels:
-        features = torch.cat(features_per_class[l])
-        reps = representors[l]
-
-        print(features.shape)
-        print(reps.shape)
-
-
-    
-    # self.distances = np.array(distances, dtype=[('label', np.int32), ('distance', np.float32)])
-    # self._known_labels = set(known_labels)
-    # self.std_coefficient = std_coefficient
-
-    # self.average_distances = {l: np.average(self.distances[self.distances['label'] == l]['distance'])
-    #                         for l in self._known_labels}
-    # self.std_distances = {l: self.distances[self.distances['label'] == l]['distance'].std()
-    #                     for l in self._known_labels}
-    # self.thresholds = {l: self.average_distances[l] + (self.std_coefficient * self.std_distances[l])
-    #                   for l in self._known_labels}
-    # self.results = None
+    self.thresholds = {
+      l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).mean().item(), 4)
+      for l in self._known_labels
+    }
 
   def load(self, pkl_path):
     self.__dict__.update(torch.load(pkl_path))
