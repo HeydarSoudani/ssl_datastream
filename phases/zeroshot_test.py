@@ -15,7 +15,7 @@ def zeroshot_test(feature_ext,
                   relation_net,
                   learner,
                   detector,
-                  known_labels,
+                  known_labels_set,
                   args, device):
   print('================================ Zero-Shot Test ================================')
   feature_ext.eval()
@@ -30,9 +30,9 @@ def zeroshot_test(feature_ext,
   streamloader = DataLoader(dataset=stream_dataset, batch_size=stream_batch, shuffle=False)
 
   ## == Create prototypes and known_labels ============
-  n_known = len(known_labels)
+  n_known = len(known_labels_set)
   
-  known_labels = torch.tensor(list(known_labels), device=device)
+  known_labels = torch.tensor(list(known_labels_set), device=device)
   print('Known labels: {}'.format(known_labels))
   
   if args.rep_approach == 'prototype':
@@ -85,7 +85,7 @@ def zeroshot_test(feature_ext,
         ))
   
   print(detection_results)
-  CwCA, NcCA, AcCA, OwCA, M_new, F_new = final_step_evaluation(detection_results, known_labels, detector._known_labels)
+  CwCA, NcCA, AcCA, OwCA, M_new, F_new = final_step_evaluation(detection_results, known_labels_set, detector._known_labels)
   print("Evaluation: %7.2f, %7.2f, %7.2f, %7.2f, %7.2f, %7.2f"%(CwCA*100, NcCA*100, AcCA*100, OwCA*100, M_new*100, F_new*100))
   # print("confusion matrix: \n%s"% cm)
   
