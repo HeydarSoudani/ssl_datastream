@@ -7,6 +7,7 @@ from pandas import read_csv
 from model import MyReducedRes50, MyPretrainedResnet50, MLP, weights_init
 from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
+from detectors.similarity_detector import SimDetector
 # from losses import TotalLoss
 from phases.batch_learn import batch_learn
 from phases.init_learn import init_learn
@@ -127,6 +128,22 @@ if args.cuda:
 if not os.path.exists(args.save):
   os.makedirs(args.save)
 
+## == Define & Load learner =============
+# criterion = TotalLoss(args)
+learner = RelationLearner(device, args)
+if args.phase in ['zeroshot_test', 'visualization']:
+  learner_path = os.path.join(args.save, "learner.pt")
+  learner.load(learner_path)
+  print("Load learner from {}".format(learner_path))
+
+## == Define & Load learner =============
+detector = SimDetector(device)
+if args.phase in ['zeroshot_test', 'visualization']:
+  detector_path = os.path.join(args.save, "detector.pt")
+  detector.load(detector_path)
+  print("Load detector from {}".format(detector_path))
+
+
 ## == Define Feature extractor & Relation network ==
 print('Defining feature_ext & relation ...')
 # feature_ext = MyReducedRes50(args)
@@ -162,20 +179,12 @@ if args.phase in ['zeroshot_test', 'visualization']:
       print("Load feature_ext from {}".format(feature_ext_path))
       print("Load relation_net from {}".format(relation_net_path))
 
-# === Print feature_ext layers and params ====
+# == Print feature_ext layers and params ====
 # print(feature_ext)
 total_params = sum(p.numel() for p in feature_ext.parameters())
 total_params_trainable = sum(p.numel() for p in feature_ext.parameters() if p.requires_grad)
 print('Total params: {}'.format(total_params))
 print('Total trainable params: {}'.format(total_params_trainable))
-
-## == Load learner =====================
-# criterion = TotalLoss(args)
-learner = RelationLearner(device, args)
-if args.phase in ['zeroshot_test', 'visualization']:
-  learner_path = os.path.join(args.save, "learner.pt")
-  learner.load(learner_path)
-  print("Load learner from {}".format(learner_path))
 
 ## == load data ========================
 print('Data loaading ...')
@@ -204,6 +213,7 @@ if __name__ == '__main__':
       feature_ext,
       relation_net,
       learner,
+      detector,
       train_data,
       base_labels,
       args, device

@@ -43,7 +43,6 @@ def end2end_3d_training(
       args)
     train_loss += loss
 
-
 def end2end_training(
   feature_ext,
   relation_net,
@@ -209,7 +208,6 @@ def separate_training(
   elif args.rep_approach == 'exampler':
     learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
 
-
   ## = Train relation network ==========
   # trainloader = iter(train_dataloader)
   # for miteration_item in range(args.meta_iteration):
@@ -371,6 +369,7 @@ def train(
     learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
   learner.save(os.path.join(args.save, "learner.pt"))
   print("= ...learner saved")
+
 
   # == Save last model ========
   feature_ext.save(os.path.join(args.save, "feature_ext_last.pt"))

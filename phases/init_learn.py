@@ -49,6 +49,7 @@ def init_learn(
   feature_ext,
   relation_net,
   learner,
+  detector,
   train_data,
   known_labels,
   args, device
@@ -61,6 +62,24 @@ def init_learn(
     train_data,
     args)
 
+   
+  ## == Calculate theresholds ====
+  if args.rep_approach == 'prototype':
+    representors = learner.prototypes
+  elif args.rep_approach == 'exampler':
+    representors = learner.examplers
+  
+  detector.threshold_calculation(
+    train_data,
+    feature_ext,
+    representors,
+    known_labels,
+    args
+  )
+  detector_path = os.path.join(args.save, "detector.pt") 
+  detector.save(detector_path)
+  print("Detector has been saved in {}.".format(detector_path))
+  
   ## == Test =====================
   # init_test(
   #   feature_ext,
