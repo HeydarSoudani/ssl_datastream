@@ -54,7 +54,7 @@ def zeroshot_test(feature_ext,
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      if i < 20:
+      # if i < 20:
         test_image, test_label = batch
         test_label = test_label.flatten()
         test_image, test_label = test_image.to(device), test_label.to(device)
@@ -80,10 +80,10 @@ def zeroshot_test(feature_ext,
         detected_novelty, predicted_label, prob, avg_sim = detector(test_feature, representors, rep_per_class)
         
         detection_results.append((test_label.item(), predicted_label, real_novelty, detected_novelty))
-        # if (i+1) % 500 == 0:
-        print("[stream %5d]: %d, %2d, %7.4f, %s, %s, %s"%(
-          i+1, test_label.item(), predicted_label, prob, real_novelty, detected_novelty,
-          tuple(np.around(np.array(avg_sim.tolist()),2))
+        if (i+1) % 500 == 0:
+          print("[stream %5d]: %d, %2d, %7.4f, %s, %s, %s"%(
+            i+1, test_label.item(), predicted_label, prob, real_novelty, detected_novelty,
+            tuple(np.around(np.array(avg_sim.tolist()),2))
         ))
   
   CwCA, NcCA, AcCA, OwCA, M_new, F_new = final_step_evaluation(detection_results, known_labels, detector._known_labels)
