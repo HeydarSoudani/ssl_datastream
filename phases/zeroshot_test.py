@@ -29,9 +29,8 @@ def zeroshot_test(feature_ext,
   stream_dataset = SimpleDataset(stream_data, args)
   streamloader = DataLoader(dataset=stream_dataset, batch_size=stream_batch, shuffle=False)
 
-  ## == Create prototypes and known_labels ============
+  ## == Define representors and known_labels ============
   n_known = len(known_labels_set)
-  
   known_labels = torch.tensor(list(known_labels_set), device=device)
   print('Known labels: {}'.format(known_labels))
   
