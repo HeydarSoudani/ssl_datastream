@@ -51,7 +51,7 @@ def zeroshot_test(feature_ext,
   with torch.no_grad():
     for i, batch in enumerate(streamloader):
 
-      if i < 20:
+      # if i < 20:
         test_image, test_label = batch
         test_label = test_label.flatten()
         test_image, test_label = test_image.to(device), test_label.to(device)
@@ -83,15 +83,15 @@ def zeroshot_test(feature_ext,
         ])
         prob, ow_predict_label = torch.max(avg_sim, 0)
 
-        # if (i+1) % 500 == 0:
-        # predict_label = known_labels[torch.div(ow_predict_label, rep_per_class, rounding_mode='trunc')]
-        # print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
-        #   i+1, test_label.item(), predict_label.item(), prob, real_novelty,
-        #   tuple(np.around(np.array(all_sim.tolist()),2)[0])
-        # ))
-        predict_label = known_labels[ow_predict_label]
-        print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
-          i+1, test_label.item(), predict_label.item(), prob, real_novelty,
-          tuple(np.around(np.array(avg_sim.tolist()),2))
-        ))
+        if (i+1) % 500 == 0:
+          # predict_label = known_labels[torch.div(ow_predict_label, rep_per_class, rounding_mode='trunc')]
+          # print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
+          #   i+1, test_label.item(), predict_label.item(), prob, real_novelty,
+          #   tuple(np.around(np.array(all_sim.tolist()),2)[0])
+          # ))
+          predict_label = known_labels[ow_predict_label]
+          print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
+            i+1, test_label.item(), predict_label.item(), prob, real_novelty,
+            tuple(np.around(np.array(avg_sim.tolist()),2))
+          ))
     
