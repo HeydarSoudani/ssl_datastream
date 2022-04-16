@@ -79,7 +79,7 @@ def zeroshot_test(feature_ext,
         
         avg_sim = torch.tensor([
           torch.mean(all_sim[:, i*rep_per_class:(i+1)*rep_per_class])
-          for i in range(rep_per_class)
+          for i in range(n_known)
         ])
         prob, ow_predict_label = torch.max(avg_sim, 0)
 
