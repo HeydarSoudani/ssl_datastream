@@ -50,7 +50,7 @@ def zeroshot_test(feature_ext,
     for i, batch in enumerate(streamloader):
 
       if i < 20:
-        
+        # real_novelty = label.item() not in detector._known_labels
         # Query set
         test_images, test_labels = batch
         test_labels = test_labels.flatten()
@@ -73,6 +73,8 @@ def zeroshot_test(feature_ext,
         # prob, predict_labels = torch.max(relations.data, 1)
         
         ## == Similarity score ==================
+        print(test_features.shape)
+        print(sup_features.shape)
         all_sim = cos_similarity(test_features, sup_features)
         prob, predict_labels = torch.max(all_sim, 1)
         # if (i+1) % 1000 == 0:
