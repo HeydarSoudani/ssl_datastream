@@ -76,8 +76,8 @@ def zeroshot_test(feature_ext,
       ## == Similarity score ==================
       all_sim = cos_similarity(test_feature, sup_features)
       prob, ow_predict_label = torch.max(all_sim, 1)
-      predict_label = known_labels[ow_predict_label] // args.n_examplers
-      
+      predict_label = known_labels[ow_predict_label//args.n_examplers]
+
       if (i+1) % 500 == 0:
         print("[stream %5d]: %d, %2d, %7.4f, %s, %s"%(
           i+1, test_label.item(), predict_label, prob, real_novelty,
