@@ -62,7 +62,7 @@ class SimDetector(object):
             cos_similarity(
               torch.cat(features_per_class[l]), representors[l]
             ).mean().item() - \
-            0.5 * cos_similarity(
+            0.1 * cos_similarity(
               torch.cat(features_per_class[l]), representors[l]
             ).std().item() 
           )
