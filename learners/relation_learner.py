@@ -215,13 +215,11 @@ class RelationLearner:
     feature_ext,
     relation_net,
     batch,
-    feature_ext_optim,
     relation_net_optim,
     known_labels,
     args
   ):
-    feature_ext.train()
-    feature_ext_optim.zero_grad()
+    feature_ext.eval()
     relation_net.train()
     relation_net_optim.zero_grad()
 
@@ -248,7 +246,8 @@ class RelationLearner:
     query_labels = query_labels.to(self.device)
 
     ### === Feature extractor ==========================
-    _, query_features = feature_ext.forward(query_images)
+    with torch.no_grad():
+      _, query_features = feature_ext.forward(query_images)
 
     ### === Concat features ============================
     support_features_ext = support_features.unsqueeze(0).repeat(args.query_num, 1, 1)     #[q, w*sh, 128]
@@ -283,9 +282,7 @@ class RelationLearner:
     )
     loss.backward()
 
-    torch.nn.utils.clip_grad_norm_(feature_ext.parameters(), args.grad_clip)
     torch.nn.utils.clip_grad_norm_(relation_net.parameters(), args.grad_clip)
-    feature_ext_optim.step()
     relation_net_optim.step()
 
     return loss.detach().item()
@@ -376,41 +373,41 @@ class RelationLearner:
         test_outputs, test_features = feature_ext.forward(test_images)
 
         ## == Relation Network preparation =====
-        # sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
-        # sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
-        # sup_labels_ext = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
-        # sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                             #[nc*sh, q]
+        sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
+        sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
+        sup_labels_ext = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
+        sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                             #[nc*sh, q]
 
-        # test_features_ext = test_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[nc*sh, q, 128]
-        # test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[nc*sh, q]
+        test_features_ext = test_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[nc*sh, q, 128]
+        test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[nc*sh, q]
 
-        # relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
-        # relarion_labels = torch.zeros(n_known*rep_per_class, args.query_num).to(self.device)
-        # relarion_labels = torch.where(
-        #   sup_labels_ext!=test_labels_ext,
-        #   relarion_labels,
-        #   torch.tensor(1.).to(self.device)
-        # ).view(-1,1)
+        relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
+        relarion_labels = torch.zeros(n_known*rep_per_class, args.query_num).to(self.device)
+        relarion_labels = torch.where(
+          sup_labels_ext!=test_labels_ext,
+          relarion_labels,
+          torch.tensor(1.).to(self.device)
+        ).view(-1,1)
         
         ## == Relation Network ===============
-        # relations = relation_net(relation_pairs).view(-1, n_known)
-        # # print(relations.data)
+        relations = relation_net(relation_pairs).view(-1, n_known)
+        # print(relations.data)
         
         # ## == Relation-based Acc. ============
-        # _, ow_predict_labels = torch.max(relations.data, 1)
-        # # print(test_labels)
-        # # print(ow_predict_labels)
-        # # print('===')
-        # ow_total += test_labels.size(0)
-        # ow_correct += (ow_predict_labels == test_labels).sum().item()
+        _, ow_predict_labels = torch.max(relations.data, 1)
+        # print(test_labels)
+        # print(ow_predict_labels)
+        # print('===')
+        ow_total += test_labels.size(0)
+        ow_correct += (ow_predict_labels == test_labels).sum().item()
 
         ## == Similarity test ==================
-        all_sim = cos_similarity(test_features, sup_features)
-        _, ow_predict_labels = torch.max(all_sim, 1)
-        ow_total += test_labels.size(0)
+        # all_sim = cos_similarity(test_features, sup_features)
+        # _, ow_predict_labels = torch.max(all_sim, 1)
+        # ow_total += test_labels.size(0)
 
-        predicted_labels = known_labels[torch.div(ow_predict_labels, args.n_examplers, rounding_mode='trunc')]
-        ow_correct += (predicted_labels == test_labels).sum().item()
+        # predicted_labels = known_labels[torch.div(ow_predict_labels, args.n_examplers, rounding_mode='trunc')]
+        # ow_correct += (predicted_labels == test_labels).sum().item()
 
         ## == Close World Acc. =================
         _, cw_predict_labels = torch.max(test_outputs, 1)
