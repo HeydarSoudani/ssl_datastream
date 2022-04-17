@@ -400,7 +400,7 @@ class RelationLearner:
         # print(ow_predict_labels)
         # print('===')
         ow_total += test_labels.size(0)
-        ow_correct += (ow_predict_labels == test_labels).sum().item()
+        ow_correct += (ow_predict_labels == test_labels_ext).sum().item()
 
         ## == Similarity test ==================
         # all_sim = cos_similarity(test_features, sup_features)
