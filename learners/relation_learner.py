@@ -389,6 +389,8 @@ class RelationLearner:
           relarion_labels,
           torch.tensor(1.).to(self.device)
         ).view(-1,1)
+
+        print(relarion_labels)
         
         ## == Relation Network ===============
         relations = relation_net(relation_pairs).view(-1, n_known)
