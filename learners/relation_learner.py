@@ -76,7 +76,6 @@ class RelationLearner:
     support_features = features[:support_len] #[w*s, 128]
     query_features = features[support_len:]   #[w*q, 128]
 
-
   def end2end_train(
     self,
     feature_ext,
@@ -376,8 +375,8 @@ class RelationLearner:
         ## == Relation Network preparation =====
         sup_features_ext = sup_features.unsqueeze(0).repeat(args.query_num, 1, 1)  #[q, nc*sh, 128]
         sup_features_ext = torch.transpose(sup_features_ext, 0, 1)                 #[nc*sh, q, 128]
-        sup_labels_ext = sup_labels.unsqueeze(0).repeat(args.query_num, 1)             #[q, nc*sh]
-        sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                             #[nc*sh, q]
+        sup_labels_ext = sup_labels.unsqueeze(0).repeat(args.query_num, 1)         #[q, nc*sh]
+        sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                     #[nc*sh, q]
 
         test_features_ext = test_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[nc*sh, q, 128]
         test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[nc*sh, q]
