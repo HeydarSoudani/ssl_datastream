@@ -14,8 +14,11 @@ def cos_similarity(x, y):
   
   x = x.unsqueeze(1).expand(n, m, d)
   y = y.unsqueeze(0).expand(n, m, d)
-  sim = (x * y).sum(dim=2)
-
+  dot_prod = (x * y).sum(dim=2)
+  x_norm = torch.linalg.norm(x, dim=2)
+  y_norm = torch.linalg.norm(y, dim=2)
+  sim = torch.div(dot_prod, x_norm*y_norm)
+  
   # sim = torch.zeros((n, m))
   # for i in range(n):
   #   for j in range(m):
