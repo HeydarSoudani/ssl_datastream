@@ -359,7 +359,8 @@ class RelationLearner:
       sup_features = torch.cat(
         [self.examplers[l.item()] for l in known_labels]
       )
-    sup_labels = known_labels
+    sup_labels = torch.transpose(known_labels.repeat(rep_per_class).reshape(rep_per_class, -1), 0, 1).flatten()
+    
 
     with torch.no_grad():
       for i, batch in enumerate(val_loader):
