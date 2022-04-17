@@ -391,6 +391,7 @@ class RelationLearner:
         ).view(-1,1)
 
         print(relarion_labels.shape)
+        print(relarion_labels.view(-1, n_known))
         print(relarion_labels)
         
         ## == Relation Network ===============
