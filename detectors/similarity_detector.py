@@ -25,7 +25,8 @@ class SimDetector(object):
     predicted_label = known_labels[predicted_idx].item()
 
     sec_max = torch.topk(avg_sim, 2)[0][-1]
-    if prob > self.thresholds[predicted_label] or (prob - sec_max) > 0.05:
+    if prob > self.thresholds[predicted_label]:
+    # or (prob - sec_max) > 0.1:
       pass
     else:
       detected_novelty = True
@@ -56,7 +57,16 @@ class SimDetector(object):
       ## Max
       # l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).max(axis=1)[0].mean().item(), 4)
       ## Mean
-      l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).mean().item(), 4)
+      l: round(
+          (
+            cos_similarity(
+              torch.cat(features_per_class[l]), representors[l]
+            ).mean().item() - \
+            0.5 * cos_similarity(
+              torch.cat(features_per_class[l]), representors[l]
+            ).std().item() 
+          )
+        ,4)
       for l in self._known_labels
     }
 
