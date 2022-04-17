@@ -12,11 +12,14 @@ def cos_similarity(x, y):
   if d != y.size(1):
     raise Exception
   
-  sim = torch.zeros((n, m))
+  x = x.unsqueeze(1).expand(n, m, d)
+  y = y.unsqueeze(0).expand(n, m, d)
+  sim = (x * y).sum(dim=2)
 
-  for i in range(n):
-    for j in range(m):
-      sim[i, j] = torch.dot(x[i], y[j])/(torch.norm(x[i])*torch.norm(y[j]))
+  # sim = torch.zeros((n, m))
+  # for i in range(n):
+  #   for j in range(m):
+  #     sim[i, j] = torch.dot(x[i], y[j])/(torch.norm(x[i])*torch.norm(y[j]))
 
   return sim
 

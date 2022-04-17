@@ -85,7 +85,37 @@ def stream_learn(feature_ext,
           (i+1, test_label.item(), predicted_label, prob, real_novelty, detected_novelty, len(unknown_buffer)))
 
 
+    if (i+1) % args.known_retrain_interval == 0 \
+      or len(unknown_buffer) == args.buffer_size:
+      print('=== Retraining... =================')
 
+      # == Preparing buffer ==================
+      if (i+1) % args.known_retrain_interval == 0:
+        buffer = []
+        for label, data in known_buffer.items():
+          n = len(data)
+          if n > args.known_per_class:
+            idxs = np.random.choice(
+              range(n), size=args.known_per_class, replace=False)
+            buffer.extend([data[i] for i in idxs])
+          else:
+            buffer.extend(data)
+
+      elif len(unknown_buffer) == args.buffer_size:
+        buffer = unknown_buffer
+
+      # == 1) evaluation ======================
+      sample_num = i-last_idx
+      CwCA, M_new, F_new, cm, acc_per_class = in_stream_evaluation(
+        detection_results, detector._known_labels)
+
+      print("[On %5d samples]: %7.4f, %7.4f, %7.4f" %
+            (sample_num, CwCA, M_new, F_new))
+      print("confusion matrix: \n%s\n" % cm)
+      print("acc per class: %s\n" % acc_per_class)
+      f.write("[In sample %2d], [On %5d samples]: %7.4f, %7.4f, %7.4f \n" %
+              (i, sample_num, CwCA, M_new, F_new))
+      f.write("acc per class: %s\n" % acc_per_class)
 
 
 

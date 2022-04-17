@@ -78,7 +78,7 @@ def zeroshot_test(feature_ext,
         
         detection_results.append((test_label.item(), predicted_label, real_novelty, detected_novelty))
         if (i+1) % 500 == 0:
-          print("[stream %5d]: %d, %2d, %7.4f, %s, %s, %s"%(
+          print("[stream %5d]: %d, %2d, %7.4f, %5s, %5s, %s"%(
             i+1, test_label.item(), predicted_label, prob, real_novelty, detected_novelty,
             tuple(np.around(np.array(avg_sim.tolist()),2))
         ))
