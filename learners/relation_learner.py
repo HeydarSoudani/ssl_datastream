@@ -279,7 +279,7 @@ class RelationLearner:
         dim=2
       ), 2
     )
-    print(relations_mean.shape)
+    # print(relations_mean.shape)
 
     ### === Loss & backward ============================
     quety_label_pressed = torch.tensor(
@@ -290,7 +290,7 @@ class RelationLearner:
       args.query_num, n_known
     ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
-    print(query_labels_onehot)
+    # print(query_labels_onehot)
     loss = self.relation_criterion(
       relations_mean,
       query_labels_onehot
@@ -397,27 +397,25 @@ class RelationLearner:
         test_features_ext = test_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[nc*sh, q, 128]
         test_labels_ext = test_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[nc*sh, q]
 
-        print(sup_labels_ext)
-        print(test_labels_ext)
-
         relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
-        relarion_labels = torch.zeros(n_known*rep_per_class, args.query_num).to(self.device)
-        relarion_labels = torch.where(
-          sup_labels_ext!=test_labels_ext,
-          relarion_labels,
-          torch.tensor(1.).to(self.device)
-        ).view(-1,1)
-
-        print(relarion_labels.shape)
-        print(relarion_labels.view(-1, n_known*rep_per_class))
-        # print(relarion_labels)
+        # relarion_labels = torch.zeros(n_known*rep_per_class, args.query_num).to(self.device)
+        # relarion_labels = torch.where(
+        #   sup_labels_ext!=test_labels_ext,
+        #   relarion_labels,
+        #   torch.tensor(1.).to(self.device)
+        # ).view(-1,1)
         
         ## == Relation Network ===============
-        relations = relation_net(relation_pairs).view(-1, n_known)
-        # print(relations.data)
+        relations = relation_net(relation_pairs).view(-1, n_known**rep_per_class)
+        relations_mean = torch.mean(
+          torch.stack(
+            torch.split(relations, n_known, dim=1),
+            dim=2
+          ), 2
+        )
         
         # ## == Relation-based Acc. ============
-        _, ow_predict_labels = torch.max(relations.data, 1)
+        _, ow_predict_labels = torch.max(relations_mean.data, 1)
         # print(test_labels)
         print(ow_predict_labels)
         print(ow_predict_labels.shape)
