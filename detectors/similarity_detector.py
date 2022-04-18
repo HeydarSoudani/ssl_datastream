@@ -57,7 +57,8 @@ class SimDetector(object):
         _, feature = feature_ext(image)
         features_per_class[label.item()].append(feature.detach())
 
-    print(features_per_class)
+    print(representors[0].shape)
+    print(torch.cat(features_per_class[0]).shape)
     self.thresholds = {
       ## Max
       # l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).max(axis=1)[0].mean().item(), 4)
