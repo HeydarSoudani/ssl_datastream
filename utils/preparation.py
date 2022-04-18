@@ -1,8 +1,8 @@
+import torch
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 from sklearn.model_selection import train_test_split
 from dataset import SimpleDataset
-from samplers.pt_sampler import PtSampler
 from samplers.relation_sampler import RelationSampler
 
 def dataloader_preparation(train_data, val_data, args):
@@ -53,7 +53,6 @@ def test_dataloader_preparation(data, args):
   _, test_transform = transforms_preparation()
   val_dataset = SimpleDataset(data, args, transforms=test_transform)
 
-
 def transforms_preparation():
   train_transform = transforms.Compose([
     transforms.ToPILImage(),
@@ -76,3 +75,15 @@ def transforms_preparation():
 
   return train_transform, test_transform
 
+def memory_samples_preparation(data, device, args):
+  dataset = SimpleDataset(data, args)
+  dataloader = DataLoader(dataset=dataset, batch_size=1, shuffle=False)
+  samples = []
+
+  for i, data in enumerate(dataloader):
+    sample, label = data
+    sample, label = sample.to(device), label.to(device)
+    samples.append((torch.squeeze(sample, 0).detach(), label.item())) #[1, 28, 28]))
+  
+  return samples
+      

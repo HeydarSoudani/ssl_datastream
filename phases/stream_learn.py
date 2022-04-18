@@ -6,15 +6,18 @@ import numpy as np
 from pandas import read_csv
 
 from dataset import SimpleDataset
-from utils.preparation import transforms_preparation
 from evaluation import in_stream_evaluation
+from trainers.episodic_trainer import train
 
 
 def stream_learn(feature_ext,
-                  relation_net,
-                  learner,
-                  detector,
-                 args, device):
+                relation_net,
+                learner,
+                detector,
+                memory,
+                base_labels,
+                args, device
+  ):
   print('================================ Stream Learing ================================')
   ## == Set retrain params ====================
   args.epochs = args.retrain_epochs
@@ -38,8 +41,8 @@ def stream_learn(feature_ext,
     f.write("[Class %5d], Start point: %5d \n" % (label, start_point))
 
   ## == Define representors and known_labels ============
-  n_known = len(known_labels_set)
-  known_labels = torch.tensor(list(known_labels_set), device=device)
+  n_known = len(base_labels)
+  known_labels = torch.tensor(list(base_labels), device=device)
   print('Known labels: {}'.format(known_labels))
   
   if args.rep_approach == 'prototype':
@@ -117,5 +120,65 @@ def stream_learn(feature_ext,
               (i, sample_num, CwCA, M_new, F_new))
       f.write("acc per class: %s\n" % acc_per_class)
 
+      # == 2) Preparing retrain data ==========
+      new_train_data = memory.select(buffer, return_data=True)
+      print('Retrain data number: {}'.format(new_train_data.shape[0]))
+      print('='*30)
 
+      # == 3) Retraining Model ================
+      train(
+        feature_ext,
+        relation_net,
+        learner,
+        new_train_data,
+        args
+      )
+      new_known_labels = set(new_train_data[:, -1])
+
+      # == 4) Recalculating Detector ==========
+      detector.threshold_calculation(
+        new_train_data,
+        feature_ext,
+        representors,
+        new_known_labels,
+        args
+      )
+      print("Detector Threshold: {}".format(detector.thresholds))  
+      detector_path = os.path.join(args.save, "detector.pt") 
+      detector.save(detector_path)
+      print("Detector has been saved in {}.".format(detector_path))
+
+      # == 5) Update parameters ===============
+      known_labels = list(known_buffer.keys())
+      labels_diff = list(set(new_known_labels)-set(known_labels))
+      for label in labels_diff:
+        print('Class {} detected at {}'.format(label, i))
+        f.write("[Class %2d], Detected point: %5d \n" % (label, i))
+
+      if len(unknown_buffer) == args.buffer_size:
+        if len(labels_diff) != 0:
+          for label in labels_diff:
+            known_buffer[label] = []
+        unknown_buffer.clear()
+      if (i+1) % args.known_retrain_interval == 0:
+        known_buffer = {i: [] for i in detector._known_labels}
+
+      # == Set parameters =====
+      detection_results.clear()
+      last_idx = i
+
+      print('=== Streaming... =================')
+
+  # == Last evaluation ========================
+  sample_num = i-last_idx
+  CwCA, M_new, F_new, cm, acc_per_class = in_stream_evaluation(
+      detection_results, detector._known_labels)
+  print("[On %5d samples]: %7.4f, %7.4f, %7.4f" %
+        (sample_num, CwCA, M_new, F_new))
+  print("confusion matrix: \n%s" % cm)
+  print("acc per class: %s\n" % acc_per_class)
+  f.write("[In sample %5d], [On %5d samples]: %7.4f, %7.4f, %7.4f \n" %
+          (i, sample_num, CwCA, M_new, F_new))
+  f.write("acc per class: %s\n" % acc_per_class)
+  f.close()
 

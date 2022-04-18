@@ -3,7 +3,7 @@ import os
 from pandas import read_csv
 
 from dataset import SimpleDataset
-from utils.preparation import transforms_preparation
+from utils.preparation import transforms_preparation, memory_samples_preparation
 from trainers.episodic_trainer import train
 
 
@@ -50,11 +50,12 @@ def init_learn(
   relation_net,
   learner,
   detector,
+  memory,
   train_data,
   known_labels,
   args, device
 ):
-  ## == Episodic train ===========
+  ## == Episodic train ====================
   train(
     feature_ext,
     relation_net,
@@ -63,7 +64,7 @@ def init_learn(
     args)
 
    
-  ## == Calculate theresholds ====
+  ## == Calculate detector theresholds ====
   if args.rep_approach == 'prototype':
     representors = learner.prototypes
   elif args.rep_approach == 'exampler':
@@ -81,6 +82,13 @@ def init_learn(
   detector.save(detector_path)
   print("Detector has been saved in {}.".format(detector_path))
   
+  ## == Initialize memory =================
+  samples = memory_samples_preparation(train_data, device, args)
+  memory.select(data=samples)
+  memory_path = os.path.join(args.save, "memory.pt") 
+  memory.save(memory_path)
+  print("Memory has been saved in {}.".format(memory_path))
+
   ## == Test =====================
   # init_test(
   #   feature_ext,

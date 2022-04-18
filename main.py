@@ -4,13 +4,15 @@ import argparse
 import numpy as np
 from pandas import read_csv
 
-from model import MyReducedRes50, MyPretrainedResnet50, MLP, weights_init
+from model import MyPretrainedResnet50, MLP, weights_init
 from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
 from detectors.similarity_detector import SimDetector
+from utils.memory import OperationalMemory
 # from losses import TotalLoss
 from phases.batch_learn import batch_learn
 from phases.init_learn import init_learn
+from phases.stream_learn import stream_learn
 from phases.zeroshot_test import zeroshot_test
 
 from visualize import visualization
@@ -56,6 +58,13 @@ parser.add_argument('--meta_iteration', type=int, default=3000, help='')
 parser.add_argument('--log_interval', type=int, default=5, help='must be less then meta_iteration parameter')
 parser.add_argument('--relation_train_interval', type=int, default=5, help='must be less then meta_iteration parameter')
 
+# retrain
+parser.add_argument('--buffer_size', type=int, default=1000, help='')
+parser.add_argument('--retrain_epochs', type=int, default=1, help='')
+parser.add_argument('--retrain_meta_iteration', type=int, default=1000, help='')
+parser.add_argument('--known_retrain_interval', type=int, default=5000, help='')
+parser.add_argument('--known_per_class', type=int, default=100, help='for known buffer')
+
 # Sampler
 parser.add_argument('--ways', type=int, default=5, help='')
 parser.add_argument('--shot', type=int, default=5, help='')
@@ -67,6 +76,7 @@ parser.add_argument('--lr_rel', type=float, default=0.001, help='')
 parser.add_argument('--momentum', type=float, default=0.9, help='')
 parser.add_argument('--wd', type=float, default=0.0005, help='')  #l2 regularization
 parser.add_argument('--grad_clip', type=float, default=5.0)
+
 # Scheduler
 parser.add_argument("--scheduler", action="store_true", help="use scheduler")
 parser.add_argument('--step_size', type=int, default=5)
@@ -99,6 +109,13 @@ parser.add_argument('--use_transform', action='store_true')
 # Loss function
 parser.add_argument("--lambda_1", type=float, default=1.0, help="Metric Coefficien in loss function")
 parser.add_argument("--lambda_2", type=float, default=1.0, help="relation Coefficient in loss function")
+
+# memory
+parser.add_argument('--mem_sel_type', type=str, default='fixed_mem', choices=['fixed_mem', 'pre_class'], help='')
+parser.add_argument('--mem_total_size', type=int, default=2000, help='')
+parser.add_argument('--mem_per_class', type=int, default=100, help='')
+parser.add_argument('--mem_sel_method', type=str, default='rand', choices=['rand', 'soft_rand'], help='')
+parser.add_argument('--mem_novel_acceptance', type=int, default=150, help='')
 
 # Device and Randomness
 parser.add_argument('--cuda', action='store_true',help='use CUDA')
@@ -150,10 +167,18 @@ if args.phase in ['zeroshot_test', 'visualization']:
   detector.load(detector_path)
   print("Load detector from {}".format(detector_path))
 
+## == Define Memory =====================
+memory = OperationalMemory(device,
+                            selection_type=args.mem_sel_type,
+                            total_size=args.mem_total_size,
+                            per_class=args.mem_per_class,
+                            novel_acceptance=args.mem_novel_acceptance)
+if args.phase in ['zeroshot_test', 'visualization']:
+  memory_path = os.path.join(args.save, "memory.pt")
+  memory.load(memory_path)
+  print("Load memory from {}".format(memory_path))
 
 ## == Define Feature extractor & Relation network ==
-print('Defining feature_ext & relation ...')
-# feature_ext = MyReducedRes50(args)
 feature_ext = MyPretrainedResnet50(args)
 relation_net = MLP(args)
 # feature_ext.apply(weights_init)
@@ -187,14 +212,12 @@ if args.phase in ['zeroshot_test', 'visualization']:
       print("Load relation_net from {}".format(relation_net_path))
 
 # == Print feature_ext layers and params ====
-# print(feature_ext)
 total_params = sum(p.numel() for p in feature_ext.parameters())
 total_params_trainable = sum(p.numel() for p in feature_ext.parameters() if p.requires_grad)
 print('Total params: {}'.format(total_params))
 print('Total trainable params: {}'.format(total_params_trainable))
 
 ## == load data ========================
-print('Data loaading ...')
 args.data_path = 'data/'
 args.train_file = '{}_train.csv'.format(args.dataset)
 args.test_file = '{}_test.csv'.format(args.dataset)
@@ -221,7 +244,18 @@ if __name__ == '__main__':
       relation_net,
       learner,
       detector,
+      memory,
       train_data,
+      base_labels,
+      args, device
+    )
+  elif args.phase == 'stream_learn':
+    stream_learn(
+      feature_ext,
+      relation_net,
+      learner,
+      detector,
+      memory,
       base_labels,
       args, device
     )
