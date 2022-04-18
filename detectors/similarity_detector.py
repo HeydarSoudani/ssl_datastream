@@ -22,7 +22,7 @@ class SimDetector(object):
     
     # with all_sim
     prob, predicted_idx = torch.max(all_sim, 1)
-    predicted_label = self._known_labels[torch.div(predicted_idx, rep_per_class, rounding_mode='trunc')]
+    predicted_label = known_labels[torch.div(predicted_idx, rep_per_class, rounding_mode='trunc')]
     
     # with avg_sim
     # prob, predicted_idx = torch.max(avg_sim, 0)
