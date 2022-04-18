@@ -155,14 +155,14 @@ if not os.path.exists(args.save):
 ## == Define & Load learner =============
 # criterion = TotalLoss(args)
 learner = RelationLearner(device, args)
-if args.phase in ['zeroshot_test', 'visualization']:
+if args.phase in ['zeroshot_test', 'stream_learn', 'visualization']:
   learner_path = os.path.join(args.save, "learner.pt")
   learner.load(learner_path)
   print("Load learner from {}".format(learner_path))
 
 ## == Define & Load learner =============
 detector = SimDetector(device)
-if args.phase in ['zeroshot_test', 'visualization']:
+if args.phase in ['zeroshot_test', 'stream_learn', 'visualization']:
   detector_path = os.path.join(args.save, "detector.pt")
   detector.load(detector_path)
   print("Load detector from {}".format(detector_path))
@@ -173,7 +173,7 @@ memory = OperationalMemory(device,
                             total_size=args.mem_total_size,
                             per_class=args.mem_per_class,
                             novel_acceptance=args.mem_novel_acceptance)
-if args.phase in ['zeroshot_test', 'visualization']:
+if args.phase in ['zeroshot_test', 'stream_learn', 'visualization']:
   memory_path = os.path.join(args.save, "memory.pt")
   memory.load(memory_path)
   print("Load memory from {}".format(memory_path))
@@ -188,7 +188,7 @@ relation_net.to(device)
 # print(feature_ext)
 
 ## == Load Feature extractor & Relation network ==
-if args.phase in ['zeroshot_test', 'visualization']:
+if args.phase in ['zeroshot_test', 'stream_learn', 'visualization']:
   if args.which_model == 'best':
     feature_ext_path = os.path.join(args.save, "feature_ext_best.pt")
     relation_net_path = os.path.join(args.save, "relation_net_best.pt")
