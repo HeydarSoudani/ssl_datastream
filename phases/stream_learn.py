@@ -127,7 +127,6 @@ def stream_learn(feature_ext,
       print('Retrain data number: {}'.format(new_train_data.shape[0]))
 
       # == 3) Retraining Model ================
-
       train(
         feature_ext,
         relation_net,
@@ -138,6 +137,11 @@ def stream_learn(feature_ext,
       new_known_labels = set(new_train_data[:, -1])
 
       # == 4) Recalculating Detector ==========
+      if args.rep_approach == 'prototype':
+        representors = learner.prototypes
+      elif args.rep_approach == 'exampler':
+        representors = learner.examplers
+      
       detector.threshold_calculation(
         new_train_data,
         feature_ext,
