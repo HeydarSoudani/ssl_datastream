@@ -55,32 +55,34 @@ def zeroshot_test(feature_ext,
         real_novelty = test_label.item() not in known_labels
         _, test_feature = feature_ext.forward(test_image)
 
-        ## == Relation Network preparation =====
-        sup_features_ext = representors.unsqueeze(0).repeat(stream_batch, 1, 1)  #[q, w*sh, 128]
-        sup_features_ext = torch.transpose(sup_features_ext, 0, 1)               #[w*sh, q, 128]
-        sup_labels_ext = rep_labels.unsqueeze(0).repeat(stream_batch, 1)             #[q, w*sh]
-        sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)
-                                   #[w*sh, q]
-        test_features_ext = test_feature.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[w*sh, q, 128]
-        test_labels_ext = test_label.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[w*sh, q]
-        
-        relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
+        if args.similarity_approach == 'relation':
+          ## == Relation Network preparation =====
+          sup_features_ext = representors.unsqueeze(0).repeat(stream_batch, 1, 1)  #[q, w*sh, 128]
+          sup_features_ext = torch.transpose(sup_features_ext, 0, 1)               #[w*sh, q, 128]
+          sup_labels_ext = rep_labels.unsqueeze(0).repeat(stream_batch, 1)         #[q, w*sh]
+          sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                   #[w*sh, q]
+          
+          test_features_ext = test_feature.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[w*sh, q, 128]
+          test_labels_ext = test_label.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[w*sh, q]
+          
+          relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
 
-        ## == Relation Network ===================
-        relations = relation_net(relation_pairs).view(-1, args.ways)
+          ## == Relation Network ===================
+          relations = relation_net(relation_pairs).view(-1, args.ways)
+          
+          avg_sim = torch.tensor([
+            torch.mean(relations.data[:, i*rep_per_class:(i+1)*rep_per_class])
+            for i in known_labels
+          ])
+          prob, predicted_idx = torch.max(avg_sim, 0)
+          predicted_label = known_labels[predicted_idx].item()
+          detected_novelty = False
+          # prob, predicted_label = torch.max(relations.data, 1)
         
-        avg_sim = torch.tensor([
-          torch.mean(relations.data[:, i*rep_per_class:(i+1)*rep_per_class])
-          for i in known_labels
-        ])
-        prob, predicted_idx = torch.max(avg_sim, 0)
-        predicted_label = known_labels[predicted_idx].item()
-        detected_novelty = False
-        # prob, predicted_label = torch.max(relations.data, 1)
-        
-        ## == Similarity score ==================
-        # detected_novelty, predicted_label, prob, avg_sim = detector(test_feature, representors, rep_per_class)
-        
+        else:
+          ## == Similarity score ==================
+          detected_novelty, predicted_label, prob, avg_sim = detector(test_feature, representors, rep_per_class)
+          
         detection_results.append((test_label.item(), predicted_label, real_novelty, detected_novelty))
         if (i+1) % 500 == 0:
           print("[stream %5d]: %d, %2d, %7.4f, %5s, %5s, %s"%(
