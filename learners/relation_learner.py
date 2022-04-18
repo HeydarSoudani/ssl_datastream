@@ -258,9 +258,6 @@ class RelationLearner:
     query_features_ext = query_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1)        #[w*sh, q, 128]
     query_labels_ext = query_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)               #[w*sh, ]
 
-    # print(support_labels_ext)
-    # print(query_labels_ext)
-
     relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
     relarion_labels = torch.zeros(n_known*rep_per_class, args.query_num).to(self.device)
     relarion_labels = torch.where(
@@ -268,8 +265,6 @@ class RelationLearner:
       relarion_labels,
       torch.tensor(1.).to(self.device)
     ).view(-1,1)
-
-    # print(relarion_labels)
 
     ### === Relation Network ===========================
     relations = relation_net(relation_pairs).view(-1,n_known*rep_per_class) #[w, w*q]
@@ -279,7 +274,6 @@ class RelationLearner:
         dim=2
       ), 2
     )
-    # print(relations_mean.shape)
 
     ### === Loss & backward ============================
     quety_label_pressed = torch.tensor(
@@ -290,7 +284,6 @@ class RelationLearner:
       args.query_num, n_known
     ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
-    # print(query_labels_onehot)
     loss = self.relation_criterion(
       relations_mean,
       query_labels_onehot
@@ -416,13 +409,7 @@ class RelationLearner:
         
         # ## == Relation-based Acc. ============
         _, ow_predict_labels = torch.max(relations_mean.data, 1)
-        # print(test_labels)
-        # print(ow_predict_labels)
-        # print(ow_predict_labels.shape)
-        # print('===')
         ow_total += test_labels.size(0)
-        print(ow_predict_labels)
-        print(test_labels)
         ow_correct += (ow_predict_labels == test_labels).sum().item()
 
         ## == Similarity test ==================
