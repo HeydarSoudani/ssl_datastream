@@ -133,7 +133,7 @@ def stream_learn(feature_ext,
         new_train_data,
         args
       )
-      new_known_labels = set(new_train_data[:, -1])
+      new_known_labels = set(int(new_train_data[:, -1]))
 
       # == 4) Recalculating Detector ==========
       detector.threshold_calculation(
