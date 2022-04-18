@@ -69,7 +69,7 @@ def stream_learn(feature_ext,
     
     with torch.no_grad():
       test_image, test_label = batch
-      test_label = test_label.flatten()
+      # test_label = test_label.flatten()
       test_image, test_label = test_image.to(device), test_label.to(device)
       real_novelty = test_label.item() not in known_labels
       _, test_feature = feature_ext.forward(test_image)
@@ -81,7 +81,7 @@ def stream_learn(feature_ext,
       if detected_novelty:
         unknown_buffer.append((test_image, test_label))
       else:
-        known_buffer[predicted_label].append((test_image, test_label.item()))
+        known_buffer[predicted_label].append((test_image, test_label))
 
       if (i+1) % 100 == 0:
         print("[stream %5d]: %d, %2d, %7.4f, %5s, %5s, %d" %
