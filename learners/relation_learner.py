@@ -257,6 +257,9 @@ class RelationLearner:
     query_features_ext = query_features.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1)        #[w*sh, q, 128]
     query_labels_ext = query_labels.unsqueeze(0).repeat(n_known*rep_per_class, 1)               #[w*sh, ]
 
+    print(support_labels_ext)
+    print(query_labels_ext)
+
     relation_pairs = torch.cat((support_features_ext, query_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
     relarion_labels = torch.zeros(n_known*rep_per_class, args.query_num).to(self.device)
     relarion_labels = torch.where(
