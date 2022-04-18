@@ -15,16 +15,20 @@ class SimDetector(object):
     
     known_labels = torch.tensor(list(self._known_labels), device=self.device)
     all_sim = cos_similarity(feature, representors)
-    # prob, predicted_idx = torch.max(all_sim, 1)
-    # predicted_label = self._known_labels[torch.div(predicted_idx, rep_per_class, rounding_mode='trunc')]
     avg_sim = torch.tensor([
       torch.mean(all_sim[:, i*rep_per_class:(i+1)*rep_per_class])
       for i in self._known_labels
     ])
-    prob, predicted_idx = torch.max(avg_sim, 0)
-    predicted_label = known_labels[predicted_idx].item()
+    
+    # with all_sim
+    prob, predicted_idx = torch.max(all_sim, 1)
+    predicted_label = self._known_labels[torch.div(predicted_idx, rep_per_class, rounding_mode='trunc')]
+    
+    # with avg_sim
+    # prob, predicted_idx = torch.max(avg_sim, 0)
+    # predicted_label = known_labels[predicted_idx].item()
 
-    sec_max = torch.topk(avg_sim, 2)[0][-1]
+    # sec_max = torch.topk(avg_sim, 2)[0][-1]
     if prob > self.thresholds[predicted_label]:
     # or (prob - sec_max) > 0.1:
       pass

@@ -82,7 +82,8 @@ def zeroshot_test(feature_ext,
         else:
           ## == Similarity score ==================
           detected_novelty, predicted_label, prob, avg_sim = detector(test_feature, representors, rep_per_class)
-          
+        
+        
         detection_results.append((test_label.item(), predicted_label, real_novelty, detected_novelty))
         if (i+1) % 500 == 0:
           print("[stream %5d]: %d, %2d, %7.4f, %5s, %5s, %s"%(
