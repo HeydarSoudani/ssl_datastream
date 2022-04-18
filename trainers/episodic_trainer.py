@@ -200,15 +200,16 @@ def separate_training(
   
     if args.scheduler:
       feature_ext_scheduler.step()
-  
+
+  ## = Update Pts or Examplers =========
+  if args.rep_approach == 'prototype':
+    learner.calculate_prototypes(feature_ext, train_loader)
+  elif args.rep_approach == 'exampler':
+    learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
+
+
   if args.similarity_approach == 'relation':
     print('===== Relation Network training ... =====')
-    ## = Update Pts or Examplers =========
-    if args.rep_approach == 'prototype':
-      learner.calculate_prototypes(feature_ext, train_loader)
-    elif args.rep_approach == 'exampler':
-      learner.calculate_examplers(feature_ext, train_dataset, k=args.n_examplers)
-
     ## = Train relation network ==========
     trainloader = iter(train_dataloader)
     for miteration_item in range(args.meta_iteration):

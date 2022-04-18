@@ -31,8 +31,6 @@ def stream_learn(feature_ext,
   stream_dataset = SimpleDataset(stream_data, args)
   streamloader = DataLoader(dataset=stream_dataset, batch_size=stream_batch, shuffle=False)
 
-  print(stream_data[:10])
-
   ## == Classes start points ===================
   f = open('output.txt', 'w')
   all_labels = stream_dataset.labels
@@ -127,8 +125,6 @@ def stream_learn(feature_ext,
       # == 2) Preparing retrain data ==========
       new_train_data = memory.select(buffer, return_data=True)
       print('Retrain data number: {}'.format(new_train_data.shape[0]))
-      # print('='*30)
-      print(new_train_data[:10])
 
       # == 3) Retraining Model ================
 
