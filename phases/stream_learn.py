@@ -175,6 +175,7 @@ def stream_learn(feature_ext,
       # == Set parameters =====
       detection_results.clear()
       last_idx = i
+      known_labels = new_known_labels
 
       print('=== Streaming... =================')
 

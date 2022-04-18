@@ -62,7 +62,7 @@ parser.add_argument('--relation_train_interval', type=int, default=5, help='must
 parser.add_argument('--buffer_size', type=int, default=1000, help='')
 parser.add_argument('--retrain_epochs', type=int, default=1, help='')
 parser.add_argument('--retrain_meta_iteration', type=int, default=1000, help='')
-parser.add_argument('--known_retrain_interval', type=int, default=5000, help='')
+parser.add_argument('--known_retrain_interval', type=int, default=10000, help='')
 parser.add_argument('--known_per_class', type=int, default=100, help='for known buffer')
 
 # Sampler
