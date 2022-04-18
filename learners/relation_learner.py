@@ -267,14 +267,15 @@ class RelationLearner:
       support_labels_ext!=query_labels_ext,
       relarion_labels,
       torch.tensor(1.).to(self.device)
-    )
-    # .view(-1,1)
+    ).view(-1,1)
 
     print(relarion_labels)
 
     ### === Relation Network ===========================
-    relations = relation_net(relation_pairs).view(-1,n_known) #[w, w*q]
-    
+    relations = relation_net(relation_pairs)
+    # .view(-1,n_known) #[w, w*q]
+    print(relations.shape)
+
     ### === Loss & backward ============================
     quety_label_pressed = torch.tensor([(known_labels == l).nonzero(as_tuple=True)[0] for l in query_labels], device=self.device)
     query_labels_onehot = torch.zeros(
