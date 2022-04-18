@@ -84,7 +84,7 @@ parser.add_argument(
   choices=['exampler, prototype'],
   help='representation approach to show known classes'
 )
-parser.add_argument('--n_examplers', type=int, default=5)
+parser.add_argument('--n_examplers', type=int, default=2)
 parser.add_argument(
   '--similarity_approach',
   type=str,
