@@ -269,22 +269,30 @@ class RelationLearner:
       torch.tensor(1.).to(self.device)
     ).view(-1,1)
 
-    print(relarion_labels)
+    # print(relarion_labels)
 
     ### === Relation Network ===========================
-    relations = relation_net(relation_pairs)
-    # .view(-1,n_known) #[w, w*q]
-    print(relations.shape)
+    relations = relation_net(relation_pairs).view(-1,n_known*rep_per_class) #[w, w*q]
+    relations_mean = torch.mean(
+      torch.stack(
+        torch.split(relations, n_known, dim=1),
+        dim=2
+      ), 2
+    )
+    print(relations_mean.shape)
 
     ### === Loss & backward ============================
-    quety_label_pressed = torch.tensor([(known_labels == l).nonzero(as_tuple=True)[0] for l in query_labels], device=self.device)
+    quety_label_pressed = torch.tensor(
+      [(known_labels == l).nonzero(as_tuple=True)[0] for l in query_labels],
+      device=self.device
+    )
     query_labels_onehot = torch.zeros(
       args.query_num, n_known
     ).to(self.device).scatter_(1, quety_label_pressed.view(-1,1), 1)
     query_labels_onehot = query_labels_onehot.to(self.device)
 
     loss = self.relation_criterion(
-      relations,
+      relations_mean,
       query_labels_onehot
     )
     loss.backward()
