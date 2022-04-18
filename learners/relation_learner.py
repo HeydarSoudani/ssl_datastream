@@ -267,7 +267,10 @@ class RelationLearner:
       support_labels_ext!=query_labels_ext,
       relarion_labels,
       torch.tensor(1.).to(self.device)
-    ).view(-1,1)
+    )
+    # .view(-1,1)
+
+    print(relarion_labels)
 
     ### === Relation Network ===========================
     relations = relation_net(relation_pairs).view(-1,n_known) #[w, w*q]
