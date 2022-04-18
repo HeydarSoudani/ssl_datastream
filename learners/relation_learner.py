@@ -417,11 +417,13 @@ class RelationLearner:
         # ## == Relation-based Acc. ============
         _, ow_predict_labels = torch.max(relations_mean.data, 1)
         # print(test_labels)
-        print(ow_predict_labels)
-        print(ow_predict_labels.shape)
+        # print(ow_predict_labels)
+        # print(ow_predict_labels.shape)
         # print('===')
         ow_total += test_labels.size(0)
-        ow_correct += (ow_predict_labels == test_labels_ext).sum().item()
+        print(ow_predict_labels)
+        print(test_labels)
+        ow_correct += (ow_predict_labels == test_labels).sum().item()
 
         ## == Similarity test ==================
         # all_sim = cos_similarity(test_features, sup_features)
