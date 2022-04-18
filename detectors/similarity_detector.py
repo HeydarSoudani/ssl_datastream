@@ -10,19 +10,19 @@ class SimDetector(object):
   def __init__(self, device):
     self.device = device
 
-  def __call__(self, feature, representors, rep_per_class):
+  def __call__(self, feature):
     detected_novelty = False
     
     known_labels = torch.tensor(list(self._known_labels), device=self.device)
-    all_sim = cos_similarity(feature, representors)
+    all_sim = cos_similarity(feature, self.representors)
     avg_sim = torch.tensor([
-      torch.mean(all_sim[:, i*rep_per_class:(i+1)*rep_per_class])
+      torch.mean(all_sim[:, i*self.rep_per_class:(i+1)*self.rep_per_class])
       for i in self._known_labels
     ])
     
     # with all_sim
     prob, predicted_idx = torch.max(all_sim, 1)
-    predicted_label = known_labels[torch.div(predicted_idx, rep_per_class, rounding_mode='trunc')].item()
+    predicted_label = known_labels[torch.div(predicted_idx, self.rep_per_class, rounding_mode='trunc')].item()
     
     # with avg_sim
     # prob, predicted_idx = torch.max(avg_sim, 0)
@@ -43,8 +43,14 @@ class SimDetector(object):
   def set_known_labels(self, label_set):
     self._known_labels = torch.tensor(list(label_set), device=self.device)
   
-  def threshold_calculation(self, data, feature_ext, representors, known_labels, args):
+  def threshold_calculation(self, data, feature_ext, representors, rep_per_class, known_labels, args):
     self._known_labels = set(known_labels)
+    self.rep_per_class = rep_per_class
+
+    # Convert dict format to 2d-tensor format (for using in call function)
+    self.representors = torch.cat(
+      [representors[l] for l in self._known_labels]
+    )
     
     features_per_class = {l: [] for l in self._known_labels}
     dataset = SimpleDataset(data, args)
@@ -57,8 +63,6 @@ class SimDetector(object):
         _, feature = feature_ext(image)
         features_per_class[label.item()].append(feature.detach())
 
-    print(representors[0].shape)
-    print(torch.cat(features_per_class[0]).shape)
     self.thresholds = {
       ## Max
       # l: round(cos_similarity(torch.cat(features_per_class[l]), representors[l]).max(axis=1)[0].mean().item(), 4)

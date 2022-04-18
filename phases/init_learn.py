@@ -66,14 +66,17 @@ def init_learn(
    
   ## == Calculate detector theresholds ====
   if args.rep_approach == 'prototype':
+    rep_per_class = 1
     representors = learner.prototypes
   elif args.rep_approach == 'exampler':
+    rep_per_class = args.n_examplers
     representors = learner.examplers
   
   detector.threshold_calculation(
     train_data,
     feature_ext,
     representors,
+    rep_per_class,
     known_labels,
     args
   )

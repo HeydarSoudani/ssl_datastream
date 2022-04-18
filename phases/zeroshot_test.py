@@ -31,16 +31,16 @@ def zeroshot_test(feature_ext,
   known_labels = torch.tensor(list(known_labels_set), device=device)
   print('Known labels: {}'.format(known_labels))
   
-  if args.rep_approach == 'prototype':
-    rep_per_class = 1
-    representors = torch.cat(
-      [learner.prototypes[l.item()] for l in known_labels]
-    )
-  elif args.rep_approach == 'exampler':
-    rep_per_class = args.n_examplers
-    representors = torch.cat(
-      [learner.examplers[l.item()] for l in known_labels]
-    )
+  # if args.rep_approach == 'prototype':
+  #   rep_per_class = 1
+  #   representors = torch.cat(
+  #     [learner.prototypes[l.item()] for l in known_labels]
+  #   )
+  # elif args.rep_approach == 'exampler':
+  #   rep_per_class = args.n_examplers
+  #   representors = torch.cat(
+  #     [learner.examplers[l.item()] for l in known_labels]
+  #   )
   rep_labels = known_labels
 
   ## == 
@@ -57,13 +57,13 @@ def zeroshot_test(feature_ext,
 
         if args.similarity_approach == 'relation':
           ## == Relation Network preparation =====
-          sup_features_ext = representors.unsqueeze(0).repeat(stream_batch, 1, 1)  #[q, w*sh, 128]
+          sup_features_ext = detector.representors.unsqueeze(0).repeat(stream_batch, 1, 1)  #[q, w*sh, 128]
           sup_features_ext = torch.transpose(sup_features_ext, 0, 1)               #[w*sh, q, 128]
           sup_labels_ext = rep_labels.unsqueeze(0).repeat(stream_batch, 1)         #[q, w*sh]
           sup_labels_ext = torch.transpose(sup_labels_ext, 0, 1)                   #[w*sh, q]
           
-          test_features_ext = test_feature.unsqueeze(0).repeat(n_known*rep_per_class, 1, 1) #[w*sh, q, 128]
-          test_labels_ext = test_label.unsqueeze(0).repeat(n_known*rep_per_class, 1)        #[w*sh, q]
+          test_features_ext = test_feature.unsqueeze(0).repeat(n_known*detector.rep_per_class, 1, 1) #[w*sh, q, 128]
+          test_labels_ext = test_label.unsqueeze(0).repeat(n_known*detector.rep_per_class, 1)        #[w*sh, q]
           
           relation_pairs = torch.cat((sup_features_ext, test_features_ext), 2).view(-1, args.feature_dim*2) #[q*w*sh, 256]
 
@@ -71,7 +71,7 @@ def zeroshot_test(feature_ext,
           relations = relation_net(relation_pairs).view(-1, args.ways)
           
           avg_sim = torch.tensor([
-            torch.mean(relations.data[:, i*rep_per_class:(i+1)*rep_per_class])
+            torch.mean(relations.data[:, i*detector.rep_per_class:(i+1)*detector.rep_per_class])
             for i in known_labels
           ])
           prob, predicted_idx = torch.max(avg_sim, 0)
@@ -81,7 +81,7 @@ def zeroshot_test(feature_ext,
         
         else:
           ## == Similarity score ==================
-          detected_novelty, predicted_label, prob, avg_sim = detector(test_feature, representors, rep_per_class)
+          detected_novelty, predicted_label, prob, avg_sim = detector(test_feature)
         
         
         detection_results.append((test_label.item(), predicted_label, real_novelty, detected_novelty))

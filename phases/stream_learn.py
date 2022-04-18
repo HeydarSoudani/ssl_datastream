@@ -45,16 +45,16 @@ def stream_learn(feature_ext,
   known_labels = torch.tensor(list(base_labels), device=device)
   print('Known labels: {}'.format(known_labels))
   
-  if args.rep_approach == 'prototype':
-    rep_per_class = 1
-    representors = torch.cat(
-      [learner.prototypes[l.item()] for l in known_labels]
-    )
-  elif args.rep_approach == 'exampler':
-    rep_per_class = args.n_examplers
-    representors = torch.cat(
-      [learner.examplers[l.item()] for l in known_labels]
-    )
+  # if args.rep_approach == 'prototype':
+  #   rep_per_class = 1
+  #   representors = torch.cat(
+  #     [learner.prototypes[l.item()] for l in known_labels]
+  #   )
+  # elif args.rep_approach == 'exampler':
+  #   rep_per_class = args.n_examplers
+  #   representors = torch.cat(
+  #     [learner.examplers[l.item()] for l in known_labels]
+  #   )
   sup_labels = known_labels
 
   # == Stream ================================
@@ -74,7 +74,7 @@ def stream_learn(feature_ext,
       real_novelty = test_label.item() not in known_labels
       _, test_feature = feature_ext.forward(test_image)
 
-      detected_novelty, predicted_label, prob, _ = detector(test_feature, representors, rep_per_class)  
+      detected_novelty, predicted_label, prob, _ = detector(test_feature)
       detection_results.append(
         (test_label.item(), predicted_label, real_novelty, detected_novelty)
       )
@@ -138,14 +138,17 @@ def stream_learn(feature_ext,
 
       # == 4) Recalculating Detector ==========
       if args.rep_approach == 'prototype':
+        rep_per_class = 1
         representors = learner.prototypes
       elif args.rep_approach == 'exampler':
+        rep_per_class = args.n_examplers
         representors = learner.examplers
       
       detector.threshold_calculation(
         new_train_data,
         feature_ext,
         representors,
+        rep_per_class,
         new_known_labels,
         args
       )
