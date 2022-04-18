@@ -31,6 +31,8 @@ def stream_learn(feature_ext,
   stream_dataset = SimpleDataset(stream_data, args)
   streamloader = DataLoader(dataset=stream_dataset, batch_size=stream_batch, shuffle=False)
 
+  print(stream_data[:10])
+
   ## == Classes start points ===================
   f = open('output.txt', 'w')
   all_labels = stream_dataset.labels
@@ -75,7 +77,9 @@ def stream_learn(feature_ext,
       _, test_feature = feature_ext.forward(test_image)
 
       detected_novelty, predicted_label, prob, _ = detector(test_feature, representors, rep_per_class)  
-      detection_results.append((test_label.item(), predicted_label, real_novelty, detected_novelty))
+      detection_results.append(
+        (test_label.item(), predicted_label, real_novelty, detected_novelty)
+      )
         
       test_image = torch.squeeze(test_image, 0)  # [1, 28, 28]
       if detected_novelty:
@@ -124,9 +128,10 @@ def stream_learn(feature_ext,
       new_train_data = memory.select(buffer, return_data=True)
       print('Retrain data number: {}'.format(new_train_data.shape[0]))
       # print('='*30)
-      # print(new_train_data[:10])
+      print(new_train_data[:10])
 
       # == 3) Retraining Model ================
+
       train(
         feature_ext,
         relation_net,
