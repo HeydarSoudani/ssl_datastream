@@ -85,6 +85,13 @@ parser.add_argument(
   help='representation approach to show known classes'
 )
 parser.add_argument('--n_examplers', type=int, default=5)
+parser.add_argument(
+  '--similarity_approach',
+  type=str,
+  default='score',
+  choices=['score, relation'],
+  help='similarity approach to compare two representators'
+)
 
 # Transform
 parser.add_argument('--use_transform', action='store_true')
