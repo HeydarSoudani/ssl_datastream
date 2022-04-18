@@ -156,28 +156,28 @@ relation_net.to(device)
 # print(feature_ext)
 
 ## == Load Feature extractor & Relation network ==
-if args.phase in ['zeroshot_test', 'visualization']:
-  if args.which_model == 'best':
-    feature_ext_path = os.path.join(args.save, "feature_ext_best.pt")
-    relation_net_path = os.path.join(args.save, "relation_net_best.pt")
-    try:
-      feature_ext.load_state_dict(torch.load(feature_ext_path))
-      relation_net.load_state_dict(torch.load(relation_net_path))
-    except FileNotFoundError: pass
-    else:
-      print("Load feature_ext from {}".format(feature_ext_path))
-      print("Load relation_net from {}".format(relation_net_path))
-  
-  elif args.which_model == 'last':
-    feature_ext_path = os.path.join(args.save, "feature_ext_last.pt")
-    relation_net_path = os.path.join(args.save, "relation_net_last.pt")
-    try:
-      feature_ext.load_state_dict(torch.load(feature_ext_path))
-      relation_net.load_state_dict(torch.load(relation_net_path))
-    except FileNotFoundError: pass
-    else:
-      print("Load feature_ext from {}".format(feature_ext_path))
-      print("Load relation_net from {}".format(relation_net_path))
+# if args.phase in ['zeroshot_test', 'visualization']:
+if args.which_model == 'best':
+  feature_ext_path = os.path.join(args.save, "feature_ext_best.pt")
+  relation_net_path = os.path.join(args.save, "relation_net_best.pt")
+  try:
+    feature_ext.load_state_dict(torch.load(feature_ext_path))
+    relation_net.load_state_dict(torch.load(relation_net_path))
+  except FileNotFoundError: pass
+  else:
+    print("Load feature_ext from {}".format(feature_ext_path))
+    print("Load relation_net from {}".format(relation_net_path))
+
+elif args.which_model == 'last':
+  feature_ext_path = os.path.join(args.save, "feature_ext_last.pt")
+  relation_net_path = os.path.join(args.save, "relation_net_last.pt")
+  try:
+    feature_ext.load_state_dict(torch.load(feature_ext_path))
+    relation_net.load_state_dict(torch.load(relation_net_path))
+  except FileNotFoundError: pass
+  else:
+    print("Load feature_ext from {}".format(feature_ext_path))
+    print("Load relation_net from {}".format(relation_net_path))
 
 # == Print feature_ext layers and params ====
 # print(feature_ext)

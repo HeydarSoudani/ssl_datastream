@@ -102,18 +102,22 @@ class MyPretrainedResnet50(nn.Module):
 class MLP(nn.Module):
   def __init__(self, args, bias=True):
     super(MLP, self).__init__()
-    self.fc1 = nn.Linear(2*args.feature_dim, 32)
+    self.fc1 = nn.Linear(2*args.feature_dim, 64)
     self.dp1 = nn.Dropout(args.dropout)
-    self.fc2 = nn.Linear(32, 8)
+    self.fc2 = nn.Linear(64, 32)
     self.dp2 = nn.Dropout(args.dropout)
-    self.fc3 = nn.Linear(8, 1)
+    self.fc3 = nn.Linear(32, 8)
+    self.dp3 = nn.Dropout(args.dropout)
+    self.fc4 = nn.Linear(8, 1)
   
   def forward(self, x):
     out = F.relu(self.fc1(x))
     out = self.dp1(out)
     out = F.relu(self.fc2(out))
     out = self.dp2(out)
-    out = torch.sigmoid(self.fc3(out))
+    out = F.relu(self.fc3(out))
+    out = self.dp3(out)
+    out = torch.sigmoid(self.fc4(out))
     return out
   
   def save(self, path):
