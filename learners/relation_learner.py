@@ -406,7 +406,7 @@ class RelationLearner:
         # ).view(-1,1)
         
         ## == Relation Network ===============
-        relations = relation_net(relation_pairs).view(-1, n_known**rep_per_class)
+        relations = relation_net(relation_pairs).view(-1, n_known*rep_per_class)
         relations_mean = torch.mean(
           torch.stack(
             torch.split(relations, n_known, dim=1),
