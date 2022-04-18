@@ -124,7 +124,7 @@ def stream_learn(feature_ext,
       new_train_data = memory.select(buffer, return_data=True)
       print('Retrain data number: {}'.format(new_train_data.shape[0]))
       # print('='*30)
-      print(new_train_data[:10])
+      # print(new_train_data[:10])
 
       # == 3) Retraining Model ================
       train(
