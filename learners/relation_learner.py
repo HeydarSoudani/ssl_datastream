@@ -235,7 +235,8 @@ class RelationLearner:
         [self.examplers[l.item()] for l in known_labels]
       )
     known_labels = torch.tensor(list(known_labels), device=self.device)
-    support_labels = known_labels
+    # support_labels = known_labels
+    support_labels = torch.transpose(known_labels.repeat(rep_per_class).reshape(rep_per_class, -1), 0, 1).flatten()
 
     ### === Prepare data ===============================
     _, _, query_images, query_labels = batch
