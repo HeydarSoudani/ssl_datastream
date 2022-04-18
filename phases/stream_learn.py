@@ -81,7 +81,7 @@ def stream_learn(feature_ext,
       if detected_novelty:
         unknown_buffer.append((test_image, test_label))
       else:
-        known_buffer[predicted_label].append((test_image, test_label))
+        known_buffer[predicted_label].append((test_image, test_label.item()))
 
       if (i+1) % 100 == 0:
         print("[stream %5d]: %d, %2d, %7.4f, %5s, %5s, %d" %
