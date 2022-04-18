@@ -91,7 +91,7 @@ class OperationalMemory():
       returned_data = torch.cat(returned_data_list, 0)
       returned_data = returned_data.detach().cpu().numpy()
       np.random.shuffle(returned_data)
-      return returned_data.int()
+      return returned_data.astype(int)
 
   def rand_selection(self):
     for label, samples in self.class_data.items():
