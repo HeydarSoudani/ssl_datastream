@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import random
 import numpy as np
 from losses import cos_similarity
-# from pytorch_metric_learning import distances, losses, miners
+from pytorch_metric_learning import distances, losses, miners
 
 def compute_prototypes(
   support_features: torch.Tensor, support_labels: torch.Tensor
@@ -17,10 +17,14 @@ def compute_prototypes(
   )
 
 class RelationLearner:
-  def __init__(self, device, args):
-    # self.metric_criterion = criterion
-    self.metric_criterion = torch.nn.CrossEntropyLoss()
-    # self.metric_criterion = losses.TripletMarginLoss(margin=0.05)
+  def __init__(self, extractor_criterion, relation_criterion, device, args):
+    self.extractor_criterion = extractor_criterion
+    self.relation_criterion = relation_criterion
+    
+    self.extractor_criterion = torch.nn.CrossEntropyLoss()
+    losses.CosFaceLoss(num_classes, embedding_size, margin=0.35, scale=64, **kwargs)
+
+    # self.extractor_criterion = losses.TripletMarginLoss(margin=0.05)
     self.relation_criterion = torch.nn.MSELoss()
     self.device = device
 
@@ -198,7 +202,7 @@ class RelationLearner:
     support_outputs, _ = feature_ext.forward(support_images)
 
     ### === Loss & backward ============================
-    loss = self.metric_criterion(
+    loss = self.extractor_criterion(
       support_outputs,
       support_labels
     )
@@ -442,7 +446,7 @@ class RelationLearner:
         cw_correct += (cw_predict_labels == test_labels).sum().item()
         
         ## == Metric Loss ======================
-        loss = self.metric_criterion(test_outputs, test_labels) # For just CW
+        loss = self.extractor_criterion(test_outputs, test_labels) # For just CW
 
         loss = loss.mean()
         total_loss += loss.item()

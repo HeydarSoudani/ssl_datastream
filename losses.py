@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-# from pytorch_metric_learning import distances, losses, miners
+from pytorch_metric_learning import distances, losses, miners
 
 def cos_similarity(x, y):
   # x: N x D
@@ -50,24 +49,24 @@ class W_BCE(nn.Module):
       return torch.mean(loss)
 
 
-# class TotalLoss(nn.Module):
-#   def __init__(self, args):
-#     super().__init__()
-#     self.lambda_1 = args.lambda_1
-#     self.lambda_2 = args.lambda_2
+class TotalLoss(nn.Module):
+  def __init__(self, args):
+    super().__init__()
+    self.lambda_1 = args.lambda_1
+    self.lambda_2 = args.lambda_2
+
+    # self.metric_loss = losses.NTXentLoss(temperature=0.07)
+    # self.metric = losses.ContrastiveLoss(pos_margin=0, neg_margin=1)
+    # self.metric = losses.TripletMarginLoss(margin=0.05)
+    self.metric_loss = losses.CosFaceLoss(args.n_classes, args.feature_dim, margin=0.35, scale=64)
+    self.ce_loss = torch.nn.CrossEntropyLoss()
     
-#     self.relation_loss = torch.nn.MSELoss()
-#     self.ce_loss = torch.nn.CrossEntropyLoss()
-#     # self.metric_loss = losses.NTXentLoss(temperature=0.07)
-#     # self.metric = losses.ContrastiveLoss(pos_margin=0, neg_margin=1)
-#     # self.metric = losses.TripletMarginLoss(margin=0.05)
+  # def forward(self, outputs, labels, relations, labels_onehot):
+  def forward(self, outputs, labels):
+    metric_loss = self.metric_loss(outputs, labels.long())
+    ce_loss = self.ce_loss(outputs, labels.long())
+    # rel_loss = self.relation_loss(relations, labels_onehot)
 
-#   # def forward(self, outputs, labels, relations, labels_onehot):
-#   def forward(self, outputs, labels):
-#     metric_loss = self.metric_loss(outputs, labels.long())
-#     ce_loss = self.ce_loss(outputs, labels.long())
-#     # rel_loss = self.relation_loss(relations, labels_onehot)
-
-#     # return self.lambda_1 * metric_loss
-#     return self.lambda_1 * metric_loss +\
-#            self.lambda_2 * ce_loss
+    # return self.lambda_1 * metric_loss
+    return self.lambda_1 * metric_loss +\
+           self.lambda_2 * ce_loss

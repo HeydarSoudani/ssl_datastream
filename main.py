@@ -9,7 +9,7 @@ from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
 from detectors.similarity_detector import SimDetector
 from utils.memory import OperationalMemory
-# from losses import TotalLoss
+from losses import TotalLoss
 from phases.batch_learn import batch_learn
 from phases.init_learn import init_learn
 from phases.stream_learn import stream_learn
@@ -153,8 +153,10 @@ if not os.path.exists(args.save):
   os.makedirs(args.save)
 
 ## == Define & Load learner =============
-# criterion = TotalLoss(args)
-learner = RelationLearner(device, args)
+extractor_criterion = TotalLoss(args)
+relation_criterion = torch.nn.MSELoss()
+
+learner = RelationLearner(extractor_criterion, relation_criterion, device, args)
 if args.phase in ['zeroshot_test', 'stream_learn', 'visualization']:
   learner_path = os.path.join(args.save, "learner.pt")
   learner.load(learner_path)
