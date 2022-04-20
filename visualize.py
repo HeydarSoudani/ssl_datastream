@@ -1,5 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
+import os
+from pandas import read_csv
 import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.manifold import TSNE
@@ -7,6 +9,18 @@ from sklearn.decomposition import PCA
 
 from samplers.pt_sampler import PtSampler
 
+def set_novel_label(known_labels, args):
+  
+  stream_data = read_csv(
+    os.path.join(args.data_path, args.stream_file),
+    sep=',', header=None).values
+
+  for idx, data in enumerate(stream_data):
+    label = data[-1]
+    if label not in known_labels:
+      stream_data[idx, -1] = 100
+
+  return stream_data
 
 def tsne_plot(features, labels, file_name='tsne'):
   print('t-SNE plotting ...')
@@ -46,7 +60,7 @@ def pca_plot(features, labels, file_name='pca'):
   plt.show()
   print('Done!')
 
-def visualization(model, dataset, args, device):
+def visualization(model, dataset, device):
   
   # activation = {}
   # def get_activation(name):

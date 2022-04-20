@@ -15,7 +15,7 @@ from phases.init_learn import init_learn
 from phases.stream_learn import stream_learn
 from phases.zeroshot_test import zeroshot_test
 
-from visualize import visualization
+from visualize import visualization, set_novel_label
 
 ## == Params ========================
 parser = argparse.ArgumentParser()
@@ -271,12 +271,13 @@ if __name__ == '__main__':
     )
   ## == visualization ===== 
   elif args.phase == 'visualization':
-    stream_data = read_csv(
-      os.path.join(args.data_path, args.stream_file),
-      sep=',',
-      header=None).values
+    stream_data = set_novel_label(base_labels, args)
+    # stream_data = read_csv(
+    #   os.path.join(args.data_path, args.stream_file),
+    #   sep=',',
+    #   header=None).values
     stream_dataset = SimpleDataset(stream_data, args)
-    visualization(feature_ext, stream_dataset, args, device)
+    visualization(feature_ext, stream_dataset, device)
 
 
 
