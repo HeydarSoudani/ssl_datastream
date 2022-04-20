@@ -56,7 +56,7 @@ class TotalLoss(nn.Module):
     self.lambda_2 = args.lambda_2
 
     # self.metric_loss = losses.NTXentLoss(temperature=0.07)
-    self.metric = losses.ContrastiveLoss(pos_margin=0, neg_margin=1)
+    self.metric_loss = losses.ContrastiveLoss(pos_margin=0, neg_margin=1)
     # self.metric = losses.TripletMarginLoss(margin=0.05)
     # self.metric_loss = losses.CosFaceLoss(num_classes=args.n_classes, embedding_size=args.feature_dim, margin=0.35, scale=64)
     # self.loss_optimizer = torch.optim.SGD(self.metric_loss.parameters(), lr=0.01)
