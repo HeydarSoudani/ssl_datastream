@@ -72,7 +72,7 @@ def visualization(model, dataset, device):
   print(len(dataset))
   sampler = PtSampler(
     dataset,
-    n_way=10,
+    n_way=6,
     n_shot=500,
     n_query=0,
     n_tasks=1
