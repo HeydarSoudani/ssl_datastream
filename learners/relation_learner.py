@@ -20,12 +20,8 @@ class RelationLearner:
   def __init__(self, extractor_criterion, relation_criterion, device, args):
     self.extractor_criterion = extractor_criterion
     self.relation_criterion = relation_criterion
+    # self.extractor_criterion = torch.nn.CrossEntropyLoss()
     
-    self.extractor_criterion = torch.nn.CrossEntropyLoss()
-    losses.CosFaceLoss(num_classes, embedding_size, margin=0.35, scale=64, **kwargs)
-
-    # self.extractor_criterion = losses.TripletMarginLoss(margin=0.05)
-    self.relation_criterion = torch.nn.MSELoss()
     self.device = device
 
     self.prototypes = {

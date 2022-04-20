@@ -155,7 +155,6 @@ if not os.path.exists(args.save):
 ## == Define & Load learner =============
 extractor_criterion = TotalLoss(args)
 relation_criterion = torch.nn.MSELoss()
-
 learner = RelationLearner(extractor_criterion, relation_criterion, device, args)
 if args.phase in ['zeroshot_test', 'stream_learn', 'visualization']:
   learner_path = os.path.join(args.save, "learner.pt")
