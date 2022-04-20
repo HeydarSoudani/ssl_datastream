@@ -28,7 +28,7 @@ def tsne_plot(features, labels, file_name='tsne'):
   X_embedded = tsne.fit_transform(features)
 
   sns.set(rc={'figure.figsize':(11.7,8.27)})
-  palette = sns.color_palette("bright", 10)
+  palette = sns.color_palette("bright", 6)
   sns.scatterplot(
     x=X_embedded[:,0],
     y=X_embedded[:,1],
