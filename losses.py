@@ -59,6 +59,7 @@ class TotalLoss(nn.Module):
     # self.metric = losses.ContrastiveLoss(pos_margin=0, neg_margin=1)
     # self.metric = losses.TripletMarginLoss(margin=0.05)
     self.metric_loss = losses.CosFaceLoss(num_classes=args.n_classes, embedding_size=args.feature_dim, margin=0.35, scale=64)
+    self.loss_optimizer = torch.optim.SGD(self.metric_loss.parameters(), lr=0.01)
     self.ce_loss = torch.nn.CrossEntropyLoss()
     
   # def forward(self, outputs, labels, relations, labels_onehot):
@@ -67,6 +68,7 @@ class TotalLoss(nn.Module):
     ce_loss = self.ce_loss(outputs, labels.long())
     # rel_loss = self.relation_loss(relations, labels_onehot)
 
+    self.loss_optimizer.step()
     # return self.lambda_1 * metric_loss
     return self.lambda_1 * metric_loss +\
            self.lambda_2 * ce_loss
