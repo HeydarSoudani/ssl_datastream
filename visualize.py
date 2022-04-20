@@ -1,9 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
-import os
-import numpy as np
 import seaborn as sns
-from pandas import read_csv
 from matplotlib import pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
@@ -30,7 +27,6 @@ def tsne_plot(features, labels, file_name='tsne'):
   plt.show()
   print('Done!')
 
-
 def pca_plot(features, labels, file_name='pca'):
   print('PCA plotting ...')
   pca = PCA(n_components=2)
@@ -49,7 +45,6 @@ def pca_plot(features, labels, file_name='pca'):
   plt.savefig('{}.png'.format(file_name))
   plt.show()
   print('Done!')
-
 
 def visualization(model, dataset, args, device):
   

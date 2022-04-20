@@ -272,7 +272,7 @@ if __name__ == '__main__':
   ## == visualization ===== 
   elif args.phase == 'visualization':
     stream_data = read_csv(
-      os.path.join(args.data_path, args.test_file),
+      os.path.join(args.data_path, args.stream_file),
       sep=',',
       header=None).values
     stream_dataset = SimpleDataset(stream_data, args)

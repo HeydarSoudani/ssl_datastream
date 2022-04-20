@@ -1,9 +1,7 @@
 import torch
-import torch.nn.functional as F
 import random
 import numpy as np
 from losses import cos_similarity
-from pytorch_metric_learning import distances, losses, miners
 
 def compute_prototypes(
   support_features: torch.Tensor, support_labels: torch.Tensor
@@ -20,8 +18,6 @@ class RelationLearner:
   def __init__(self, extractor_criterion, relation_criterion, device, args):
     self.extractor_criterion = extractor_criterion
     self.relation_criterion = relation_criterion
-    # self.extractor_criterion = torch.nn.CrossEntropyLoss()
-    
     self.device = device
 
     self.prototypes = {

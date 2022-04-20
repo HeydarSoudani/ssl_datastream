@@ -63,7 +63,6 @@ def init_learn(
     train_data,
     args)
 
-   
   ## == Calculate detector theresholds ====
   if args.rep_approach == 'prototype':
     rep_per_class = 1
