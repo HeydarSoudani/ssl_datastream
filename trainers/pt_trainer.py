@@ -13,6 +13,7 @@ def pt_training(
   optim,
   train_dataloader,
   val_dataloader,
+  train_loader, # For pt
   known_labels,
   scheduler,
   args
@@ -38,6 +39,9 @@ def pt_training(
     if (miteration_item + 1) % args.log_interval == 0:
       train_loss_total = train_ext_loss / args.log_interval
       train_ext_loss = 0.
+
+      print('Prototypes are calculating ...')
+      learner.calculate_prototypes(feature_ext, train_loader)
 
       # evalute on val_dataset
       val_loss, \
@@ -103,6 +107,7 @@ def train(
         optim,
         train_dataloader,
         val_dataloader,
+        train_loader, # For pt
         known_labels,
         scheduler,
         args
