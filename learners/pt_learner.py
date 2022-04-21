@@ -20,7 +20,7 @@ class PtLearner:
     self.device = device
 
     self.prototypes = {
-      l: torch.zeros(1, args.hidden_dims, device=device)
+      l: torch.zeros(1, args.feature_dim, device=device)
       for l in range(args.n_classes)
     }
 
