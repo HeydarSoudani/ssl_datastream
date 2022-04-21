@@ -111,6 +111,7 @@ parser.add_argument('--use_transform', action='store_true')
 # Loss function
 parser.add_argument("--lambda_1", type=float, default=1.0, help="Metric Coefficien in loss function")
 parser.add_argument("--lambda_2", type=float, default=1.0, help="relation Coefficient in loss function")
+parser.add_argument("--temp_scale", type=float, default=0.2, help="Temperature scale for DCE in loss function")
 
 # memory
 parser.add_argument('--mem_sel_type', type=str, default='fixed_mem', choices=['fixed_mem', 'pre_class'], help='')
