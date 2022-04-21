@@ -57,9 +57,16 @@ def init_learn(
   args, device
 ):
   ## == Episodic train ====================
+  # train(
+  #   feature_ext,
+  #   relation_net,
+  #   learner,
+  #   train_data,
+  #   args)
+  
+  ## == Pt train ====
   train(
     feature_ext,
-    relation_net,
     learner,
     train_data,
     args)
