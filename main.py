@@ -7,9 +7,11 @@ from pandas import read_csv
 from model import MyPretrainedResnet50, MLP, weights_init
 from dataset import SimpleDataset
 from learners.relation_learner import RelationLearner
+from learners.pt_learner import PtLearner
 from detectors.similarity_detector import SimDetector
 from utils.memory import OperationalMemory
-from losses import TotalLoss
+from losses.metric_loss import TotalLoss as TotalMetricLoss
+from losses.pt_loss import TotalLoss as TotalPtLoss
 from phases.batch_learn import batch_learn
 from phases.init_learn import init_learn
 from phases.stream_learn import stream_learn
@@ -90,7 +92,7 @@ parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument(
   '--rep_approach',
   type=str,
-  default='exampler',
+  default='prototype',
   choices=['exampler, prototype'],
   help='representation approach to show known classes'
 )
@@ -152,10 +154,18 @@ if args.cuda:
 if not os.path.exists(args.save):
   os.makedirs(args.save)
 
-## == Define & Load learner =============
-extractor_criterion = TotalLoss(args)
-relation_criterion = torch.nn.MSELoss()
-learner = RelationLearner(extractor_criterion, relation_criterion, device, args)
+## == Define & Load (Metric) learner ===
+# extractor_criterion = TotalMetricLoss(args)
+# relation_criterion = torch.nn.MSELoss()
+# learner = RelationLearner(extractor_criterion, relation_criterion, device, args)
+# if args.phase in ['zeroshot_test', 'stream_learn', 'visualization']:
+#   learner_path = os.path.join(args.save, "learner.pt")
+#   learner.load(learner_path)
+#   print("Load learner from {}".format(learner_path))
+
+## == Define & Load (Pt) learner ========
+criterion = TotalPtLoss(device, args)
+learner = PtLearner(criterion, device, args)
 if args.phase in ['zeroshot_test', 'stream_learn', 'visualization']:
   learner_path = os.path.join(args.save, "learner.pt")
   learner.load(learner_path)

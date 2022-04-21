@@ -4,6 +4,8 @@ from torchvision.transforms import transforms
 from sklearn.model_selection import train_test_split
 from dataset import SimpleDataset
 from samplers.relation_sampler import RelationSampler
+from samplers.pt_sampler import PtSampler
+
 
 def dataloader_preparation(train_data, val_data, args):
   if val_data == []:
@@ -20,14 +22,30 @@ def dataloader_preparation(train_data, val_data, args):
   known_labels = train_dataset.label_set
   print('Known labels: {}'.format(known_labels))
 
-  # sampler = PtSampler(
+  ## == For relation ================
+  # sampler = RelationSampler(
   #   train_dataset,
   #   n_way=args.ways,
   #   n_shot=args.shot,
   #   n_query=args.query_num,
   #   n_tasks=args.meta_iteration
   # )
-  sampler = RelationSampler(
+  # train_dataloader = DataLoader(
+  #   train_dataset,
+  #   batch_sampler=sampler,
+  #   num_workers=1,
+  #   pin_memory=True,
+  #   collate_fn=sampler.episodic_collate_fn,
+  # )
+  # val_dataloader = DataLoader(
+  #   dataset=val_dataset,
+  #   batch_size=args.query_num,
+  #   drop_last=True,
+  #   shuffle=False
+  # )
+
+  ## == For Pt ====================
+  sampler = PtSampler(
     train_dataset,
     n_way=args.ways,
     n_shot=args.shot,
@@ -41,12 +59,9 @@ def dataloader_preparation(train_data, val_data, args):
     pin_memory=True,
     collate_fn=sampler.episodic_collate_fn,
   )
-  val_dataloader = DataLoader(
-    dataset=val_dataset,
-    batch_size=args.query_num,
-    drop_last=True,
-    shuffle=False
-  )
+  val_dataloader = DataLoader(dataset=val_dataset, batch_size=8, shuffle=False)
+
+
   return train_dataloader, val_dataloader, known_labels
 
 def test_dataloader_preparation(data, args):

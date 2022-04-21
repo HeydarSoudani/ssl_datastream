@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader
 import numpy as np
 
 from dataset import SimpleDataset
-from losses import cos_similarity
+from losses.metric_loss import cos_similarity
 
 
 class SimDetector(object):

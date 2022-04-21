@@ -1,7 +1,7 @@
 import torch
 import random
 import numpy as np
-from losses import cos_similarity
+from losses.metric_loss import cos_similarity
 
 def compute_prototypes(
   support_features: torch.Tensor, support_labels: torch.Tensor
@@ -332,7 +332,8 @@ class RelationLearner:
           ]
         )
 
-  def evaluate(self,
+  def evaluate(
+    self,
     feature_ext,
     relation_net,
     val_loader,
@@ -439,7 +440,6 @@ class RelationLearner:
         
         ## == Metric Loss ======================
         loss = self.extractor_criterion(test_outputs, test_labels) # For just CW
-
         loss = loss.mean()
         total_loss += loss.item()
 

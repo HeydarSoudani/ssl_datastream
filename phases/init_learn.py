@@ -4,7 +4,8 @@ from pandas import read_csv
 
 from dataset import SimpleDataset
 from utils.preparation import transforms_preparation, memory_samples_preparation
-from trainers.episodic_trainer import train
+# from trainers.episodic_trainer import train
+from trainers.pt_trainer import train
 
 
 def init_test(

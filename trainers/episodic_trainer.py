@@ -360,6 +360,11 @@ def train(
   except KeyboardInterrupt:
     print('skipping training')
   
+  # == Save last model ========
+  feature_ext.save(os.path.join(args.save, "feature_ext_last.pt"))
+  relation_net.save(os.path.join(args.save, "relation_net_last.pt"))
+  print("= ...last model saved")
+
   # == Save learner ===========
   if args.rep_approach == 'prototype':
     learner.calculate_prototypes(feature_ext, train_loader)
@@ -368,9 +373,4 @@ def train(
   learner.save(os.path.join(args.save, "learner.pt"))
   print("= ...learner saved")
 
-
-  # == Save last model ========
-  feature_ext.save(os.path.join(args.save, "feature_ext_last.pt"))
-  relation_net.save(os.path.join(args.save, "relation_net_last.pt"))
-  print("= ...last model saved")
 
