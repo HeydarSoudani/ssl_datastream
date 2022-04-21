@@ -90,7 +90,7 @@ def train(
     val_dataloader,\
       known_labels = dataloader_preparation(train_data, [], args)
 
-  optim = SGD(feature_ext.parameters(), lr=args.lr, momentum=args.momentum)
+  optim = SGD(feature_ext.parameters(), lr=args.lr_ext, momentum=args.momentum)
   scheduler = StepLR(optim, step_size=args.step_size, gamma=args.gamma)
 
   try:
